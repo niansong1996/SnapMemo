@@ -12,10 +12,15 @@ import java.util.Iterator;
 import common.TimeOccupancyPO;
 
 public class DataIO {
-	public final String location = "..//data.ser";
+	public final String location = "data.ser";
 	private ArrayList<TimeOccupancyPO> data = new ArrayList<TimeOccupancyPO>();
 	
 	public DataIO(){
+		File f = new File(location);
+		if(!f.exists()){
+			try {f.createNewFile();} catch (IOException e) {e.printStackTrace();}
+			this.store();
+		}
 		this.read();
 	}
 	private void store(){
@@ -39,6 +44,7 @@ public class DataIO {
 				TimeOccupancyPO po = (TimeOccupancyPO)ois.readObject();
 				data.add(po);
 			}
+			ois.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {

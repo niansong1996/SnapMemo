@@ -11,7 +11,6 @@ import com.sun.net.httpserver.HttpServer;
 public class HttpRequestHandler {
 	HttpServer server;
 	public HttpRequestHandler(){
-		HttpServer server;
 		try {
 			server = HttpServer.create(new InetSocketAddress("127.0.0.1",5678),0);
 			server.createContext("/",new HandlerA());

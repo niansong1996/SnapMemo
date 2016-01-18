@@ -15,5 +15,6 @@ public class ServerActivator {
 	}
 	public void activate(){
 		httpHandler.startHandle();
+		System.out.println("Server is ready.");
 	}
 }
