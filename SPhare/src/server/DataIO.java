@@ -7,9 +7,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import common.TimeOccupancyPO;
+import net.sf.json.JSONArray;
 
 public class DataIO {
 	public final String location = "data.ser";
@@ -52,8 +52,10 @@ public class DataIO {
 		}
 		
 	}
-	public Iterator<TimeOccupancyPO> getAll(){
-		return data.iterator();
+	public String getAll(){
+		JSONArray array = JSONArray.fromObject(data);
+	    String jsonstr = array.toString();
+		return jsonstr;
 	}
 	public void add(TimeOccupancyPO po){
 		this.data.add(po);

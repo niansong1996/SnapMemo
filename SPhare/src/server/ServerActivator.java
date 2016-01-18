@@ -10,7 +10,7 @@ public class ServerActivator {
 	HttpRequestHandler httpHandler;
 	public ServerActivator(){
 		data = new DataIO();
-		httpHandler = new HttpRequestHandler();
+		httpHandler = new HttpRequestHandler(data);
 		
 	}
 	public void activate(){

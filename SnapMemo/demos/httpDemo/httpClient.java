@@ -16,11 +16,12 @@ public class httpClient {
 		CloseableHttpClient httpclient = HttpClients.createDefault();  
 		try
 		{
-			URIBuilder builder = new URIBuilder("http://127.0.0.1:5678/te");
+			URIBuilder builder = new URIBuilder("http://127.0.0.1:5678/");
 			URI uri = builder.build();
 			HttpGet request = new HttpGet(uri);
 			// Request body
 			System.out.println("sending the request");
+			request.setHeader("Type", "getInfo");
 			HttpResponse response = httpclient.execute(request);
 			HttpEntity entity = response.getEntity();
 			String result = "";
