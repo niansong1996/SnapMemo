@@ -7,10 +7,12 @@ public class ServerActivator {
 	}
 	
 	DataIO data;
+	HTMLHelper html;
 	HttpRequestHandler httpHandler;
 	public ServerActivator(){
 		data = new DataIO();
-		httpHandler = new HttpRequestHandler(data);
+		html = new HTMLHelper(data);
+		httpHandler = new HttpRequestHandler(data,html);
 		
 	}
 	public void activate(){

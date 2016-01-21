@@ -6,16 +6,18 @@ public class TimeOccupancyPO implements Serializable{
 
 	private static final long serialVersionUID = 4008226459350446854L;
 	public String userName;
-	public int severness; //5 level from 0 - 4
+	public int severness; //4 level from 0 - 3
 	
-	//Time format is yyyy-mm-dd hh:mm:ss
+	//Time format is tinyint
 	public String startTime;
 	public String endTime;
-	public TimeOccupancyPO(String userName, int severness, String startTime, String endTime) {
+	public String day;
+	public TimeOccupancyPO(String userName, int severness, String startTime, String endTime,String day) {
 		this.userName = userName;
 		this.severness = severness;
 		this.startTime = startTime;
 		this.endTime = endTime;
+		this.day = day;
 	}
 	public String getUserName() {
 		return userName;

@@ -16,12 +16,13 @@ public class httpClient {
 		CloseableHttpClient httpclient = HttpClients.createDefault();  
 		try
 		{
-			URIBuilder builder = new URIBuilder("http://127.0.0.1:5678/");
+			URIBuilder builder = new URIBuilder("http://127.0.0.1:5678/SPhare");
 			URI uri = builder.build();
 			HttpGet request = new HttpGet(uri);
 			// Request body
 			System.out.println("sending the request");
-			request.setHeader("Type", "getInfo");
+			request.setHeader("Ddsing", "getInfo");
+			System.out.println(request.toString());
 			HttpResponse response = httpclient.execute(request);
 			HttpEntity entity = response.getEntity();
 			String result = "";

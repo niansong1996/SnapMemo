@@ -1,0 +1,185 @@
+<html>
+<head>
+<script type="text/javascript">
+	function Open() {
+		var url = "http://139.129.40.103:5678/SPhare?type=add&name=";
+		var name = document.getElementById("name");
+		var day = document.getElementById("select_day");
+		var begin = document.getElementById("select_begin");
+		var end = document.getElementById("select_end");
+		var severness = document.getElementById("select_severness");
+		url = url + name.value + "&day=" + day.value + "&begin=" + begin.value
+				+ "&end=" + end.value + "&severness=" + severness.value;
+		location.replace(url);
+	}
+</script>
+</head>
+<body>
+	
+	<table border="1">
+		<tr>
+			<th width=100>Class</th>
+			<th width=100>Sunday</th>
+			<th width=100>Monday</th>
+			<th width=100>Tuesday</th>
+			<th width=100>Wednesday</th>
+			<th width=100>Thursday</th>
+			<th width=100>Friday</th>
+			<th width=100>Saturday</th>
+		</tr>
+		<tr height=50>
+			<td>1</td>
+			<td>01</td>
+			<td>11</td>
+			<td>21</td>
+			<td>31</td>
+			<td>41</td>
+			<td>51</td>
+			<td>61</td>
+		</tr>
+		<tr height=50>
+			<td>2</td>
+			<td>02</td>
+			<td>12</td>
+			<td>22</td>
+			<td>32</td>
+			<td>42</td>
+			<td>52</td>
+			<td>62</td>
+		</tr>
+		<tr height=50>
+			<td>3</td>
+			<td>03</td>
+			<td>13</td>
+			<td>23</td>
+			<td>33</td>
+			<td>43</td>
+			<td>53</td>
+			<td>63</td>
+		</tr>
+		<tr height=50>
+			<td>4</td>
+			<td>04</td>
+			<td>14</td>
+			<td>24</td>
+			<td>34</td>
+			<td>44</td>
+			<td>54</td>
+			<td>64</td>
+		</tr>
+		<tr height=50>
+			<td>5</td>
+			<td>05</td>
+			<td>15</td>
+			<td>25</td>
+			<td>35</td>
+			<td>45</td>
+			<td>55</td>
+			<td>65</td>
+		</tr>
+		<tr height=50>
+			<td>6</td>
+			<td>06</td>
+			<td>16</td>
+			<td>26</td>
+			<td>36</td>
+			<td>46</td>
+			<td>56</td>
+			<td>66</td>
+		</tr>
+		<tr height=50>
+			<td>7</td>
+			<td>07</td>
+			<td>17</td>
+			<td>27</td>
+			<td>37</td>
+			<td>47</td>
+			<td>57</td>
+			<td>67</td>
+		</tr>
+		<tr height=50>
+			<td>8</td>
+			<td>08</td>
+			<td>18</td>
+			<td>28</td>
+			<td>38</td>
+			<td>48</td>
+			<td>58</td>
+			<td>68</td>
+		</tr>
+		<tr height=50>
+			<td>9</td>
+			<td>09</td>
+			<td>19</td>
+			<td>29</td>
+			<td>39</td>
+			<td>49</td>
+			<td>59</td>
+			<td>69</td>
+		</tr>
+		<tr height=50>
+			<td>10</td>
+			<td>010</td>
+			<td>110</td>
+			<td>210</td>
+			<td>310</td>
+			<td>410</td>
+			<td>510</td>
+			<td>610</td>
+		</tr>
+		<tr height=50>
+			<td>11</td>
+			<td>011</td>
+			<td>111</td>
+			<td>211</td>
+			<td>311</td>
+			<td>411</td>
+			<td>511</td>
+			<td>611</td>
+		</tr>
+	</table>
+	<input type="text" size="20" id="name" value="Your_Name" />
+	<select name="select" id="select_day">
+		<option value="0">Sunday</option>
+		<option value="1">Monday</option>
+		<option value="2">Tuesday</option>
+		<option value="3">Wednesday</option>
+		<option value="4">Thursday</option>
+		<option value="5">Friday</option>
+		<option value="6">Saturday</option>
+	</select>
+	<select name="select" id="select_begin">
+		<option value="1">1</option>
+		<option value="2">2</option>
+		<option value="3">3</option>
+		<option value="4">4</option>
+		<option value="5">5</option>
+		<option value="6">6</option>
+		<option value="7">7</option>
+		<option value="8">8</option>
+		<option value="9">9</option>
+		<option value="10">10</option>
+		<option value="11">11</option>
+	</select>
+	<select name="select" id="select_end">
+		<option value="1">1</option>
+		<option value="2">2</option>
+		<option value="3">3</option>
+		<option value="4">4</option>
+		<option value="5">5</option>
+		<option value="6">6</option>
+		<option value="7">7</option>
+		<option value="8">8</option>
+		<option value="9">9</option>
+		<option value="10">10</option>
+		<option value="11">11</option>
+	</select>
+	<select name="select" id="select_severness">
+		<option value="0">slightly</option>
+		<option value="1">not very</option>
+		<option value="2">very</option>
+		<option value="3">inevitable</option>
+	</select>
+	<input type="button" value="submit" onclick="Open()">
+</body>
+</html>

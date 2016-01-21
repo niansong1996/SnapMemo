@@ -13,7 +13,7 @@ import net.sf.json.JSONArray;
 
 public class DataIO {
 	public final String location = "data.ser";
-	private ArrayList<TimeOccupancyPO> data = new ArrayList<TimeOccupancyPO>();
+	public ArrayList<TimeOccupancyPO> data = new ArrayList<TimeOccupancyPO>();
 	
 	public DataIO(){
 		File f = new File(location);
