@@ -8,11 +8,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import common.TimeOccupancyPO;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 public class DataIO {
 	public final String location = "data.ser";
@@ -56,19 +54,9 @@ public class DataIO {
 		
 	}
 	public String getAll(){
-		JSONArray array = new JSONArray(data);
-		String source = "[{\"startTime\":\"1\",\"endTime\":\"1\",\"userName\":\"Your_Name\",\"severness\":0},{\"startTime\":\"1\",\"endTime\":\"1\",\"userName\":\"Your_Name\",\"severness\":0},{\"startTime\":\"1\",\"endTime\":\"1\",\"userName\":\"Your_Name\",\"severness\":0},{\"startTime\":\"1\",\"endTime\":\"1\",\"userName\":\"Your_Name\",\"severness\":0},{\"startTime\":\"1\",\"endTime\":\"1\",\"userName\":\"Your_Name\",\"severness\":0},{\"startTime\":\"5\",\"endTime\":\"7\",\"userName\":\"Anthony\",\"severness\":0},{\"startTime\":\"5\",\"endTime\":\"7\",\"userName\":\"Anthony\",\"severness\":0},{\"startTime\":\"8\",\"endTime\":\"11\",\"userName\":\"Alan\",\"severness\":2},{\"startTime\":\"8\",\"endTime\":\"11\",\"userName\":\"Alan\",\"severness\":2},{\"startTime\":\"8\",\"endTime\":\"11\",\"userName\":\"Alan\",\"severness\":2},{\"startTime\":\"8\",\"endTime\":\"11\",\"userName\":\"Alan\",\"severness\":2},{\"startTime\":\"8\",\"endTime\":\"11\",\"userName\":\"Alan\",\"severness\":2}]";
-		try {
-			JSONObject a = new JSONObject(source);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		JSONArray array = JSONArray.fromObject(data);
 	    String jsonstr = array.toString();
 		return jsonstr;
-	}
-	public void toObject(){
-		String source = "[{\"startTime\":\"1\",\"endTime\":\"1\",\"userName\":\"Your_Name\",\"severness\":0},{\"startTime\":\"1\",\"endTime\":\"1\",\"userName\":\"Your_Name\",\"severness\":0},{\"startTime\":\"1\",\"endTime\":\"1\",\"userName\":\"Your_Name\",\"severness\":0},{\"startTime\":\"1\",\"endTime\":\"1\",\"userName\":\"Your_Name\",\"severness\":0},{\"startTime\":\"1\",\"endTime\":\"1\",\"userName\":\"Your_Name\",\"severness\":0},{\"startTime\":\"5\",\"endTime\":\"7\",\"userName\":\"Anthony\",\"severness\":0},{\"startTime\":\"5\",\"endTime\":\"7\",\"userName\":\"Anthony\",\"severness\":0},{\"startTime\":\"8\",\"endTime\":\"11\",\"userName\":\"Alan\",\"severness\":2},{\"startTime\":\"8\",\"endTime\":\"11\",\"userName\":\"Alan\",\"severness\":2},{\"startTime\":\"8\",\"endTime\":\"11\",\"userName\":\"Alan\",\"severness\":2},{\"startTime\":\"8\",\"endTime\":\"11\",\"userName\":\"Alan\",\"severness\":2},{\"startTime\":\"8\",\"endTime\":\"11\",\"userName\":\"Alan\",\"severness\":2}]";
 	}
 	public void add(TimeOccupancyPO po){
 		this.data.add(po);
