@@ -1,6 +1,5 @@
 package com.alan.sphare.logic.httpBl;
 
-import com.alan.sphare.model.PO.FreeTimePO;
 import com.alan.sphare.model.VO.FreeDateTimeVO;
 import com.alan.sphare.model.VO.GroupVO;
 import com.alan.sphare.model.httpservice.HttpHandlerService;
@@ -9,7 +8,6 @@ import com.alan.sphare.model.httpservice.JSONHandlerService;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -52,6 +50,8 @@ public class HttpHandler implements HttpHandlerService {
             conn.setRequestProperty("Content-Type", "text/plain");
             //设置内容长度
             conn.setRequestProperty("Content-Length", String.valueOf(groupID.length()));
+            //设置请求方式
+            conn.setRequestProperty("Request-Type","getGroupInfo");
 
             //将groupID刷入输出流传至服务器
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(conn.getOutputStream());
@@ -93,9 +93,8 @@ public class HttpHandler implements HttpHandlerService {
     @Override
     public boolean setFreeTime(FreeDateTimeVO freeDateTimeVO, String groupID) {
         boolean result = false;
-        FreeTimePO freeTimePO = new FreeTimePO(groupID, freeDateTimeVO.getUserID(),
-                freeDateTimeVO.getDate(), freeDateTimeVO.getFreeDateTime()[0].getStartTime(),
-                freeDateTimeVO.getFreeDateTime()[0].getEndTime());
+        //获得生成的JSON字符串
+        String sendFreeTime = jsonHandler.getFreeTimeJSON(freeDateTimeVO,groupID);
 
         try {
             conn = (HttpURLConnection) url.openConnection();
@@ -105,13 +104,20 @@ public class HttpHandler implements HttpHandlerService {
             conn.setRequestMethod("POST");
             //设置字符集
             conn.setRequestProperty("Accept-Charset", "utf-8");
-            //设置内容格式，这里采用二进制流传输
-            conn.setRequestProperty("Content-Type", "application/octet-stream");
+            //设置内容格式，这里采用纯文本
+            conn.setRequestProperty("Content-Type", "text/plain");
+            //设置内容长度
+            conn.setRequestProperty("Content-Length", String.valueOf(sendFreeTime.length()));
+            //设置请求方式
+            conn.setRequestProperty("Request-Type","setFreeTime");
 
-            //将序列化的freeDateTimePO刷入输出流传至服务器
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(conn.getOutputStream());
-            objectOutputStream.writeObject(freeTimePO);
-            objectOutputStream.flush();
+            //将生成的JSON字符串刷入输出流传至服务器
+            if(sendFreeTime==null&&sendFreeTime.length()==0){
+                return false;
+            }
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(conn.getOutputStream());
+            outputStreamWriter.write(sendFreeTime);
+            outputStreamWriter.flush();
 
             //响应失败处理
             if (conn.getResponseCode() >= 300) {
@@ -121,6 +127,9 @@ public class HttpHandler implements HttpHandlerService {
             //读取返回的布尔值判断是否更新成功
             ObjectInputStream objectInputStream = new ObjectInputStream(conn.getInputStream());
             result = objectInputStream.readBoolean();
+
+            //关闭输入输出流
+
 
             return result;
 
