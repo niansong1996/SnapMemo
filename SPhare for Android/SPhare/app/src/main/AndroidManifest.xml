@@ -8,6 +8,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".presentation.activityUI.MainActivity"
             android:label="@string/app_name"
@@ -22,6 +23,9 @@
             android:name=".presentation.activityUI.SetFreeTimeActivity"
             android:label="@string/title_activity_set_free_time"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+
+
     </application>
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 
 </manifest>

@@ -6,8 +6,10 @@ import com.alan.sphare.model.httpservice.HttpHandlerService;
 import com.alan.sphare.model.httpservice.JSONHandlerService;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -24,7 +26,9 @@ public class HttpHandler implements HttpHandlerService {
     JSONHandlerService jsonHandler;
 
     public HttpHandler() {
+        //实例化JSON处理器
         jsonHandler = new JSONHandler();
+
         try {
             url = new URL(host);
         } catch (MalformedURLException e) {
@@ -51,16 +55,21 @@ public class HttpHandler implements HttpHandlerService {
             //设置内容长度
             conn.setRequestProperty("Content-Length", String.valueOf(groupID.length()));
             //设置请求方式
-            conn.setRequestProperty("Request-Type","getGroupInfo");
+            conn.setRequestProperty("Request-Type", "getGroupInfo");
+            //设置不使用缓存
+            conn.setUseCaches(false);
+            //设置连接超时为3秒
+            conn.setConnectTimeout(3 * 1000);
 
             //将groupID刷入输出流传至服务器
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(conn.getOutputStream());
+            OutputStream outputStream = conn.getOutputStream();
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream);
             outputStreamWriter.write(groupID);
             outputStreamWriter.flush();
 
             //响应失败处理
             if (conn.getResponseCode() >= 300) {
-                throw new Exception("HTTP Request is not success, Response code is " + conn.getResponseCode());
+                throw new IOException("HTTP Request is not success, Response code is " + conn.getResponseCode());
             }
 
             //从服务器获得返回的JSON语句
@@ -80,7 +89,7 @@ public class HttpHandler implements HttpHandlerService {
 
             //断开连接
             conn.disconnect();
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -94,7 +103,7 @@ public class HttpHandler implements HttpHandlerService {
     public boolean setFreeTime(FreeDateTimeVO freeDateTimeVO, String groupID) {
         boolean result = false;
         //获得生成的JSON字符串
-        String sendFreeTime = jsonHandler.getFreeTimeJSON(freeDateTimeVO,groupID);
+        String sendFreeTime = jsonHandler.getFreeTimeJSON(freeDateTimeVO, groupID);
 
         try {
             conn = (HttpURLConnection) url.openConnection();
@@ -109,10 +118,10 @@ public class HttpHandler implements HttpHandlerService {
             //设置内容长度
             conn.setRequestProperty("Content-Length", String.valueOf(sendFreeTime.length()));
             //设置请求方式
-            conn.setRequestProperty("Request-Type","setFreeTime");
+            conn.setRequestProperty("Request-Type", "setFreeTime");
 
             //将生成的JSON字符串刷入输出流传至服务器
-            if(sendFreeTime==null&&sendFreeTime.length()==0){
+            if (sendFreeTime == null && sendFreeTime.length() == 0) {
                 return false;
             }
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(conn.getOutputStream());

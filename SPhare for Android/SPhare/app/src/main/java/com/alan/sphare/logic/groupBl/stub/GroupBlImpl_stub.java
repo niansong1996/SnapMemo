@@ -70,7 +70,7 @@ public class GroupBlImpl_stub implements GroupBlService {
     }
 
     @Override
-    public boolean setFreeTime(FreeDateTimeVO freeDateTimeVO) {
+    public boolean setFreeTime(FreeDateTimeVO freeDateTimeVO, String groupID) {
         return false;
     }
 }

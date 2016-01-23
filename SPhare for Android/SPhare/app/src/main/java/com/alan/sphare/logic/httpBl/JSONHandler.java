@@ -18,17 +18,23 @@ public class JSONHandler implements JSONHandlerService {
     @Override
     public GroupVO getGroupInfo(String JSONGroupInfo) {
         try {
-            //将传入的JSON格式的字符串篡位JSONObject进行操作
+            //将传入的JSON格式的字符串转为JSONObject进行操作
             JSONObject jsonObject = new JSONObject(JSONGroupInfo);
+            //用户的JSON类
+            JSONObject user;
+            //freeTime的JSON类
+            JSONObject freeTime;
             //获得userID的数组
-
             JSONArray userIDList = jsonObject.getJSONArray("userID");
-            //声明自由时间数组
-            JSONArray freeTime;
-
+            //自由时间数组
+            JSONArray freeTimeArray, timePeriod;
+            //获得
             for (int i = 0; i < userIDList.length(); i++) {
-                String userID = userIDList.getString(i);
-                freeTime = userIDList.getJSONObject(i).getJSONArray("freeTime");
+                user = userIDList.getJSONObject(i);
+                freeTimeArray = user.getJSONArray("freeTime");
+                for(int j=0;j<freeTimeArray.length();j++){
+                    freeTime = freeTimeArray.getJSONObject(j);
+                }
             }
 
         } catch (JSONException e) {
@@ -73,6 +79,7 @@ public class JSONHandler implements JSONHandlerService {
 
     /**
      * 补充1位数字，在前面添加0，并以String类型返回
+     *
      * @param num
      * @return
      */
