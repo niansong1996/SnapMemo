@@ -15,10 +15,10 @@ import android.view.MenuItem;
 import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alan.sphare.R;
 import com.alan.sphare.logic.groupBl.GroupBlImpl;
-import com.alan.sphare.logic.groupBl.stub.GroupBlImpl_stub;
 import com.alan.sphare.model.Tool.Date;
 import com.alan.sphare.model.VO.FreeDateTimeVO;
 import com.alan.sphare.model.VO.TimeTableVO;
@@ -75,12 +75,33 @@ public class MainActivity extends AppCompatActivity
      */
     Date date = new Date(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
 
+    /**
+     * 后台处理网络工作的线程
+     */
+    Thread task;
+    BackgroundTask backgroundTask;
+
+    /**
+     * 阻塞线程标志位
+     */
+    boolean gotInternetInfo = false;
+
+    /**
+     * 显示在listView中的内容
+     */
+    List<FreeDateTimeVO> freeDateTimeVOList;
+
+    //listView适配器
+    FreeTimeAdapter freeTimeAdapter;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         groupBl = new GroupBlImpl();
+        backgroundTask = new BackgroundTask();
 
         init();
     }
@@ -119,7 +140,7 @@ public class MainActivity extends AppCompatActivity
             properties.load(getAssets().open("app/src/main/res/userInfo.properties"));
             userID = properties.getProperty("userID");
             groupID = properties.getProperty("groupID");
-            Log.d("SPhare", "postLogin: "+userID+" "+groupID);
+            Log.d("SPhare", "postLogin: " + userID + " " + groupID);
             userVO = new UserVO(userID, "", groupID, null);
         } catch (IOException e) {
             e.printStackTrace();
@@ -159,38 +180,15 @@ public class MainActivity extends AppCompatActivity
     private void initListView() {
 
         listView = (ListView) findViewById(R.id.listView);
-//        TimeTableVO[] timeTableList = groupBl.getTimeTable(userVO.getGroupID());
-
-        //stub
-        GroupBlService groupBl = new GroupBlImpl_stub();
-        TimeTableVO[] timeTableList = groupBl.getTimeTable("0000");
-        List<FreeDateTimeVO> freeDateTimeVOList = new ArrayList<FreeDateTimeVO>();
-
-        //遍历获得的组内TimeTable，将TimeTable转化为选定日期的FreeDateTime添加入listView的数组中
-        for (TimeTableVO timeTable : timeTableList) {
-            //组内用户的ID
-            String userID = timeTable.getUserID();
-            //用户的空余时间段
-            TimeVO[] timeVOList = null;
-
-            //遍历匹配的空余时间段
-            HashMap<Date, TimeVO[]> hashMap = timeTable.getUserFreeTime();
-            Iterator<Map.Entry<Date, TimeVO[]>> it = hashMap.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<Date, TimeVO[]> entry = it.next();
-                Date tempDate = entry.getKey();
-                if (tempDate.getYear() == date.getYear() && tempDate.getMonth() == date.getMonth() && tempDate.getDay() == date.getDay()) {
-                    timeVOList = entry.getValue();
-                }
-            }
-            //生成FreeDateTime添加入listView的数组中
-            FreeDateTimeVO freeDateTimeVO = new FreeDateTimeVO(userID, date, timeVOList);
-            freeDateTimeVOList.add(freeDateTimeVO);
-        }
+        freeDateTimeVOList = new ArrayList<FreeDateTimeVO>();
 
         //设置listView的适配器
-        FreeTimeAdapter freeTimeAdapter = new FreeTimeAdapter(MainActivity.this, R.layout.freetime, freeDateTimeVOList);
+        freeTimeAdapter = new FreeTimeAdapter(MainActivity.this, R.layout.freetime, freeDateTimeVOList);
         listView.setAdapter(freeTimeAdapter);
+
+        //开启后台网络获得数据
+        task = new Thread(backgroundTask);
+        task.start();
     }
 
     @Override
@@ -218,6 +216,7 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.group) {
             // Handle the camera action
+            Toast.makeText(MainActivity.this, "这个按钮并没有什么卵用。", Toast.LENGTH_SHORT).show();
         }
 
         drawer.closeDrawer(GravityCompat.START);
@@ -232,7 +231,7 @@ public class MainActivity extends AppCompatActivity
                 public void onDateSet(DatePicker dp, int year, int month, int day) {
                     date = new Date(year, month + 1, day);
                     //选择完日期后更新列表中的显示
-                    initListView();
+                    gotInternetInfo = false;
                 }
             },
                     calendar.get(Calendar.YEAR),
@@ -241,8 +240,49 @@ public class MainActivity extends AppCompatActivity
 
         } else if (item.getItemId() == R.id.setFreeTime) {
             Intent intent = new Intent(MainActivity.this, SetFreeTimeActivity.class);
+            intent.putExtra("groupID", userVO.getGroupID());
+            intent.putExtra("userID", userVO.getUserID());
             startActivity(intent);
         }
         return true;
+    }
+
+    /**
+     * 后台线程处理的网络工作
+     */
+    class BackgroundTask implements Runnable {
+
+        @Override
+        public void run() {
+            while (!gotInternetInfo) {
+                TimeTableVO[] timeTableList = groupBl.getTimeTable(userVO.getGroupID());
+                //遍历获得的组内TimeTable，将TimeTable转化为选定日期的FreeDateTime添加入listView的数组中
+                for (TimeTableVO timeTable : timeTableList) {
+                    //组内用户的ID
+                    String userID = timeTable.getUserID();
+                    //用户的空余时间段
+                    TimeVO[] timeVOList = null;
+
+                    //遍历匹配的空余时间段
+                    HashMap<Date, TimeVO[]> hashMap = timeTable.getUserFreeTime();
+                    Iterator<Map.Entry<Date, TimeVO[]>> it = hashMap.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Map.Entry<Date, TimeVO[]> entry = it.next();
+                        Date tempDate = entry.getKey();
+                        if (tempDate.isEquals(date)) {
+                            timeVOList = entry.getValue();
+                        }
+                    }
+                    //生成FreeDateTime添加入listView的数组中
+                    FreeDateTimeVO freeDateTimeVO = new FreeDateTimeVO(userID, date, timeVOList);
+                    freeDateTimeVOList.add(freeDateTimeVO);
+                }
+                //刷新listView
+                freeTimeAdapter.notifyDataSetChanged();
+
+                //修改标志位使线程阻塞
+                gotInternetInfo = true;
+            }
+        }
     }
 }
