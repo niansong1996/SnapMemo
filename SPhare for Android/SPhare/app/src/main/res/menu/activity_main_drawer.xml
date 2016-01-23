@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="none">
+        <item
+            android:id="@+id/group"
+            android:icon="@drawable/ic_menu_share"
+            android:title="小组管理" />
+    </group>
+
+</menu>

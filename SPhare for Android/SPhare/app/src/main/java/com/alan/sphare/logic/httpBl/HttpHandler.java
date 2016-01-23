@@ -1,5 +1,6 @@
 package com.alan.sphare.logic.httpBl;
 
+import com.alan.sphare.model.PO.FreeTimePO;
 import com.alan.sphare.model.VO.FreeDateTimeVO;
 import com.alan.sphare.model.VO.GroupVO;
 import com.alan.sphare.model.httpservice.HttpHandlerService;
@@ -7,6 +8,8 @@ import com.alan.sphare.model.httpservice.JSONHandlerService;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -74,6 +77,9 @@ public class HttpHandler implements HttpHandlerService {
             if (outputStreamWriter != null) {
                 outputStreamWriter.close();
             }
+
+            //断开连接
+            conn.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -85,7 +91,42 @@ public class HttpHandler implements HttpHandlerService {
     }
 
     @Override
-    public boolean setFreeTime(FreeDateTimeVO freeDateTimeVO) {
-        return false;
+    public boolean setFreeTime(FreeDateTimeVO freeDateTimeVO, String groupID) {
+        boolean result = false;
+        FreeTimePO freeTimePO = new FreeTimePO(groupID, freeDateTimeVO.getUserID(),
+                freeDateTimeVO.getDate(), freeDateTimeVO.getFreeDateTime()[0].getStartTime(),
+                freeDateTimeVO.getFreeDateTime()[0].getEndTime());
+
+        try {
+            conn = (HttpURLConnection) url.openConnection();
+            //允许输出
+            conn.setDoOutput(true);
+            //设置请求方式为POST
+            conn.setRequestMethod("POST");
+            //设置字符集
+            conn.setRequestProperty("Accept-Charset", "utf-8");
+            //设置内容格式，这里采用二进制流传输
+            conn.setRequestProperty("Content-Type", "application/octet-stream");
+
+            //将序列化的freeDateTimePO刷入输出流传至服务器
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(conn.getOutputStream());
+            objectOutputStream.writeObject(freeTimePO);
+            objectOutputStream.flush();
+
+            //响应失败处理
+            if (conn.getResponseCode() >= 300) {
+                throw new Exception("HTTP Request is not success, Response code is " + conn.getResponseCode());
+            }
+
+            //读取返回的布尔值判断是否更新成功
+            ObjectInputStream objectInputStream = new ObjectInputStream(conn.getInputStream());
+            result = objectInputStream.readBoolean();
+
+            return result;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return result;
+        }
     }
 }

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/p"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="com.alan.sphare.presentation.activityUI.SetFreeTimeActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/subtoolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <TextView
+        android:id="@+id/freeTimeDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/view"
+        android:padding="10sp"
+        android:text="选中的日期"
+        android:textColor="#6b2121"
+        android:textIsSelectable="false"
+        android:textSize="22sp" />
+
+    <ImageView
+        android:id="@+id/divierBelowFreeTimeDate"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/freeTimeDate"
+        android:layout_marginTop="5dp"
+        android:src="#9a9090" />
+
+
+    <TextView
+        android:id="@+id/startTimeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/divierBelowFreeTimeDate"
+        android:layout_marginTop="25dp"
+        android:paddingLeft="10sp"
+        android:text="开始时间"
+        android:textColor="#2d6595"
+        android:textSize="20sp" />
+
+    <ImageView
+        android:id="@+id/divierBelowStartTimeText"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/startTimeText"
+        android:layout_marginTop="5dp"
+        android:src="#9a9090" />
+
+    <Spinner
+        android:id="@+id/startHour"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/divierBelowStartTimeText"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="10sp"
+        android:spinnerMode="dropdown" />
+
+
+    <Spinner
+        android:id="@+id/startMin"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/startHour"
+        android:layout_toEndOf="@+id/startHourText"
+        android:spinnerMode="dropdown" />
+
+    <TextView
+        android:id="@+id/startHourText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/startHour"
+        android:layout_toEndOf="@+id/startHour"
+        android:text="时"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/startMinText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/startMin"
+        android:layout_toEndOf="@+id/startMin"
+        android:text="分"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/endTimeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/startHour"
+        android:layout_marginTop="30sp"
+        android:paddingLeft="10sp"
+        android:text="结束时间"
+        android:textColor="#2d6595"
+        android:textSize="20sp" />
+
+    <ImageView
+        android:id="@+id/divierBelowEndTimeText"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/endTimeText"
+        android:layout_marginTop="5dp"
+        android:src="#9a9090" />
+
+    <Spinner
+        android:id="@+id/endHour"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/divierBelowEndTimeText"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="10sp"
+        android:paddingLeft="10sp" />
+
+    <Spinner
+        android:id="@+id/endMin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/endHour"
+        android:layout_alignEnd="@+id/startMin"
+        android:layout_alignStart="@+id/startMin"
+        android:layout_alignTop="@+id/endHourText"
+        android:spinnerMode="dropdown" />
+
+    <TextView
+        android:id="@+id/endMinText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/endMin"
+        android:layout_toEndOf="@+id/endMin"
+        android:text="分"
+        android:textSize="20sp" />
+
+
+    <TextView
+        android:id="@+id/endHourText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/endHour"
+        android:layout_toEndOf="@+id/endHour"
+        android:text="时"
+        android:textSize="20sp" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="fill_parent"
+        android:layout_height="3dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/addButton"
+        android:src="#746363" />
+
+    <com.alan.sphare.presentation.widget.SlideCutListView
+        android:id="@+id/slidecutListview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/imageView4"
+        android:cacheColorHint="@android:color/transparent"
+        android:listSelector="@android:color/transparent"></com.alan.sphare.presentation.widget.SlideCutListView>
+
+    <Button
+        android:id="@+id/addButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/endMin"
+        android:layout_marginTop="66dp"
+        android:background="#eaeaea"
+        android:text="添加" />
+
+</RelativeLayout>
