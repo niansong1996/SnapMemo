@@ -17,10 +17,22 @@ public interface GroupBlService {
     public TimeTableVO[] getTimeTable(String groupID);
 
     /**
-     * 设置空余时间
+     * 添加空余时间
      *
      * @param freeDateTimeVO
+     * @param groupID
      * @return
      */
-    public boolean setFreeTime(FreeDateTimeVO freeDateTimeVO, String groupID);
+    public boolean addFreeTime(FreeDateTimeVO freeDateTimeVO, String groupID);
+
+    /**
+     * 删除空余时间
+     *
+     * @param freeDateTimeVO
+     * @param groupID
+     * @return
+     */
+    public boolean deleteFreeTime(FreeDateTimeVO freeDateTimeVO, String groupID);
+
+
 }

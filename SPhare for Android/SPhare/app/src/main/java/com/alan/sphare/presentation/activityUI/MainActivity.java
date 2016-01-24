@@ -3,13 +3,14 @@ package com.alan.sphare.presentation.activityUI;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.DatePicker;
@@ -27,6 +28,7 @@ import com.alan.sphare.model.VO.UserVO;
 import com.alan.sphare.model.logicservice.GroupBlService;
 import com.alan.sphare.presentation.widget.FreeTimeAdapter;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -38,6 +40,16 @@ import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, Toolbar.OnMenuItemClickListener {
+
+    /**
+     * 日志标识
+     */
+    final String TAG = "SPhare";
+
+    /**
+     * Handler标识
+     */
+    final int SUCCESS = 1, FAIL = 2;
 
     /**
      * 工具栏
@@ -91,14 +103,33 @@ public class MainActivity extends AppCompatActivity
      */
     List<FreeDateTimeVO> freeDateTimeVOList;
 
-    //listView适配器
+    /**
+     * listView适配器
+     */
     FreeTimeAdapter freeTimeAdapter;
+
+    /**
+     * UIHandler处理网络线程中的界面反馈
+     */
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == SUCCESS) {
+                //刷新成功反馈
+                Toast.makeText(MainActivity.this, "刷新成功", Toast.LENGTH_SHORT).show();
+            } else if (msg.what == FAIL) {
+                //处理网络传输失败或者不存在分组的情况
+                Toast.makeText(MainActivity.this, "网络连接错误，请重新登录", Toast.LENGTH_LONG).show();
+            }
+        }
+    };
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         groupBl = new GroupBlImpl();
         backgroundTask = new BackgroundTask();
@@ -136,11 +167,11 @@ public class MainActivity extends AppCompatActivity
     private boolean postLogin() {
         String userID, groupID;
         Properties properties = new Properties();
+        FileReader reader = null;
         try {
-            properties.load(getAssets().open("app/src/main/res/userInfo.properties"));
+            properties.load(getAssets().open("userInfo.properties"));
             userID = properties.getProperty("userID");
             groupID = properties.getProperty("groupID");
-            Log.d("SPhare", "postLogin: " + userID + " " + groupID);
             userVO = new UserVO(userID, "", groupID, null);
         } catch (IOException e) {
             e.printStackTrace();
@@ -208,17 +239,13 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.group) {
-            // Handle the camera action
-            Toast.makeText(MainActivity.this, "这个按钮并没有什么卵用。", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "目前这个按钮并没有什么卵用.", Toast.LENGTH_SHORT).show();
         }
-
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -230,6 +257,8 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onDateSet(DatePicker dp, int year, int month, int day) {
                     date = new Date(year, month + 1, day);
+                    dateText.setText("日期  " + date.getYear() + " " + date.getMonth() + " " + date.getDay());
+
                     //选择完日期后更新列表中的显示
                     gotInternetInfo = false;
                 }
@@ -254,35 +283,54 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public void run() {
-            while (!gotInternetInfo) {
-                TimeTableVO[] timeTableList = groupBl.getTimeTable(userVO.getGroupID());
-                //遍历获得的组内TimeTable，将TimeTable转化为选定日期的FreeDateTime添加入listView的数组中
-                for (TimeTableVO timeTable : timeTableList) {
-                    //组内用户的ID
-                    String userID = timeTable.getUserID();
-                    //用户的空余时间段
-                    TimeVO[] timeVOList = null;
+            while (true) {
+                if (!gotInternetInfo) {
+                    TimeTableVO[] timeTableList = groupBl.getTimeTable(userVO.getGroupID());
+                    if (timeTableList != null) {
+                        //遍历获得的组内TimeTable，将TimeTable转化为选定日期的FreeDateTime添加入listView的数组中
+                        for (TimeTableVO timeTable : timeTableList) {
+                            //组内用户的ID
+                            String userID = timeTable.getUserID();
+                            //用户的空余时间段
+                            TimeVO[] timeVOList = null;
 
-                    //遍历匹配的空余时间段
-                    HashMap<Date, TimeVO[]> hashMap = timeTable.getUserFreeTime();
-                    Iterator<Map.Entry<Date, TimeVO[]>> it = hashMap.entrySet().iterator();
-                    while (it.hasNext()) {
-                        Map.Entry<Date, TimeVO[]> entry = it.next();
-                        Date tempDate = entry.getKey();
-                        if (tempDate.isEquals(date)) {
-                            timeVOList = entry.getValue();
+                            //遍历匹配的空余时间段
+                            HashMap<Date, TimeVO[]> hashMap = timeTable.getUserFreeTime();
+                            Iterator<Map.Entry<Date, TimeVO[]>> it = hashMap.entrySet().iterator();
+                            while (it.hasNext()) {
+                                Map.Entry<Date, TimeVO[]> entry = it.next();
+                                Date tempDate = entry.getKey();
+                                if (tempDate.isEquals(date)) {
+                                    timeVOList = entry.getValue();
+                                }
+                            }
+                            //生成FreeDateTime添加入listView的数组中
+                            FreeDateTimeVO freeDateTimeVO = new FreeDateTimeVO(userID, date, timeVOList);
+                            freeDateTimeVOList.add(freeDateTimeVO);
                         }
-                    }
-                    //生成FreeDateTime添加入listView的数组中
-                    FreeDateTimeVO freeDateTimeVO = new FreeDateTimeVO(userID, date, timeVOList);
-                    freeDateTimeVOList.add(freeDateTimeVO);
-                }
-                //刷新listView
-                freeTimeAdapter.notifyDataSetChanged();
+                        //刷新listView
+                        freeTimeAdapter.notifyDataSetChanged();
 
-                //修改标志位使线程阻塞
-                gotInternetInfo = true;
+                        //反馈
+                        Message message = new Message();
+                        message.what = SUCCESS;
+                        handler.sendMessage(message);
+
+                    } else {
+                        //反馈
+                        Message message = new Message();
+                        message.what = FAIL;
+                        handler.sendMessage(message);
+                    }
+
+                    //修改标志位使线程阻塞
+                    gotInternetInfo = true;
+                }
             }
         }
     }
+
+
 }
+
+

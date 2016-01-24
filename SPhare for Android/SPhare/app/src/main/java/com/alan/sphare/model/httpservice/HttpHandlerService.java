@@ -17,10 +17,19 @@ public interface HttpHandlerService {
     public GroupVO getGroupInfo(String groupID);
 
     /**
-     * 用户设置自己的空余时间
+     * 用户添加自己的空余时间
      *
      * @param freeDateTimeVO
      * @return
      */
-    public boolean setFreeTime(FreeDateTimeVO freeDateTimeVO,String groupID);
+    public boolean addFreeTime(FreeDateTimeVO freeDateTimeVO, String groupID);
+
+    /**
+     * 用户删除自己的空余时间
+     *
+     * @param freeDateTimeVO
+     * @param groupID
+     * @return
+     */
+    public boolean deleteFreeTime(FreeDateTimeVO freeDateTimeVO, String groupID);
 }

@@ -29,19 +29,30 @@ public class GroupBlImpl implements GroupBlService {
 
         //通过http逻辑方法获得小组信息，并转换为TimeTable列表返回
         GroupVO group = httpHandler.getGroupInfo(groupID);
-        ArrayList<UserVO> userList = group.getUserList();
-        TimeTableVO[] timeTable = new TimeTableVO[userList.size()];
-        for (int i = 0; i < userList.size(); i++) {
-            timeTable[i] = userList.get(i).getTimeTable();
-        }
 
-        return timeTable;
+        if (group == null) {//如果返回为null表示网络未获得数据、数据不能解析或者解析中出错
+            return null;
+        } else {
+            ArrayList<UserVO> userList = group.getUserList();
+            TimeTableVO[] timeTable = new TimeTableVO[userList.size()];
+            for (int i = 0; i < userList.size(); i++) {
+                timeTable[i] = userList.get(i).getTimeTable();
+            }
+
+            return timeTable;
+        }
     }
 
     @Override
-    public boolean setFreeTime(FreeDateTimeVO freeDateTimeVO, String groupID) {
+    public boolean addFreeTime(FreeDateTimeVO freeDateTimeVO, String groupID) {
 
-        return httpHandler.setFreeTime(freeDateTimeVO, groupID);
+        return httpHandler.addFreeTime(freeDateTimeVO, groupID);
+    }
+
+    @Override
+    public boolean deleteFreeTime(FreeDateTimeVO freeDateTimeVO, String groupID) {
+
+        return httpHandler.deleteFreeTime(freeDateTimeVO, groupID);
     }
 
 
