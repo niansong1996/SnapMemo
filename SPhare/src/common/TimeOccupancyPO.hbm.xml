@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2016-1-26 0:44:17 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="common.TimeOccupancyPO" table="TIMEOCCUPANCYPO">
+        <id name="userName" type="java.lang.String">
+            <column name="USERNAME" />
+            <generator class="assigned" />
+        </id>
+        <property name="severness" type="int">
+            <column name="SEVERNESS" />
+        </property>
+        <property name="startTime" type="java.lang.String">
+            <column name="STARTTIME" />
+        </property>
+        <property name="endTime" type="java.lang.String">
+            <column name="ENDTIME" />
+        </property>
+        <property name="day" type="java.lang.String" access="field">
+            <column name="DAY" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2016-1-26 0:44:17 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="common.GroupPO" table="GROUPPO">
+        <id name="groupID" type="java.lang.String">
+            <column name="GROUPID" />
+            <generator class="assigned" />
+        </id>
+        <list name="userID" inverse="false" table="USERPO" lazy="true">
+            <key>
+                <column name="GROUPID" />
+            </key>
+            <list-index></list-index>
+            <one-to-many class="common.UserPO" />
+        </list>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2016-1-26 0:44:17 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="common.FreeTimePO" table="FREETIMEPO">
+        <id name="date" type="java.lang.String">
+            <column name="DATE" />
+            <generator class="assigned" />
+        </id>
+        <list name="timePeriod" inverse="false" table="TIMEPERIOD" lazy="true">
+            <key>
+                <column name="DATE" />
+            </key>
+            <list-index></list-index>
+            <element type="java.lang.String">
+                <column name="TIMEPERIOD" />
+            </element>
+        </list>
+    </class>
+</hibernate-mapping>
