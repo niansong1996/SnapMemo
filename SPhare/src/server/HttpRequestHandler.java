@@ -15,8 +15,8 @@ import com.sun.net.httpserver.HttpServer;
 
 
 public class HttpRequestHandler {
-//	private final String IPAddress = "139.129.40.103";
-	private final String IPAddress = "127.0.0.1";
+	private final String IPAddress = "139.129.40.103";
+//	private final String IPAddress = "127.0.0.1";
 	private final int port = 5678;
 	private final int maxConn = 10;
 	HttpServer server;
@@ -49,7 +49,7 @@ class TestHandler implements HttpHandler{
 		response(exchange);
 	}
 	public void response(HttpExchange exchange) throws IOException{
-		String responseString = data.getAll();
+		String responseString = "";
 		exchange.sendResponseHeaders(200, responseString.length());     
 		OutputStream os = exchange.getResponseBody();     
 		os.write(responseString.getBytes());     
@@ -66,13 +66,15 @@ class HandlerA implements HttpHandler{
 	}
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
+		System.out.println("get a request");
 //		String result = exchange.getRequestURI().getRawQuery();
 		Map<String,List<String>> map = exchange.getRequestHeaders();
 		String type = map.get("Request-Type").get(0);
 		switch(type){
 		case "Get-Group-Info": getGroupInfo(exchange);break;
-		case "Set-Free-Time": setFreeTime(exchange);break;
-		default : invalidRequest(exchange);break;
+		case "Add-Free-Time": setFreeTime(exchange);break;
+		case "Delete-Free-Time": deleteFreeTime(exchange);break;
+		default : System.out.println("bad request");invalidRequest(exchange);break;
 		}
 	}
 	public void getGroupInfo(HttpExchange exchange) throws IOException{
@@ -80,7 +82,7 @@ class HandlerA implements HttpHandler{
 		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 		String groupID = reader.readLine();
 		if(groupID==null) invalidRequest(exchange);
-		String result = data.getGroupJSON(reader.readLine());
+		String result = data.getGroupJSON(groupID);
 		response(exchange,result,200);
 	}
 	public void setFreeTime(HttpExchange exchange) throws IOException{
@@ -93,6 +95,19 @@ class HandlerA implements HttpHandler{
 			tmp = reader.readLine();
 		}while(tmp!=null);
 		boolean success = data.setFreeTime(result);
+		if(success) response(exchange,"success",200);
+		else invalidRequest(exchange);
+	}
+	private void deleteFreeTime(HttpExchange exchange) throws IOException{
+		InputStream stream = exchange.getRequestBody();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+		String result = "";
+		String tmp = "";
+		do{
+			result += tmp;
+			tmp = reader.readLine();
+		}while(tmp!=null);
+		boolean success = data.deleteFreeTime(result);
 		if(success) response(exchange,"success",200);
 		else invalidRequest(exchange);
 	}

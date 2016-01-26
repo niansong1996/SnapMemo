@@ -1,10 +1,15 @@
 package common;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.persistence.Id;
 
-public class UserPO {
+public class UserPO implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2623408003982814356L;
 	String name;
 	ArrayList<FreeTimePO> freeTime;
 	public UserPO(){}

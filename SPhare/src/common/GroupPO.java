@@ -1,10 +1,15 @@
 package common;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.persistence.Id;
 
-public class GroupPO {
+public class GroupPO implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5653173246008180716L;
 	String groupID;
 	ArrayList<UserPO> userID;
 	public GroupPO(){};

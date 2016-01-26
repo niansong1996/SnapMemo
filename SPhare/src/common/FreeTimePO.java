@@ -1,5 +1,6 @@
 package common;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.persistence.CollectionTable;
@@ -8,7 +9,11 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 
-public class FreeTimePO {
+public class FreeTimePO implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4541796022111035449L;
 	String date;
 	ArrayList<String> timePeriod;
 	public FreeTimePO(){}

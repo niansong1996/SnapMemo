@@ -10,13 +10,13 @@
 	<classpathentry kind="lib" path="lib/hibernate/jandex-2.0.0.Final.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/javassist-3.18.1-GA.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate/jboss-logging-3.3.0.Final.jar"/>
-	<classpathentry kind="lib" path="lib/json/json-lib-2.4-jdk15.jar"/>
 	<classpathentry kind="lib" path="lib/json/ezmorph-1.0.6.jar"/>
+	<classpathentry kind="lib" path="lib/json/json-lib-2.4-jdk15.jar"/>
 	<classpathentry kind="lib" path="lib/commons-beanutils-1.9.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.2.jar"/>
-	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.38-bin.jar"/>
 	<classpathentry kind="lib" path="lib/jta-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.38-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

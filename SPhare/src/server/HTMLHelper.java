@@ -29,16 +29,17 @@ public class HTMLHelper {
 		return result;
 	}
 	public String modifyHtml(String raw){
+		//TODO
 		String result = raw;
-		for(TimeOccupancyPO po : data.data){
-			String day = po.day;
-			int start = Integer.parseInt(po.startTime);
-			int end = Integer.parseInt(po.endTime);
-			for(int i=start;i<=end;i++){
-				System.out.println(""+day+i);
-				result = paint(po.severness,po.userName,""+day+i,result);
-			}
-		}
+//		for(TimeOccupancyPO po : null){
+//			String day = po.day;
+//			int start = Integer.parseInt(po.startTime);
+//			int end = Integer.parseInt(po.endTime);
+//			for(int i=start;i<=end;i++){
+//				System.out.println(""+day+i);
+//				result = paint(po.severness,po.userName,""+day+i,result);
+//			}
+//		}
 		
 		return result;
 	}
