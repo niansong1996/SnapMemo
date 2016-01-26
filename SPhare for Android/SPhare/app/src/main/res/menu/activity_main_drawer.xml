@@ -6,6 +6,10 @@
             android:id="@+id/group"
             android:icon="@drawable/ic_menu_share"
             android:title="小组管理" />
+        <item
+            android:id="@+id/webviewicon"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="查看源网页" />
     </group>
 
 </menu>

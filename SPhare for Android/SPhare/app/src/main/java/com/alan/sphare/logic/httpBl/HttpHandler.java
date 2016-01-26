@@ -1,5 +1,6 @@
 package com.alan.sphare.logic.httpBl;
 
+import com.alan.sphare.logic.tool.NetAddress;
 import com.alan.sphare.model.VO.FreeDateTimeVO;
 import com.alan.sphare.model.VO.GroupVO;
 import com.alan.sphare.model.httpservice.HttpHandlerService;
@@ -15,21 +16,37 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
+ * <strong>Http传输处理器</strong><br>
  * Created by Alan on 2016/1/22.
  */
 public class HttpHandler implements HttpHandlerService {
 
-    String host = "http://139.129.40.103:5678/SPhare";
+    /**
+     * 网络URL
+     */
     URL url;
+
+    /**
+     * 定向网络http连接
+     */
     HttpURLConnection conn;
+
+    /**
+     * JSON处理器
+     */
     JSONHandlerService jsonHandler;
 
+    /**
+     * 网络输出流
+     */
+    OutputStreamWriter outputStreamWriter;
+
     public HttpHandler() {
-        //实例化JSON处理器
+
         jsonHandler = new JSONHandler();
 
         try {
-            url = new URL(host);
+            url = new URL(NetAddress.hostAddress);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -40,35 +57,16 @@ public class HttpHandler implements HttpHandlerService {
     public GroupVO getGroupInfo(String groupID) {
         StringBuffer resultJSONStringBuffer = new StringBuffer();
         GroupVO resultGroupVO;
+
+        setConnection(RequestMethod.POST, RequestProperty.PLAINTEXT);
+
         try {
-            //打开连接
-            conn = (HttpURLConnection) url.openConnection();
-            //允许输出
-            conn.setDoOutput(true);
-            //设置请求方式为POST
-            conn.setRequestMethod("POST");
-            //设置字符集
-            conn.setRequestProperty("Accept-Charset", "utf-8");
-            //设置内容格式，这里采用纯文本方式传输
-            conn.setRequestProperty("Content-Type", "text/plain");
             //设置内容长度
             conn.setRequestProperty("Content-Length", String.valueOf(groupID.length()));
             //设置请求方式
-            conn.setRequestProperty("Request-Type", "getGroupInfo");
-            //设置不使用缓存
-            conn.setUseCaches(false);
-            //设置连接超时为3秒
-            conn.setConnectTimeout(3 * 1000);
+            conn.setRequestProperty("Request-Type", "Get-Group-Info");
 
-            //将groupID刷入输出流传至服务器
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(conn.getOutputStream());
-            outputStreamWriter.write(groupID);
-            outputStreamWriter.flush();
-
-            //响应失败处理
-            if (conn.getResponseCode() >= 300) {
-                throw new IOException("HTTP Request is not success, Response code is " + conn.getResponseCode());
-            }
+            flushInfo(groupID);
 
             //从服务器获得返回的JSON语句
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -77,16 +75,13 @@ public class HttpHandler implements HttpHandlerService {
                 resultJSONStringBuffer.append(tempLine);
             }
 
-            //关闭输入输出流
+            //关闭输出流
             if (bufferedReader != null) {
                 bufferedReader.close();
             }
-            if (outputStreamWriter != null) {
-                outputStreamWriter.close();
-            }
 
-            //断开连接
-            conn.disconnect();
+            closeConn();
+
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -104,49 +99,31 @@ public class HttpHandler implements HttpHandlerService {
         //获得生成的JSON字符串
         String sendFreeTime = jsonHandler.getFreeTimeJSON(freeDateTimeVO, groupID);
 
+        setConnection(RequestMethod.POST, RequestProperty.JSON);
+
         try {
-            //打开连接
-            conn = (HttpURLConnection) url.openConnection();
-            //允许输出
-            conn.setDoOutput(true);
-            //设置请求方式为POST
-            conn.setRequestMethod("POST");
-            //设置字符集
-            conn.setRequestProperty("Accept-Charset", "utf-8");
-            //设置内容格式，这里采用JSON
-            conn.setRequestProperty("Content-Type", "application/json");
             //设置内容长度
             conn.setRequestProperty("Content-Length", String.valueOf(sendFreeTime.length()));
             //设置请求方式
-            conn.setRequestProperty("Request-Type", "addFreeTime");
+            conn.setRequestProperty("Request-Type", "Add-Free-Time");
 
             //将生成的JSON字符串刷入输出流传至服务器
             if (sendFreeTime == null && sendFreeTime.length() == 0) {
                 return false;
             }
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(conn.getOutputStream());
-            outputStreamWriter.write(sendFreeTime);
-            outputStreamWriter.flush();
 
-            //响应失败处理
-            if (conn.getResponseCode() >= 300) {
-                throw new IOException("HTTP Request is not success, Response code is " + conn.getResponseCode());
-            }
+            flushInfo(sendFreeTime);
 
             //读取返回的布尔值判断是否更新成功
             ObjectInputStream objectInputStream = new ObjectInputStream(conn.getInputStream());
             result = objectInputStream.readBoolean();
 
-            //关闭输入输出流
+            //关闭输入流
             if (objectInputStream != null) {
                 objectInputStream.close();
             }
-            if (outputStreamWriter != null) {
-                outputStreamWriter.close();
-            }
 
-            //关闭连接
-            conn.disconnect();
+            closeConn();
 
             return result;
 
@@ -162,49 +139,32 @@ public class HttpHandler implements HttpHandlerService {
         //获得生成的JSON字符串
         String sendFreeTime = jsonHandler.getFreeTimeJSON(freeDateTimeVO, groupID);
 
+        setConnection(RequestMethod.POST, RequestProperty.JSON);
+
         try {
-            //打开连接
-            conn = (HttpURLConnection) url.openConnection();
-            //允许输出
-            conn.setDoOutput(true);
-            //设置请求方式为POST
-            conn.setRequestMethod("POST");
-            //设置字符集
-            conn.setRequestProperty("Accept-Charset", "utf-8");
-            //设置内容格式，这里采用JSON
-            conn.setRequestProperty("Content-Type", "application/json");
             //设置内容长度
             conn.setRequestProperty("Content-Length", String.valueOf(sendFreeTime.length()));
             //设置请求方式
-            conn.setRequestProperty("Request-Type", "deleteFreeTime");
+            conn.setRequestProperty("Request-Type", "Delete-Free-Time");
 
             //将生成的JSON字符串刷入输出流传至服务器
             if (sendFreeTime == null && sendFreeTime.length() == 0) {
                 return false;
             }
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(conn.getOutputStream());
-            outputStreamWriter.write(sendFreeTime);
-            outputStreamWriter.flush();
 
-            //响应失败处理
-            if (conn.getResponseCode() >= 300) {
-                throw new IOException("HTTP Request is not success, Response code is " + conn.getResponseCode());
-            }
+            flushInfo(sendFreeTime);
 
             //读取返回的布尔值判断是否更新成功
             ObjectInputStream objectInputStream = new ObjectInputStream(conn.getInputStream());
             result = objectInputStream.readBoolean();
 
-            //关闭输入输出流
+            //关闭输入流
             if (objectInputStream != null) {
                 objectInputStream.close();
             }
-            if (outputStreamWriter != null) {
-                outputStreamWriter.close();
-            }
 
-            //关闭连接
-            conn.disconnect();
+            closeConn();
+
 
             return result;
 
@@ -212,5 +172,77 @@ public class HttpHandler implements HttpHandlerService {
             e.printStackTrace();
             return result;
         }
+    }
+
+    /**
+     * 设置连接参数
+     *
+     * @param requestMethod
+     * @param requestProperty
+     */
+    private void setConnection(RequestMethod requestMethod, RequestProperty requestProperty) {
+
+        try {
+            //打开连接
+            conn = (HttpURLConnection) url.openConnection();
+
+            //允许输出
+            conn.setDoOutput(true);
+
+            //设置请求方式为POST
+            conn.setRequestMethod(requestMethod.name());
+
+            //设置字符集
+            conn.setRequestProperty("Accept-Charset", "utf-8");
+
+            //设置不使用缓存
+            conn.setUseCaches(false);
+
+            //设置连接超时为3秒
+            conn.setConnectTimeout(3 * 1000);
+
+            //设置内容格式，这里采用JSON或纯文本
+            switch (requestProperty) {
+                case JSON:
+                    conn.setRequestProperty("Content-Type", "application/json");
+                    break;
+                case PLAINTEXT:
+                    conn.setRequestProperty("Content-Type", "text/plain");
+                    break;
+                default:
+                    break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 将信息刷入网络输出流
+     *
+     * @param info
+     * @throws IOException
+     */
+    private void flushInfo(String info) throws IOException {
+        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(conn.getOutputStream());
+        outputStreamWriter.write(info);
+        outputStreamWriter.flush();
+        //响应失败处理
+        if (conn.getResponseCode() >= 300) {
+            throw new IOException("HTTP Request is not success, Response code is " + conn.getResponseCode());
+        }
+    }
+
+    /**
+     * 关闭流,关闭连接
+     */
+    private void closeConn() throws IOException {
+
+        //关闭输出流
+        if (outputStreamWriter != null) {
+            outputStreamWriter.close();
+        }
+        //关闭连接
+        conn.disconnect();
     }
 }

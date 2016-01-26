@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">SPhare</string>
+    <string name="app_designer">Sensation</string>
+    <string name="app_designer_ad">Sensation Design.</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -96,4 +98,27 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="title_activity_set_free_time">SetFreeTimeActivity</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="refresh_success">刷新成功</string>
+    <string name="login_fail">网络连接失败，请重新登录</string>
+    <string name="internet_fail">网络连接失败</string>
+    <string name="update_success">更新成功</string>
+    <string name="update_fail">更新失败，请检查网络</string>
+    <string name="operation_error">操作过快，请重新选择日期重新进行操作</string>
+    <string name="open_websource">打开了源网页.</string>
+    <string name="todo">有待完成</string>
+    <string name="set_free_time_title">设置空余时间</string>
 </resources>

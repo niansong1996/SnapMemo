@@ -19,8 +19,8 @@ import android.widget.Toast;
 
 import com.alan.sphare.R;
 import com.alan.sphare.logic.groupBl.GroupBlImpl;
-import com.alan.sphare.model.Tool.Date;
-import com.alan.sphare.model.Tool.Time;
+import com.alan.sphare.model.tool.Date;
+import com.alan.sphare.model.tool.Time;
 import com.alan.sphare.model.VO.FreeDateTimeVO;
 import com.alan.sphare.model.VO.TimeTableVO;
 import com.alan.sphare.model.VO.TimeVO;
@@ -37,32 +37,112 @@ import java.util.List;
 import java.util.Map;
 
 public class SetFreeTimeActivity extends AppCompatActivity implements RemoveListener, Toolbar.OnMenuItemClickListener {
+    //--------------------常量设置--------------------
+
+    /**
+     * 日志标识
+     */
+    private final String TAG = getString(R.string.app_name);
 
     /**
      * Handler标识
      */
-    final int INITSUCCESS = 1, INITFAIL = 2, UPDATESUCCESS = 3, UPDATEFAIL = 4, OPERATIONERR = 5;
+    private final int INITSUCCESS = 1, INITFAIL = 2, UPDATESUCCESS = 3, UPDATEFAIL = 4, OPERATIONERR = 5;
 
+    private final int GET = 1, ADD = 2, DELETE = 3;
+
+
+    //--------------------主界面部件及布局--------------------
+
+    /**
+     * 工具栏
+     */
     Toolbar toolbar;
+
+    /**
+     * 显示日期
+     */
     TextView headDate;
+
+    /**
+     * 列表
+     */
     SlideCutListView slideCutListView;
+
+    /**
+     * listView适配器
+     */
     ArrayAdapter<String> listViewAdapter;
-    ArrayAdapter<Integer> spinnerAdapter;
-    Spinner startHour, startMin, endHour, endMin;
-    int starthour, startmin, endhour, endmin;
-    Calendar calendar = Calendar.getInstance();
-    Date date = new Date(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
+
+    /**
+     * 显示在listView中的内容
+     */
     List<String> freeTimeList = new ArrayList<String>();
 
+    /**
+     * 日起选择Spinner
+     */
+    Spinner startHour, startMin, endHour, endMin;
+
+    /**
+     * Spinner适配器
+     */
+    ArrayAdapter<Integer> spinnerAdapter;
+
+    /**
+     * 开始结束时间
+     */
+    int starthour, startmin, endhour, endmin;
+
+    Calendar calendar = Calendar.getInstance();
+    /**
+     * 日期
+     */
+    Date date = new Date(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
+
+    //--------------------数据及接口--------------------
+    /**
+     * 从主活动传递的信息
+     */
+    String groupID, userID;
+
+    /**
+     * 用户本地的自由时间表
+     */
+    HashMap<Date, TimeVO[]> userFreeTime = new HashMap<Date, TimeVO[]>();
+
+    /**
+     * 小组的时间表
+     */
+    TimeTableVO[] timeTableList;
+
+    /**
+     * 依赖的小组逻辑接口
+     */
+    GroupBlService groupBl;
+
+    /**
+     * 检测到的被删除的时间段
+     */
+    Time deletedStartTime, deletedEndTime;
+
+    //--------------------后台--------------------
+
+    /**
+     * 后台处理网络工作的线程
+     */
     Thread task;
     BackgroundTask backgroundTask;
-    boolean gotInternetInfo;
+
+    /**
+     * 网络获取状况标志位
+     */
+    private boolean gotInternetInfo;
+
+    /**
+     * 网络请求类型标识
+     */
     int internetRequest;
-    String groupID, userID;
-    HashMap<Date, TimeVO[]> userFreeTime = new HashMap<Date, TimeVO[]>();
-    TimeTableVO[] timeTableList;
-    GroupBlService groupBl;
-    Time deletedStartTime, deletedEndTime;
 
     /**
      * UIHandler处理网络线程中的界面反馈
@@ -71,22 +151,26 @@ public class SetFreeTimeActivity extends AppCompatActivity implements RemoveList
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == INITSUCCESS) {
+                //初始化listView
+                initListView();
                 //刷新成功反馈
-                Toast.makeText(SetFreeTimeActivity.this, "刷新成功", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SetFreeTimeActivity.this, getString(R.string.refresh_success), Toast.LENGTH_SHORT).show();
             } else if (msg.what == INITFAIL) {
+                //初始化listView
+                initListView();
                 //处理网络传输失败或者不存在分组的情况
-                Toast.makeText(SetFreeTimeActivity.this, "网络连接错误", Toast.LENGTH_LONG).show();
+                Toast.makeText(SetFreeTimeActivity.this, getString(R.string.internet_fail), Toast.LENGTH_SHORT).show();
             } else if (msg.what == UPDATESUCCESS) {
                 //更新列表显示
                 listViewAdapter.notifyDataSetChanged();
-                Toast.makeText(SetFreeTimeActivity.this, "添加成功", Toast.LENGTH_LONG).show();
+                Toast.makeText(SetFreeTimeActivity.this, getString(R.string.update_success), Toast.LENGTH_SHORT).show();
             } else if (msg.what == UPDATEFAIL) {
                 //更新列表显示
                 listViewAdapter.notifyDataSetChanged();
-                Toast.makeText(SetFreeTimeActivity.this, "更新失败，请检查网络", Toast.LENGTH_LONG).show();
+                Toast.makeText(SetFreeTimeActivity.this, getString(R.string.update_fail), Toast.LENGTH_SHORT).show();
             } else if (msg.what == OPERATIONERR) {
                 //操作过快的反馈
-                Toast.makeText(SetFreeTimeActivity.this, "操作过快，请重新选择日期重新进行操作", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SetFreeTimeActivity.this, getString(R.string.operation_error), Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -106,14 +190,15 @@ public class SetFreeTimeActivity extends AppCompatActivity implements RemoveList
 
         //开启后台网络线程
         backgroundTask = new BackgroundTask();
-        internetRequest = 1;
+        openThread(GET);
         task = new Thread(backgroundTask);
         task.start();
     }
 
     private void init() {
+
         headDate = (TextView) findViewById(R.id.freeTimeDate);
-        headDate.setText("目前选中的日期： " + date.getYear() + "-" + date.getMonth() + "-" + date.getDay());
+        updateDate();
 
         initToolBar();
 
@@ -218,15 +303,14 @@ public class SetFreeTimeActivity extends AppCompatActivity implements RemoveList
             @Override
             public void onClick(View view) {
                 //开启添加线程
-                internetRequest = 2;
-                gotInternetInfo = false;
+                openThread(ADD);
             }
         });
     }
 
     private void initToolBar() {
         toolbar = (Toolbar) findViewById(R.id.subtoolbar);
-        toolbar.setTitle("设置空余时间");
+        toolbar.setTitle(getString(R.string.set_free_time_title));
         setSupportActionBar(toolbar);
         toolbar.setOnMenuItemClickListener(this);
     }
@@ -245,14 +329,14 @@ public class SetFreeTimeActivity extends AppCompatActivity implements RemoveList
                 deletingStartMin = Integer.parseInt(deletingStartTime.split(":")[1]),
                 deletingEndHour = Integer.parseInt(deletingEndTime.split(":")[0]),
                 deletingEndMin = Integer.parseInt(deletingEndTime.split(":")[1]);
+
         //设置被删除的时间以便更新
         deletedStartTime = new Time(deletingStartHour, deletingStartMin);
         deletedEndTime = new Time(deletingEndHour, deletingEndMin);
         listViewAdapter.remove(deletingTimePeriod);
 
         //打开删除线程
-        internetRequest = 3;
-        gotInternetInfo = false;
+        openThread(DELETE);
     }
 
     @Override
@@ -263,8 +347,7 @@ public class SetFreeTimeActivity extends AppCompatActivity implements RemoveList
                 @Override
                 public void onDateSet(DatePicker dp, int year, int month, int day) {
                     date = new Date(year, month + 1, day);
-                    //选择完日期后更新的显示
-                    headDate.setText("目前选中的日期： " + date.getYear() + "-" + date.getMonth() + "-" + date.getDay());
+                    updateDate();
                     //刷新空余时间列表
                     initListView();
                 }
@@ -275,6 +358,24 @@ public class SetFreeTimeActivity extends AppCompatActivity implements RemoveList
         }
         return true;
     }
+
+    /**
+     * 更新日期标题显示
+     */
+    private void updateDate() {
+        headDate.setText("日期:  " + date.getYear() + "-" + date.getMonth() + "-" + date.getDay());
+    }
+
+    /**
+     * 打开网络线程
+     *
+     * @param request 请求类型
+     */
+    private void openThread(int request) {
+        internetRequest = request;
+        gotInternetInfo = false;
+    }
+
 
     /**
      * 后台线程处理的网络工作
@@ -293,23 +394,11 @@ public class SetFreeTimeActivity extends AppCompatActivity implements RemoveList
                                     userFreeTime = timeTable.getUserFreeTime();
                                 }
                             }
-                            //初始化listView
-                            initListView();
 
-                            //反馈
-                            Message message = new Message();
-                            message.what = INITSUCCESS;
-                            handler.sendMessage(message);
+                            sendMessage(INITSUCCESS);
                         } else {
-                            //初始化listView
-                            initListView();
-
-                            //反馈
-                            Message message = new Message();
-                            message.what = INITFAIL;
-                            handler.sendMessage(message);
+                            sendMessage(INITFAIL);
                         }
-
 
                         gotInternetInfo = true;
                     }
@@ -325,9 +414,7 @@ public class SetFreeTimeActivity extends AppCompatActivity implements RemoveList
                         TimeVO[] newTimeVOList;
                         if (oldTimeVOList != null) {
                             newTimeVOList = new TimeVO[oldTimeVOList.length + 1];
-                            for (int i = 0; i < oldTimeVOList.length; i++) {
-                                newTimeVOList[i] = oldTimeVOList[i];
-                            }
+                            System.arraycopy(oldTimeVOList, 0, newTimeVOList, 0, oldTimeVOList.length);
                             newTimeVOList[newTimeVOList.length - 1] = newTimeVO;
                         } else {
                             newTimeVOList = new TimeVO[1];
@@ -345,13 +432,9 @@ public class SetFreeTimeActivity extends AppCompatActivity implements RemoveList
 
                         //更新反馈
                         if (result) {
-                            Message message = new Message();
-                            message.what = UPDATESUCCESS;
-                            handler.sendMessage(message);
+                            sendMessage(UPDATESUCCESS);
                         } else {
-                            Message message = new Message();
-                            message.what = UPDATEFAIL;
-                            handler.sendMessage(message);
+                            sendMessage(UPDATEFAIL);
                         }
 
                         gotInternetInfo = true;
@@ -360,9 +443,7 @@ public class SetFreeTimeActivity extends AppCompatActivity implements RemoveList
                     if (internetRequest == 3) {//删除空余时间
                         //删除过快可能导致的理论错误
                         if ((userFreeTime.get(date).length - 1) != freeTimeList.size()) {
-                            Message message = new Message();
-                            message.what = OPERATIONERR;
-                            handler.sendMessage(message);
+                            sendMessage(OPERATIONERR);
 
                         } else {
                             //用新的键值对取代旧的
@@ -390,13 +471,9 @@ public class SetFreeTimeActivity extends AppCompatActivity implements RemoveList
 
                             //反馈
                             if (result) {
-                                Message message = new Message();
-                                message.what = UPDATESUCCESS;
-                                handler.sendMessage(message);
+                                sendMessage(UPDATESUCCESS);
                             } else {
-                                Message message = new Message();
-                                message.what = UPDATEFAIL;
-                                handler.sendMessage(message);
+                                sendMessage(UPDATEFAIL);
                             }
 
                             gotInternetInfo = true;
@@ -404,6 +481,17 @@ public class SetFreeTimeActivity extends AppCompatActivity implements RemoveList
                     }
                 }
             }
+        }
+
+        /**
+         * 给UI发送信息，进行UI反馈
+         *
+         * @param info 反馈信息类型
+         */
+        private void sendMessage(int info) {
+            Message message = new Message();
+            message.what = info;
+            handler.sendMessage(message);
         }
     }
 }

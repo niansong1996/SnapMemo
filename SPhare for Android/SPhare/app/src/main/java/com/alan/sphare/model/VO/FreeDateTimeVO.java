@@ -1,6 +1,6 @@
 package com.alan.sphare.model.VO;
 
-import com.alan.sphare.model.Tool.Date;
+import com.alan.sphare.model.tool.Date;
 
 /**
  * Created by Alan on 2016/1/21.

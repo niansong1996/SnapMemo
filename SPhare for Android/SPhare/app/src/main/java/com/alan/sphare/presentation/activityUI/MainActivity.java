@@ -11,24 +11,27 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alan.sphare.R;
-import com.alan.sphare.logic.groupBl.GroupBlImpl;
-import com.alan.sphare.model.Tool.Date;
+import com.alan.sphare.logic.groupBl.stub.GroupBlImpl_stub;
 import com.alan.sphare.model.VO.FreeDateTimeVO;
 import com.alan.sphare.model.VO.TimeTableVO;
 import com.alan.sphare.model.VO.TimeVO;
 import com.alan.sphare.model.VO.UserVO;
 import com.alan.sphare.model.logicservice.GroupBlService;
+import com.alan.sphare.model.tool.Date;
 import com.alan.sphare.presentation.widget.FreeTimeAdapter;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,17 +42,23 @@ import java.util.Map;
 import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, Toolbar.OnMenuItemClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        Toolbar.OnMenuItemClickListener, View.OnTouchListener, GestureDetector.OnGestureListener {
+
+    //--------------------常量设置--------------------
 
     /**
      * 日志标识
      */
-    final String TAG = "SPhare";
+    private final String TAG = getString(R.string.app_name);
 
     /**
      * Handler标识
      */
-    final int SUCCESS = 1, FAIL = 2;
+    private final int SUCCESS = 1, FAIL = 2;
+
+
+    //--------------------主界面部件及布局--------------------
 
     /**
      * 工具栏
@@ -67,38 +76,6 @@ public class MainActivity extends AppCompatActivity
     ListView listView;
 
     /**
-     * 列表显示日期
-     */
-    TextView dateText;
-
-    /**
-     * 用户数据
-     */
-    UserVO userVO;
-
-    /**
-     * 依赖的小组逻辑接口
-     */
-    GroupBlService groupBl;
-
-    Calendar calendar = Calendar.getInstance();
-    /**
-     * 列表显示的空余时间日期，默认为当天日期
-     */
-    Date date = new Date(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
-
-    /**
-     * 后台处理网络工作的线程
-     */
-    Thread task;
-    BackgroundTask backgroundTask;
-
-    /**
-     * 阻塞线程标志位
-     */
-    boolean gotInternetInfo = false;
-
-    /**
      * 显示在listView中的内容
      */
     List<FreeDateTimeVO> freeDateTimeVOList;
@@ -109,20 +86,63 @@ public class MainActivity extends AppCompatActivity
     FreeTimeAdapter freeTimeAdapter;
 
     /**
+     * 显示日期
+     */
+    TextView dateText;
+
+    //--------------------数据及接口--------------------
+
+    /**
+     * 用户数据
+     */
+    UserVO userVO;
+
+    Calendar calendar = Calendar.getInstance();
+    /**
+     * 列表显示的空余时间日期，默认为当天日期
+     */
+    Date date = new Date(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH));
+
+    /**
+     * 依赖的小组逻辑接口
+     */
+    GroupBlService groupBl;
+
+    //--------------------后台--------------------
+
+    /**
+     * 后台处理网络工作的线程
+     */
+    Thread task;
+    BackgroundTask backgroundTask;
+
+    /**
+     * 阻塞线程标志位
+     */
+    private boolean gotInternetInfo = false;
+
+    /**
      * UIHandler处理网络线程中的界面反馈
      */
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == SUCCESS) {
+                //刷新listView
+                freeTimeAdapter.notifyDataSetChanged();
                 //刷新成功反馈
-                Toast.makeText(MainActivity.this, "刷新成功", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getString(R.string.refresh_success), Toast.LENGTH_SHORT).show();
             } else if (msg.what == FAIL) {
                 //处理网络传输失败或者不存在分组的情况
-                Toast.makeText(MainActivity.this, "网络连接错误，请重新登录", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, getString(R.string.login_fail), Toast.LENGTH_SHORT).show();
             }
         }
     };
+
+    /**
+     * 手势检测器
+     */
+    GestureDetector detector;
 
 
     @Override
@@ -130,8 +150,14 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        View contentView = findViewById(R.id.content_main);
+        contentView.setOnTouchListener(this);
+        contentView.setLongClickable(true);
 
-        groupBl = new GroupBlImpl();
+        detector = new GestureDetector(MainActivity.this, this);
+        detector.setIsLongpressEnabled(true);
+
+        groupBl = new GroupBlImpl_stub();
         backgroundTask = new BackgroundTask();
 
         init();
@@ -147,7 +173,7 @@ public class MainActivity extends AppCompatActivity
 
         //设置默认日期
         dateText = (TextView) findViewById(R.id.dateText);
-        dateText.setText("日期  " + date.getYear() + " " + date.getMonth() + " " + date.getDay());
+        updateDate();
 
         //初始化工具栏
         initToolBar();
@@ -160,14 +186,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * 前置登录，检查是否本地有已经登录的用户，如果有就读出用户信息
+     * 前置登录，检查是否本地有已经登录的用户，如果有就读出用户信息<br>
+     * 第一迭代期间弱化登录功能
      *
-     * @return
+     * @return true
      */
     private boolean postLogin() {
         String userID, groupID;
         Properties properties = new Properties();
-        FileReader reader = null;
         try {
             properties.load(getAssets().open("userInfo.properties"));
             userID = properties.getProperty("userID");
@@ -186,8 +212,8 @@ public class MainActivity extends AppCompatActivity
     private void initToolBar() {
         toolbar = (Toolbar) findViewById(R.id.maintoolbar);
         setSupportActionBar(toolbar);
-        toolbar.setTitle("SPhare");
-        toolbar.setSubtitle("Sensation Design.");
+        toolbar.setTitle(getString(R.string.app_name));
+        toolbar.setSubtitle(getString(R.string.app_designer_ad));
         toolbar.setOnMenuItemClickListener(this);
     }
 
@@ -195,6 +221,7 @@ public class MainActivity extends AppCompatActivity
      * 初始化侧滑菜单
      */
     private void initDrawer() {
+
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -203,6 +230,19 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View drawerHeadView = navigationView.getHeaderView(0);
+
+        TextView userLoginID = (TextView) drawerHeadView.findViewById(R.id.userLoginID);
+        userLoginID.setText(userVO.getUserID());
+
+        ImageView userLogo = (ImageView) drawerHeadView.findViewById(R.id.logo);
+        userLogo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, getString(R.string.todo), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     /**
@@ -244,9 +284,13 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.group) {
-            Toast.makeText(MainActivity.this, "目前这个按钮并没有什么卵用.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, getString(R.string.todo), Toast.LENGTH_SHORT).show();
+            drawer.closeDrawer(GravityCompat.START);
+        } else if (id == R.id.webviewicon) {
+            Toast.makeText(MainActivity.this, getString(R.string.open_websource), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
+            startActivity(intent);
         }
-        drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
@@ -257,7 +301,7 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onDateSet(DatePicker dp, int year, int month, int day) {
                     date = new Date(year, month + 1, day);
-                    dateText.setText("日期  " + date.getYear() + " " + date.getMonth() + " " + date.getDay());
+                    updateDate();
 
                     //选择完日期后更新列表中的显示
                     gotInternetInfo = false;
@@ -276,6 +320,52 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        detector.onTouchEvent(event);
+        return true;
+    }
+
+    @Override
+    public boolean onDown(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        if (velocityX > 0) {
+            drawer.openDrawer(GravityCompat.START);
+        }
+        return true;
+    }
+
+    /**
+     * 更新日期标题显示
+     */
+    private void updateDate() {
+        dateText.setText("日期:  " + date.getYear() + "-" + date.getMonth() + "-" + date.getDay());
+    }
+
     /**
      * 后台线程处理的网络工作
      */
@@ -287,6 +377,10 @@ public class MainActivity extends AppCompatActivity
                 if (!gotInternetInfo) {
                     TimeTableVO[] timeTableList = groupBl.getTimeTable(userVO.getGroupID());
                     if (timeTableList != null) {
+                        //先清空再将新内容放入
+                        if (freeDateTimeVOList != null) {
+                            freeDateTimeVOList.clear();
+                        }
                         //遍历获得的组内TimeTable，将TimeTable转化为选定日期的FreeDateTime添加入listView的数组中
                         for (TimeTableVO timeTable : timeTableList) {
                             //组内用户的ID
@@ -308,19 +402,11 @@ public class MainActivity extends AppCompatActivity
                             FreeDateTimeVO freeDateTimeVO = new FreeDateTimeVO(userID, date, timeVOList);
                             freeDateTimeVOList.add(freeDateTimeVO);
                         }
-                        //刷新listView
-                        freeTimeAdapter.notifyDataSetChanged();
 
-                        //反馈
-                        Message message = new Message();
-                        message.what = SUCCESS;
-                        handler.sendMessage(message);
+                        sendMessage(SUCCESS);
 
                     } else {
-                        //反馈
-                        Message message = new Message();
-                        message.what = FAIL;
-                        handler.sendMessage(message);
+                        sendMessage(FAIL);
                     }
 
                     //修改标志位使线程阻塞
@@ -328,9 +414,18 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
+
+        /**
+         * 给UI发送信息，进行UI反馈
+         *
+         * @param info 反馈信息类型
+         */
+        private void sendMessage(int info) {
+            Message message = new Message();
+            message.what = info;
+            handler.sendMessage(message);
+        }
     }
-
-
 }
 
 

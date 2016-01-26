@@ -1,8 +1,8 @@
 package com.alan.sphare.logic.groupBl.stub;
 
-import com.alan.sphare.model.Tool.Date;
+import com.alan.sphare.model.tool.Date;
 import com.alan.sphare.model.VO.FreeDateTimeVO;
-import com.alan.sphare.model.Tool.Time;
+import com.alan.sphare.model.tool.Time;
 import com.alan.sphare.model.VO.TimeTableVO;
 import com.alan.sphare.model.VO.TimeVO;
 import com.alan.sphare.model.logicservice.GroupBlService;
@@ -31,7 +31,7 @@ public class GroupBlImpl_stub implements GroupBlService {
         time4 = new Time(24, 0);
         timeVOList[0] = new TimeVO(time1, time2);
         timeVOList[1] = new TimeVO(time3, time4);
-        date = new Date(2016, 1, 17);
+        date = new Date(2016, 1, 25);
         hashMap = new HashMap<Date, TimeVO[]>();
         hashMap.put(date, timeVOList);
         timeTableVO1 = new TimeTableVO("Alan", hashMap);
@@ -44,7 +44,7 @@ public class GroupBlImpl_stub implements GroupBlService {
         time4 = new Time(24, 0);
         timeVOList[0] = new TimeVO(time1, time2);
         timeVOList[1] = new TimeVO(time3, time4);
-        date = new Date(2016, 1, 17);
+        date = new Date(2016, 1, 25);
         hashMap = new HashMap<Date, TimeVO[]>();
         hashMap.put(date, timeVOList);
         timeTableVO2 = new TimeTableVO("Anthony", hashMap);
@@ -57,7 +57,7 @@ public class GroupBlImpl_stub implements GroupBlService {
         time4 = new Time(24, 0);
         timeVOList[0] = new TimeVO(time1, time2);
         timeVOList[1] = new TimeVO(time3, time4);
-        date = new Date(2016, 1, 17);
+        date = new Date(2016, 1, 25);
         hashMap = new HashMap<Date, TimeVO[]>();
         hashMap.put(date, timeVOList);
         timeTableVO3 = new TimeTableVO("Sissel", hashMap);

@@ -1,4 +1,4 @@
-package com.alan.sphare.model.Tool;
+package com.alan.sphare.model.tool;
 
 import java.io.Serializable;
 

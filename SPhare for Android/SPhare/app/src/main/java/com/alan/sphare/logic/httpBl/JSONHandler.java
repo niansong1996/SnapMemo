@@ -1,7 +1,7 @@
 package com.alan.sphare.logic.httpBl;
 
-import com.alan.sphare.model.Tool.Date;
-import com.alan.sphare.model.Tool.Time;
+import com.alan.sphare.model.tool.Date;
+import com.alan.sphare.model.tool.Time;
 import com.alan.sphare.model.VO.FreeDateTimeVO;
 import com.alan.sphare.model.VO.GroupVO;
 import com.alan.sphare.model.VO.TimeTableVO;
