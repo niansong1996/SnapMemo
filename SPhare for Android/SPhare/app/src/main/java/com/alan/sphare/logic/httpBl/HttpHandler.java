@@ -9,7 +9,6 @@ import com.alan.sphare.model.httpservice.JSONHandlerService;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -114,13 +113,9 @@ public class HttpHandler implements HttpHandlerService {
 
             flushInfo(sendFreeTime);
 
-            //读取返回的布尔值判断是否更新成功
-            ObjectInputStream objectInputStream = new ObjectInputStream(conn.getInputStream());
-            result = objectInputStream.readBoolean();
-
-            //关闭输入流
-            if (objectInputStream != null) {
-                objectInputStream.close();
+            //判断更新情况
+            if (conn.getResponseCode() == 200) {
+                result = true;
             }
 
             closeConn();
@@ -148,23 +143,18 @@ public class HttpHandler implements HttpHandlerService {
             conn.setRequestProperty("Request-Type", "Delete-Free-Time");
 
             //将生成的JSON字符串刷入输出流传至服务器
-            if (sendFreeTime == null && sendFreeTime.length() == 0) {
+            if (sendFreeTime == null || sendFreeTime.length() == 0) {
                 return false;
             }
 
             flushInfo(sendFreeTime);
 
-            //读取返回的布尔值判断是否更新成功
-            ObjectInputStream objectInputStream = new ObjectInputStream(conn.getInputStream());
-            result = objectInputStream.readBoolean();
-
-            //关闭输入流
-            if (objectInputStream != null) {
-                objectInputStream.close();
+            //判断更新情况
+            if (conn.getResponseCode() == 200) {
+                result = true;
             }
 
             closeConn();
-
 
             return result;
 

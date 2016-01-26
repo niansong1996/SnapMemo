@@ -23,7 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alan.sphare.R;
-import com.alan.sphare.logic.groupBl.stub.GroupBlImpl_stub;
+import com.alan.sphare.logic.groupBl.GroupBlImpl;
 import com.alan.sphare.model.VO.FreeDateTimeVO;
 import com.alan.sphare.model.VO.TimeTableVO;
 import com.alan.sphare.model.VO.TimeVO;
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * 日志标识
      */
-    private final String TAG = getString(R.string.app_name);
+    private String TAG;
 
     /**
      * Handler标识
@@ -149,6 +149,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        TAG = getString(R.string.app_name);
 
         View contentView = findViewById(R.id.content_main);
         contentView.setOnTouchListener(this);
@@ -157,7 +158,7 @@ public class MainActivity extends AppCompatActivity
         detector = new GestureDetector(MainActivity.this, this);
         detector.setIsLongpressEnabled(true);
 
-        groupBl = new GroupBlImpl_stub();
+        groupBl = new GroupBlImpl();
         backgroundTask = new BackgroundTask();
 
         init();

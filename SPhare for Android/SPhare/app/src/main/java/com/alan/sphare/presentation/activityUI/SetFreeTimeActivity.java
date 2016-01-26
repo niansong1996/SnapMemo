@@ -42,7 +42,7 @@ public class SetFreeTimeActivity extends AppCompatActivity implements RemoveList
     /**
      * 日志标识
      */
-    private final String TAG = getString(R.string.app_name);
+    private String TAG;
 
     /**
      * Handler标识
@@ -179,6 +179,7 @@ public class SetFreeTimeActivity extends AppCompatActivity implements RemoveList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_free_time);
+        TAG = getString(R.string.app_name);
 
         //获得从上一个Activity传过来的数据
         groupID = getIntent().getStringExtra("groupID");
