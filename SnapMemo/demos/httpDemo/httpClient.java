@@ -1,10 +1,8 @@
 package httpDemo;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 
@@ -17,25 +15,11 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 public class httpClient {
 	public static void main(String[] args) 
 	{
-		String json = "";
-		String tmp = "";
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(new File("sampleSend.json")));
-			do{
-				json += tmp;
-				tmp = reader.readLine();
-			}while(tmp!=null);
-			reader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
 		CloseableHttpClient httpclient = HttpClients.createDefault();  
 		try
 		{
