@@ -3,14 +3,13 @@
 -------------------------------------------------------------------------------
     发送：
     Request-Method:   POST
-	Request-Type:     Analyze-Image
+	Request-Type:     Resolve-Image
 	Request-Property: application/octet-stream(字节流-ByteArrayOutputStream)
 -------------------------------------------------------------------------------
 	接收JSON格式:
 	{
         "topic":"happy new year"
         "date":"2016-02-07"
-	    "day":"星期日"
 	    "content":"新年快乐"
     }
 -------------------------------------------------------------------------------
@@ -28,13 +27,11 @@
 		    {
 			    "topic":"happy new year"
                 "date":"2016-02-07"
-	            "day":"星期日"
 	            "content":"新年快乐"
 			},
 			{
 			    "topic":"happy new year"
                 "date":"2016-02-08"
-	            "day":"星期一"
 	            "content":"新年快乐"
 			}
 		]
@@ -50,7 +47,6 @@
 	    "userName":"Alan"
         "topic":"happy new year"
         "date":"2016-02-07"
-	    "day":"星期日"
 	    "content":"新年快乐"
     }
 -------------------------------------------------------------------------------
@@ -66,7 +62,6 @@
 	    "userName":"Alan"
         "topic":"happy new year"
         "date":"2016-02-07"
-	    "day":"星期日"
 	    "content":"新年快乐"
     }
 -------------------------------------------------------------------------------
