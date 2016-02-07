@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="org.sensation.snapmemo.activity.ContentActivity"
+    tools:showIn="@layout/activity_content">
+
+    <Button
+        android:id="@+id/cancel"
+        android:layout_width="160dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:background="@color/backgroundColor"
+        android:text="@string/cancel"
+        android:textColor="@color/textColor"
+        android:textSize="24sp" />
+
+    <Button
+        android:id="@+id/confirm"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/cancel"
+        android:background="@color/dominColor"
+        android:text="@string/confirm"
+        android:textColor="#ffffff"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/time"
+        fontPath="fonts/msyhbd.ttf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/topic"
+        android:layout_marginTop="39dp"
+        android:background="#58b5f0"
+        android:paddingBottom="5dp"
+        android:paddingLeft="45dp"
+        android:paddingRight="7dp"
+        android:paddingTop="5dp"
+        android:text="@string/time"
+        android:textColor="@color/white"
+        android:textSize="38sp" />
+
+    <TextView
+        android:id="@+id/content"
+        fontPath="fonts/msyhbd.ttf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/time"
+        android:layout_marginTop="39dp"
+        android:background="#ddddad"
+        android:paddingBottom="5dp"
+        android:paddingLeft="45dp"
+        android:paddingRight="7dp"
+        android:paddingTop="5dp"
+        android:text="@string/content_content"
+        android:textColor="@color/textColor"
+        android:textSize="38sp" />
+
+    <TextView
+        android:id="@+id/topic"
+        fontPath="fonts/msyhbd.ttf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="37dp"
+        android:background="#f06358"
+        android:paddingBottom="5dp"
+        android:paddingLeft="45dp"
+        android:paddingRight="7dp"
+        android:paddingTop="5dp"
+        android:text="@string/topic"
+        android:textColor="@color/white"
+        android:textSize="38sp" />
+
+    <EditText
+        android:id="@+id/topic_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/topic"
+        android:layout_toEndOf="@+id/cancel"
+        android:background="@null"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:maxWidth="200dp"
+        android:paddingBottom="5dp"
+        android:textColor="@color/textColor"
+        android:textSize="22sp" />
+
+    <EditText
+        android:id="@+id/time_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/content"
+        android:layout_alignStart="@+id/topic_content"
+        android:background="@null"
+        android:paddingBottom="5dp"
+        android:textColor="@color/textColor"
+        android:textSize="22sp" />
+
+    <EditText
+        android:id="@+id/content_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/time_content"
+        android:layout_alignTop="@+id/content"
+        android:background="@null"
+        android:maxWidth="200dp"
+        android:paddingTop="25dp"
+        android:textColor="@color/textColor"
+        android:textSize="22sp" />
+
+    <ImageView
+        android:id="@+id/divider_under_topic"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignEnd="@+id/confirm"
+        android:layout_below="@+id/topic_content"
+        android:layout_marginTop="20dp"
+        android:src="#d6d5d5" />
+
+    <ImageView
+        android:id="@+id/divider_under_time"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignEnd="@+id/confirm"
+        android:layout_below="@+id/time_content"
+        android:layout_marginTop="20dp"
+        android:src="#d6d5d5" />
+
+</RelativeLayout>
