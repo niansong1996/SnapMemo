@@ -24,6 +24,7 @@ public class BLExecutor implements Runnable{
 	private void resolveImage(Request request){
 		byte[] img = OCRModule.InputStream2Img(request.is);
 		String info = ocr.Img2String(img);
+		info = "{\"topic\":\"test\",\"date\":\"2016-02-09\",\"content\":\""+info+"\"}";
 		Response response = new Response(request.exchange,info,200);
 		ResponseQueue.put(response);
 	}

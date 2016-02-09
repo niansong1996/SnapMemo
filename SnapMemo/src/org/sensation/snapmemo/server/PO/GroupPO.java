@@ -13,8 +13,14 @@ public class GroupPO {
 	public void addUser(UserPO user){
 		this.users.add(user);
 	}
-	public void deleteUser(UserPO user){
-		this.users.remove(user);
+	public void modifyUser(UserPO user){
+		this.deleteUser(user.getID());
+		this.addUser(user);
+	}
+	public void deleteUser(String userID){
+		for(UserPO user : users)
+			if(user.getID().equals(userID))
+				users.remove(user);
 	}
 	public String getID() {
 		return ID;
@@ -30,7 +36,9 @@ public class GroupPO {
 	}
 	@Override
 	public boolean equals(Object o){
-		//TODO
+		GroupPO source = (GroupPO) o;
+		if(this.getID().equals(source.getID()))
+			return true;
 		return false;
 	}
 }

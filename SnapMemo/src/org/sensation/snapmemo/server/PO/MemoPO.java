@@ -1,5 +1,7 @@
 package org.sensation.snapmemo.server.PO;
 
+import java.util.Calendar;
+
 public class MemoPO {
 	private String theme;
 	//times is annotated as yyyy-mm-dd HH:mm:ss
@@ -49,5 +51,8 @@ public class MemoPO {
 	public boolean equals(Object o){
 		//TODO
 		return false;
+	}
+	public static void main(String[] args){
+		Calendar cal = Calendar.getInstance();
 	}
 }

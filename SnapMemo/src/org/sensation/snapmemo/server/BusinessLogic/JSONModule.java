@@ -12,10 +12,19 @@ public class JSONModule {
 			String oneLine = "";
 			JSONArray words = lines.getJSONObject(i).getJSONArray("words");
 			for(int j=0;j<words.size();j++){
-				oneLine += words.getJSONObject(j).getString("text");
+				String word = words.getJSONObject(j).getString("text");
+				if(word.equals("\""))
+					word = "\\\"";
+				oneLine += word;
 			}
 			result+= oneLine;
 		}
 		return result;
+	}
+	public static void main(String[] args){
+		String word = "\\\"";
+		String w = "\"";
+		System.out.println(word);
+		System.out.println(w);
 	}
 }

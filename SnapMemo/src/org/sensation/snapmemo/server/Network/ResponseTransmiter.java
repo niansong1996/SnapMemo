@@ -25,6 +25,7 @@ public class ResponseTransmiter implements Runnable{
 		if(response==null) return;
 		HttpExchange exchange = response.exchange;
 		String responseString = response.responseString;
+		System.out.println("response json is : "+responseString);
 		int code = response.code;
 		try {
 			exchange.sendResponseHeaders(code, responseString.getBytes().length);
