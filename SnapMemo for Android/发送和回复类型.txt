@@ -5,6 +5,7 @@
     Request-Method:   POST
 	Request-Type:     Resolve-Image
 	Request-Property: application/octet-stream(字节流-ByteArrayOutputStream)
+	发送内容：图片的字节流
 -------------------------------------------------------------------------------
 	接收JSON格式:
 	{
@@ -19,6 +20,7 @@
 	Request-Method:   POST
 	Request-Type:     Get-List
 	Request-Property: text/plain(纯文本)
+	发送内容：用户名userName
 -------------------------------------------------------------------------------
 	接收JSON格式:
 	{
@@ -41,8 +43,9 @@
 -------------------------------------------------------------------------------
     发送：
 	Request-Method:   POST
-	Request-Type:     Delete-Content
+	Request-Type:     Delete-Memo
 	Request-Property: application/json(JSON格式)
+	发送内容：删除的Memo内容和用户名
 	{
 	    "userName":"Alan"
         "topic":"happy new year"
@@ -56,8 +59,9 @@
 -------------------------------------------------------------------------------
     发送；
 	Request-Method:   POST
-	Request-Type:     Modify-Content
+	Request-Type:     Modify-Memo
 	Request-Property: application/json(JSON格式)
+	发送内容：修改的Memo内容和用户名
 	{
 	    "userName":"Alan"
         "topic":"happy new year"
@@ -73,6 +77,7 @@
 	Request-Method:   POST
 	Request-Type:     Sign-In
 	Request-Property: application/json(JSON格式)
+	发送内容：用户名和密码
     {
 	    "userName":"Alan"
         "password":"123456"
