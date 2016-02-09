@@ -19,4 +19,9 @@
 
     <string name="content_title">备忘录内容确认</string>
     <string name="content_content">内容</string>
+    <string name="title_activity_user_settings">UserSettingsActivity</string>
+
+    <string name="undefine">undefine</string>
+
+    <string name="user_settings_title">用户设置</string>
 </resources>

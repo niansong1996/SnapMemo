@@ -3,9 +3,11 @@ package org.sensation.snapmemo.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -80,6 +82,8 @@ public class ContentActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(getString(R.string.content_title));
         setSupportActionBar(toolbar);
+        toolbar.setTitleTextColor(Color.WHITE);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void initButton() {
@@ -109,6 +113,17 @@ public class ContentActivity extends AppCompatActivity {
                 overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            finish();
+            overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
+        }
+        return true;
     }
 
     @Override

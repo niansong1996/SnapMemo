@@ -5,19 +5,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import org.sensation.snapmemo.R;
 import org.sensation.snapmemo.VO.MemoVO;
-import org.sensation.snapmemo.httpservice.HttpService_stub;
+import org.sensation.snapmemo.httpservice.HttpService;
 import org.sensation.snapmemo.tool.ClientData;
 
 import java.io.ByteArrayOutputStream;
@@ -75,6 +78,8 @@ public class StartActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(getString(R.string.start_title));
         setSupportActionBar(toolbar);
+        toolbar.setTitleTextColor(Color.WHITE);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         handleImage();
     }
@@ -130,6 +135,17 @@ public class StartActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            finish();
+            overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
+        }
+        return true;
+    }
+
+    @Override
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
@@ -150,8 +166,10 @@ public class StartActivity extends AppCompatActivity {
         @Override
         protected MemoVO doInBackground(ByteArrayOutputStream... params) {
             //TODO 网络连接发送
-            MemoVO memoVO = new HttpService_stub().transPic(params[0]);
+//            MemoVO memoVO = new HttpService_stub().transPic(params[0]);
+            MemoVO memoVO = new HttpService().transPic(params[0]);
             return memoVO;
+
         }
 
         @Override
@@ -164,6 +182,7 @@ public class StartActivity extends AppCompatActivity {
                 overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
             } else {
                 //TODO 网络异常处理
+                Toast.makeText(StartActivity.this, "网络错误", Toast.LENGTH_SHORT).show();
             }
         }
     }

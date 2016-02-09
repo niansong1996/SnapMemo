@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.sensation.snapmemo">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".tool.MyApplication"
         android:allowBackup="true"
@@ -23,6 +27,7 @@
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="image/png" />
             </intent-filter>
         </activity>
@@ -32,7 +37,10 @@
         <activity
             android:name=".activity.ContentActivity"
             android:label="@string/title_activity_content" />
+        <activity
+            android:name=".activity.UserSettingsActivity"
+            android:label="@string/title_activity_user_settings"
+            android:theme="@style/AppTheme"></activity>
     </application>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
 </manifest>

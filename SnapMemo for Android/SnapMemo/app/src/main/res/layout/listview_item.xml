@@ -57,8 +57,9 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/listview_topic_text"
         android:layout_toRightOf="@+id/listview_topic_text"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:paddingLeft="20dp"
-        android:textAppearance="@style/TextAppearance.CustomTitle1"
         android:textColor="#ffffff"
         android:textSize="21sp" />
 
@@ -79,8 +80,9 @@
         android:layout_alignStart="@+id/listview_time_text"
         android:layout_below="@+id/listview_time_text"
         android:layout_marginTop="19dp"
+        android:ellipsize="end"
+        android:maxLines="4"
         android:maxWidth="250dp"
-        android:textAppearance="@style/TextAppearance.CustomContent"
         android:textColor="@color/textColor"
         android:textSize="21sp" />
 

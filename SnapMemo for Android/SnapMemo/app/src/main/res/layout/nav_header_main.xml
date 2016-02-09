@@ -1,39 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_header_height"
     android:background="@color/suitColor"
-    android:gravity="bottom"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:id="@+id/userLogoBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:alpha="0.2" />
+
+    <org.sensation.snapmemo.widget.RoundImageView
+        android:id="@+id/userLogo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_above="@+id/userName"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="25dp"
         android:src="@android:drawable/sym_def_app_icon" />
 
     <TextView
+        android:id="@+id/userName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="5dp"
+        android:layout_above="@+id/condition"
+        android:layout_alignParentStart="true"
+        android:paddingLeft="25dp"
         android:text="Alan"
         android:textColor="@color/white"
         android:textSize="30sp" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/condition"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
         android:ellipsize="end"
         android:maxLines="1"
-        android:paddingLeft="5dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="25dp"
         android:text="In love with Grace."
         android:textColor="@color/white"
         android:textSize="17sp" />
 
-</LinearLayout>
+
+</RelativeLayout>

@@ -1,5 +1,7 @@
 package org.sensation.snapmemo.httpservice;
 
+import android.util.Log;
+
 import org.sensation.snapmemo.VO.MemoVO;
 import org.sensation.snapmemo.tool.ClientData;
 import org.sensation.snapmemo.tool.JSONHandler;
@@ -14,6 +16,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 /**
  * 网络服务
@@ -30,6 +33,7 @@ public class HttpService {
     public HttpService() {
         try {
             url = new URL(ClientData.getInstance().getServerIP());
+            Log.d("SnapMemo", "HttpService: "+url.toString());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -39,34 +43,130 @@ public class HttpService {
      * 将图片上传并利用JSONHandler转换为MemoVO返回
      *
      * @param os
-     * @return
+     * @return memoVO
      */
     public MemoVO transPic(ByteArrayOutputStream os) {
-        StringBuffer resultJSONStringBuffer = new StringBuffer();
-        setConnection(RequestMethod.POST, RequestProperty.JSON);
+        String resultJSONString;
         MemoVO memoVO;
+
+        setConnection(RequestMethod.POST, RequestProperty.STREAM);
+        conn.setRequestProperty("Request-Type", "Resolve-Image");
 
         try {
             flushInfo(os);
 
-            //从服务器获得返回的JSON语句
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String tempLine;
-            while ((tempLine = bufferedReader.readLine()) != null) {
-                resultJSONStringBuffer.append(tempLine);
-            }
+            resultJSONString = getJSONString();
 
-            closeStream(bufferedReader);
             closeConn();
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
 
-        memoVO = JSONHandler.getMemoVO(resultJSONStringBuffer.toString());
+        memoVO = JSONHandler.getMemoVO(resultJSONString);
 
         return memoVO;
     }
+
+    /**
+     * 登录后根据userName获得memo列表
+     *
+     * @param userName 用户名
+     * @return
+     */
+    public List<MemoVO> getMemoList(String userName) {
+        String resultJSONString = null;
+        List<MemoVO> memoVOList;
+
+        setConnection(RequestMethod.POST, RequestProperty.PLAINTEXT);
+        conn.setRequestProperty("Request-Type", "Get-List");
+
+        try {
+            flushInfo(userName);
+
+            resultJSONString = getJSONString();
+
+            closeConn();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        memoVOList = JSONHandler.getMemoList(resultJSONString);
+        return memoVOList;
+
+
+    }
+
+    /**
+     * 根据Memo内容删除该Memo
+     *
+     * @param memoVO
+     * @return
+     */
+    public boolean deleteMemo(MemoVO memoVO) {
+        boolean result;
+        setConnection(RequestMethod.POST, RequestProperty.JSON);
+        conn.setRequestProperty("Request-Type", "Delete-Memo");
+
+        try {
+            flushInfo(JSONHandler.getMemoJSON(memoVO));
+            result = getResponseCondition();
+            closeConn();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return result;
+    }
+
+    /**
+     * 根据Memo内容修改该Memo
+     *
+     * @param memoVO
+     * @return
+     */
+    public boolean modifyMemo(MemoVO memoVO) {
+        boolean result;
+        setConnection(RequestMethod.POST, RequestProperty.JSON);
+        conn.setRequestProperty("Request-Type", "Modify-Memo");
+
+        try {
+            flushInfo(JSONHandler.getMemoJSON(memoVO));
+            result = getResponseCondition();
+            closeConn();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return result;
+    }
+
+    /**
+     * 用户登录
+     *
+     * @param userName 用户名
+     * @param password 密码
+     * @return 是否成功登录
+     */
+    public boolean signIn(String userName, String password) {
+        boolean result;
+        setConnection(RequestMethod.POST, RequestProperty.JSON);
+        conn.setRequestProperty("Request-Type", "Sign-In");
+
+        try {
+            flushInfo(JSONHandler.getSignInJSON(userName, password));
+            result = getResponseCondition();
+            closeConn();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return result;
+    }
+
 
     /**
      * 网络连接基本设置
@@ -78,7 +178,6 @@ public class HttpService {
         try {
             //打开连接
             conn = (HttpURLConnection) url.openConnection();
-
             //允许输出
             conn.setDoOutput(true);
 
@@ -111,6 +210,7 @@ public class HttpService {
             }
 
         } catch (IOException e) {
+            Log.d("SnapMemo", "setConnection: 0");
             e.printStackTrace();
         }
     }
@@ -118,13 +218,17 @@ public class HttpService {
     /**
      * 将String类型信息刷入网络输出流
      *
-     * @param info
+     * @param info 字符串信息（一般为JSON）
      * @throws IOException
      */
     private void flushInfo(String info) throws IOException {
+
         OutputStreamWriter outputStreamWriter = new OutputStreamWriter(conn.getOutputStream());
+
         outputStreamWriter.write(info);
+
         outputStreamWriter.flush();
+
         handleError();
 
         closeStream(outputStreamWriter);
@@ -133,7 +237,7 @@ public class HttpService {
     /**
      * 将ByteArrayOutputStream类型信息刷入网络输出流
      *
-     * @param os
+     * @param os 图片的字节流
      * @throws IOException
      */
     private void flushInfo(ByteArrayOutputStream os) throws IOException {
@@ -146,12 +250,41 @@ public class HttpService {
     }
 
     /**
+     * 获得从服务器传来的JSONString
+     *
+     * @throws IOException
+     */
+    private String getJSONString() throws IOException {
+        StringBuffer resultJSONStringBuffer = new StringBuffer();
+        //从服务器获得返回的JSON语句
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String tempLine;
+        while ((tempLine = bufferedReader.readLine()) != null) {
+            resultJSONStringBuffer.append(tempLine);
+        }
+        closeStream(bufferedReader);
+
+        return resultJSONStringBuffer.toString();
+    }
+
+    /**
+     * 判断是否成功在服务器进行操作
+     *
+     * @return 是否成功
+     * @throws IOException
+     */
+    private boolean getResponseCondition() throws IOException {
+        return (conn.getResponseCode() == 200);
+    }
+
+    /**
      * 响应失败处理
      *
      * @throws IOException
      */
     private void handleError() throws IOException {
         if (conn.getResponseCode() >= 300) {
+            Log.d("SnapMemo", "handleError: ");
             throw new IOException("HTTP Request is not success, Response code is " + conn.getResponseCode());
         }
     }

@@ -2,7 +2,9 @@ package org.sensation.snapmemo.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -15,13 +17,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.sensation.snapmemo.R;
 import org.sensation.snapmemo.VO.MemoVO;
+import org.sensation.snapmemo.VO.UserVO;
 import org.sensation.snapmemo.tool.ClientData;
 import org.sensation.snapmemo.tool.Resource_stub;
 import org.sensation.snapmemo.widget.ListViewAdapter;
+import org.sensation.snapmemo.widget.RoundImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,13 +67,19 @@ public class MainActivity extends AppCompatActivity
     /**
      * 用户本地数据
      */
-    ClientData clientData = ClientData.getInstance();
+    ClientData clientData;
+
+    /**
+     * 本地用户信息
+     */
+    UserVO userVO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        clientData = ClientData.getInstance();
+        userVO = clientData.getUserVO();
         init();
 
         //在此获得截得的Action，如果不为空就启动StartActivity并将图片Uri传入
@@ -99,9 +111,13 @@ public class MainActivity extends AppCompatActivity
 
         initDrawer();
 
+        initNavigation();
+
         initListView();
 
+
     }
+
 
     /**
      * 初始化列表显示，在网络连通后才进行更新
@@ -141,8 +157,7 @@ public class MainActivity extends AppCompatActivity
         toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+
     }
 
     /**
@@ -156,6 +171,53 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
     }
 
+    /**
+     * 初始化左滑菜单内容
+     */
+    private void initNavigation() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        View headerView = navigationView.getHeaderView(0);
+
+        RoundImageView userLogo = (RoundImageView) headerView.findViewById(R.id.userLogo);
+        userLogo.setImageBitmap(userVO.getUserLogo());
+        userLogo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, UserSettingsActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+            }
+        });
+
+        TextView userName = (TextView) headerView.findViewById(R.id.userName);
+        userName.setText(userVO.getUserName());
+
+        TextView condition = (TextView) headerView.findViewById(R.id.condition);
+        condition.setText(userVO.getCondition());
+
+        ImageView userLogoBackground = (ImageView) headerView.findViewById(R.id.userLogoBackground);
+        Bitmap originalUserLogo = userVO.getUserLogo(), newUserLogo;
+        Point p = new Point();
+        double scaleOfContainer = 0.6,
+                scaleOfImage = (originalUserLogo.getHeight() + 0.0) / originalUserLogo.getWidth();
+
+        if (scaleOfContainer < scaleOfImage) {
+            newUserLogo = Bitmap.createBitmap(originalUserLogo, 0, 0,
+                    originalUserLogo.getWidth(),
+                    (int) (originalUserLogo.getWidth() * scaleOfContainer));
+
+
+        } else {
+            newUserLogo = Bitmap.createBitmap(originalUserLogo, 0, 0,
+                    (int) (originalUserLogo.getHeight() / scaleOfContainer),
+                    originalUserLogo.getHeight());
+        }
+
+        userLogoBackground.setScaleType(ImageView.ScaleType.FIT_XY);
+        userLogoBackground.setImageBitmap(newUserLogo);
+    }
+
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(new CalligraphyContextWrapper(newBase));
@@ -167,12 +229,21 @@ public class MainActivity extends AppCompatActivity
 
         MemoVO newMemoVO = clientData.getNewMemoVO();
 
-        if (newMemoVO != null && clientData.isAdd()) {//新增状态，添加listView内容
-            memoVOList.add(newMemoVO);
-        } else if (newMemoVO != null && !clientData.isAdd()) {//修改状态，修改listView内容
-            memoVOList.set(clientData.getPosition(), newMemoVO);
+        if (newMemoVO != null) {
+            if (clientData.isAdd()) {//新增状态，添加listView内容
+                memoVOList.add(newMemoVO);
+            } else if (!clientData.isAdd()) {//修改状态，修改listView内容
+                memoVOList.set(clientData.getPosition(), newMemoVO);
+            }
+            listViewAdapter.notifyDataSetChanged();
         }
-        listViewAdapter.notifyDataSetChanged();
+        if (clientData.isUserInfoChanged()) {
+            //刷新左滑菜单头部显示
+            clientData.setUserInfoChanged(false);
+            userVO = clientData.getUserVO();
+            initNavigation();
+        }
+
     }
 
     @Override

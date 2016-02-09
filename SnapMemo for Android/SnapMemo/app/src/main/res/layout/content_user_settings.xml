@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="org.sensation.snapmemo.activity.UserSettingsActivity"
+    tools:showIn="@layout/activity_user_settings">
+
+    <ImageView
+        android:id="@+id/userLogo"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
+
+    <ImageView
+        android:id="@+id/userInfoBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/conditionBackground"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/userName"
+        android:alpha="0.4"
+        android:background="@color/dominColor" />
+
+    <EditText
+        android:id="@+id/userName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/educationInfo"
+        android:layout_alignStart="@+id/educationInfo"
+        android:background="@null"
+        android:text="@string/undefine"
+        android:textColor="@color/textColor"
+        android:textSize="35sp" />
+
+    <EditText
+        android:id="@+id/educationInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/userLogo"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/userLogo"
+        android:background="@null"
+        android:text="@string/undefine"
+        android:textColor="@color/textColor"
+        android:textSize="20sp" />
+
+    <ImageView
+        android:id="@+id/conditionBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/userLogo"
+        android:layout_marginBottom="130dp"
+        android:layout_marginTop="30dp"
+        android:alpha="0.4"
+        android:background="@color/deputyColorLight" />
+
+    <EditText
+        android:id="@+id/condition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/conditionBackground"
+        android:layout_alignTop="@+id/conditionBackground"
+        android:background="@null"
+        android:padding="12dp"
+        android:text="@string/undefine"
+        android:textSize="20sp" />
+
+</RelativeLayout>
