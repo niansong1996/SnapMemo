@@ -28,7 +28,7 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
 
-                <data android:mimeType="image/png" />
+                <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
         <activity
@@ -39,8 +39,7 @@
             android:label="@string/title_activity_content" />
         <activity
             android:name=".activity.UserSettingsActivity"
-            android:label="@string/title_activity_user_settings"
-            android:theme="@style/AppTheme"></activity>
+            android:label="@string/title_activity_user_settings" />
     </application>
 
 </manifest>
