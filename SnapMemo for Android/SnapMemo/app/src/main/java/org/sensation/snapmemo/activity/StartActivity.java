@@ -1,6 +1,7 @@
 package org.sensation.snapmemo.activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,6 +10,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,7 +26,9 @@ import org.sensation.snapmemo.httpservice.HttpService;
 import org.sensation.snapmemo.tool.ClientData;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -39,9 +43,13 @@ public class StartActivity extends AppCompatActivity {
      */
     Bitmap bitmap = null;
     /**
-     * 从外部传入的图片Uri地址
+     * 等待时进度框
      */
-    private Uri imageUri;
+    ProgressDialog progressDialog;
+    /**
+     * 从外部传入的图片Uri地址和裁剪后的保存地址
+     */
+    private Uri imageUri, outputImageUri;
 
     /**
      * 自定义载入方式
@@ -72,7 +80,6 @@ public class StartActivity extends AppCompatActivity {
      */
     private void init() {
 
-        //TODO 布置其他部件
         initButton();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -90,9 +97,8 @@ public class StartActivity extends AppCompatActivity {
         generate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO 将图片发至服务器
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 80, os);
                 new TransTask().execute(os);
             }
         });
@@ -110,10 +116,21 @@ public class StartActivity extends AppCompatActivity {
      * 处理图片进入后的截取跳转
      */
     private void handleImage() {
+        File outputImage = new File(Environment.getExternalStorageDirectory(), "crop_image.jpg");
+        try {
+            if (outputImage.exists()) {
+                outputImage.delete();
+            }
+            outputImage.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        outputImageUri = Uri.fromFile(outputImage);
+
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(imageUri, "image/*");
         intent.putExtra("scale", true);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, outputImageUri);
         startActivityForResult(intent, CROP_PHOTO);
     }
 
@@ -122,7 +139,7 @@ public class StartActivity extends AppCompatActivity {
         if (requestCode == CROP_PHOTO) {
             if (resultCode == RESULT_OK) {
                 try {
-                    bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
+                    bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(outputImageUri));
                     ImageView pic = (ImageView) findViewById(R.id.crop_image);
                     pic.setImageBitmap(bitmap);
                     pic.setAdjustViewBounds(true);
@@ -160,12 +177,16 @@ public class StartActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            //TODO 显示进度条或者进度圆圈
+            progressDialog = new ProgressDialog(StartActivity.this);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage("微软牛津计划,正在识别...");
+            progressDialog.show();
+            progressDialog.setCancelable(false);
+            progressDialog.setCanceledOnTouchOutside(false);
         }
 
         @Override
         protected MemoVO doInBackground(ByteArrayOutputStream... params) {
-            //TODO 网络连接发送
 //            MemoVO memoVO = new HttpService_stub().transPic(params[0]);
             MemoVO memoVO = new HttpService().transPic(params[0]);
             return memoVO;
@@ -174,6 +195,7 @@ public class StartActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(MemoVO memo) {
+            progressDialog.dismiss();
             //跳转至内容界面
             if (memo != null) {
                 ClientData.getInstance().setAdd(true);
@@ -181,7 +203,7 @@ public class StartActivity extends AppCompatActivity {
                 finish();
                 overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
             } else {
-                //TODO 网络异常处理
+                //网络异常处理
                 Toast.makeText(StartActivity.this, "网络错误", Toast.LENGTH_SHORT).show();
             }
         }

@@ -24,4 +24,10 @@
     <string name="undefine">undefine</string>
 
     <string name="user_settings_title">用户设置</string>
+
+    <string name="default_user_name">userName=Alan</string>
+    <string name="default_education_info">educationInfo=Nanjing University</string>
+    <string name="default_condition">condition=In love with Grace</string>
+
+    <string name="progress_dialog_title">微软牛津计划</string>
 </resources>

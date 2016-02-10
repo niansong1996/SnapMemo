@@ -45,7 +45,6 @@ public class UserSettingsActivity extends AppCompatActivity implements View.OnCl
 
     private void init() {
         initToolBar();
-
         initUserInfo();
     }
 
@@ -139,7 +138,7 @@ public class UserSettingsActivity extends AppCompatActivity implements View.OnCl
             }
             imageUri = Uri.fromFile(outputImage);
 
-            Intent intent = new Intent("android.intent.action.PICK");
+            Intent intent = new Intent("android.intent.action.GET_CONTENT");
             intent.setDataAndType(MediaStore.Images.Media.INTERNAL_CONTENT_URI, "image/*");
             intent.putExtra("output", imageUri);
             intent.putExtra("crop", "true");

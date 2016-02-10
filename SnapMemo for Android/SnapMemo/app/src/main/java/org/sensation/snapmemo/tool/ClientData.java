@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import org.sensation.snapmemo.R;
 import org.sensation.snapmemo.VO.MemoVO;
 import org.sensation.snapmemo.VO.UserVO;
 
@@ -89,6 +90,7 @@ public class ClientData {
             if (fileInputStream == null) {
                 initLogo();
             }
+            //重新加载
             initInfo();
         }
     }
@@ -97,9 +99,9 @@ public class ClientData {
      * 初始化本地数据，包括用户信息
      */
     private void initUserInfo() {
-        String defaultUserName = "userName=Alan",
-                defaultEducationInfo = "educationInfo=Nanjing University",
-                defaultCondition = "condition=In love with Grace";
+        String defaultUserName = MyApplication.getContext().getString(R.string.default_user_name),
+                defaultEducationInfo = MyApplication.getContext().getString(R.string.default_education_info),
+                defaultCondition = MyApplication.getContext().getString(R.string.default_condition);
         FileOutputStream out;
         BufferedWriter writer = null;
         try {
@@ -150,8 +152,6 @@ public class ClientData {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-
         }
     }
 
@@ -161,7 +161,6 @@ public class ClientData {
      * @return
      */
     public String getServerIP() {
-        //TODO 通过读取配置文件来获得IP地址
         String IP = null;
         Properties IPAddress = new Properties();
         try {

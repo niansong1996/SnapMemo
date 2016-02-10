@@ -33,7 +33,6 @@ public class HttpService {
     public HttpService() {
         try {
             url = new URL(ClientData.getInstance().getServerIP());
-            Log.d("SnapMemo", "HttpService: "+url.toString());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
