@@ -13,7 +13,11 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="0">
-            <Image Name="imgView"/>
+            <Grid Name="containerGrid">
+                <Image Name="imgView" PointerPressed="OnImagePressed" PointerMoved="OnMoved" PointerReleased="OnReleased"/>
+                <Rectangle Name="border" Width="0" Height="0" Fill="AliceBlue" HorizontalAlignment="Left" VerticalAlignment="Top"
+                           StrokeThickness="10" Opacity="0.46" Tapped="BorderOnTapped" Visibility="Visible" PointerMoved="OnMoved" PointerReleased="OnReleased" PointerPressed="OnRectPressed"/>
+            </Grid>
         </ScrollViewer>
         <StackPanel Name="btnList" HorizontalAlignment="Right" Orientation="Horizontal" Grid.Row="1">
             <Button Content="ok" FontSize="24" Margin="0,0,20,0" Click="OnOK"/>
