@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,11 +23,11 @@ import org.sensation.snapmemo.R;
 import org.sensation.snapmemo.VO.MemoVO;
 import org.sensation.snapmemo.httpservice.HttpService;
 import org.sensation.snapmemo.tool.ClientData;
+import org.sensation.snapmemo.tool.DataTool;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -46,6 +45,10 @@ public class StartActivity extends AppCompatActivity {
      * 等待时进度框
      */
     ProgressDialog progressDialog;
+    /**
+     * 保存文件的根路径
+     */
+    String saveDir = DataTool.defaultSaveDir;
     /**
      * 从外部传入的图片Uri地址和裁剪后的保存地址
      */
@@ -116,20 +119,14 @@ public class StartActivity extends AppCompatActivity {
      * 处理图片进入后的截取跳转
      */
     private void handleImage() {
-        File outputImage = new File(Environment.getExternalStorageDirectory(), "crop_image.jpg");
-        try {
-            if (outputImage.exists()) {
-                outputImage.delete();
-            }
-            outputImage.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        //创建裁剪图片输出缓存文件
+        File outputImage = DataTool.createFile(saveDir, "crop_image.jpg");
         outputImageUri = Uri.fromFile(outputImage);
 
+        //设置并启动intent
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(imageUri, "image/*");
-        intent.putExtra("scale", true);
+        intent.putExtra("scale", "true");
         intent.putExtra(MediaStore.EXTRA_OUTPUT, outputImageUri);
         startActivityForResult(intent, CROP_PHOTO);
     }
@@ -204,7 +201,7 @@ public class StartActivity extends AppCompatActivity {
                 overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
             } else {
                 //网络异常处理
-                Toast.makeText(StartActivity.this, "网络错误", Toast.LENGTH_SHORT).show();
+                Toast.makeText(StartActivity.this, getString(R.string.internet_failure), Toast.LENGTH_SHORT).show();
             }
         }
     }

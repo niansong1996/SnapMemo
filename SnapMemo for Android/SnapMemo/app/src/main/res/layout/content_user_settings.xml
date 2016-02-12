@@ -14,28 +14,19 @@
 
     <ImageView
         android:id="@+id/userLogo"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true" />
-
-    <ImageView
-        android:id="@+id/userInfoBackground"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/conditionBackground"
-        android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/userName"
-        android:alpha="0.4"
-        android:background="@color/dominColor" />
 
     <EditText
         android:id="@+id/userName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/educationInfo"
-        android:layout_alignStart="@+id/educationInfo"
+        android:layout_alignStart="@+id/userNameText"
+        android:layout_below="@+id/userNameText"
         android:background="@null"
+        android:paddingLeft="10dp"
         android:text="@string/undefine"
         android:textColor="@color/textColor"
         android:textSize="35sp" />
@@ -44,10 +35,10 @@
         android:id="@+id/educationInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/userLogo"
-        android:layout_marginLeft="10dp"
-        android:layout_toRightOf="@+id/userLogo"
+        android:layout_below="@+id/educationInfoText"
+        android:layout_toEndOf="@+id/userLogo"
         android:background="@null"
+        android:paddingLeft="10dp"
         android:text="@string/undefine"
         android:textColor="@color/textColor"
         android:textSize="20sp" />
@@ -58,14 +49,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/userLogo"
+        android:layout_below="@+id/conditionText"
         android:layout_marginBottom="130dp"
-        android:layout_marginTop="30dp"
         android:alpha="0.4"
         android:background="@color/deputyColorLight" />
 
     <EditText
-        android:id="@+id/condition"
+        android:id="@+id/signiture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/conditionBackground"
@@ -74,5 +64,59 @@
         android:padding="12dp"
         android:text="@string/undefine"
         android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/userNameText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/userLogo"
+        android:layout_toEndOf="@+id/userLogo"
+        android:text="@string/user_name"
+        android:textColor="@color/deputyColor"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/userIDText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/userNameText"
+        android:layout_below="@+id/userName"
+        android:text="@string/user_id"
+        android:textColor="@color/deputyColor"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/userID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/userIDText"
+        android:layout_toEndOf="@+id/userLogo"
+        android:background="@null"
+        android:paddingLeft="10dp"
+        android:text="@string/undefine"
+        android:textColor="@color/textColor"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/educationInfoText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/userID"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@+id/userLogo"
+        android:text="@string/education_info"
+        android:textColor="@color/deputyColor"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/conditionText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/userLogo"
+        android:layout_marginTop="10dp"
+        android:text="@string/signiture"
+        android:textColor="@color/deputyColor"
+        android:textSize="18sp" />
 
 </RelativeLayout>

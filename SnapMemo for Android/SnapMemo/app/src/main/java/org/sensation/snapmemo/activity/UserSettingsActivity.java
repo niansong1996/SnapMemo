@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,24 +15,31 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import org.sensation.snapmemo.R;
 import org.sensation.snapmemo.VO.UserVO;
 import org.sensation.snapmemo.tool.ClientData;
+import org.sensation.snapmemo.tool.DataTool;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class UserSettingsActivity extends AppCompatActivity implements View.OnClickListener {
 
-    final int CROP_PHOTO = 1, SELECT_PHOTO = 2;
+    final int SELECT_PHOTO = 2;
     Uri imageUri;
+    ClientData clientData;
     UserVO userVO;
     EditText educationInfo, condition, userName;
     ImageView userLogo;
+    TextView userID;
+    /**
+     * 保存文件的根路径
+     */
+    String saveDir = DataTool.defaultSaveDir;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,12 +50,13 @@ public class UserSettingsActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void init() {
+        clientData = ClientData.getInstance();
         initToolBar();
         initUserInfo();
     }
 
     private void initUserInfo() {
-        userVO = ClientData.getInstance().getUserVO();
+        userVO = clientData.getUserVO();
 
         userLogo = (ImageView) findViewById(R.id.userLogo);
         userLogo.setImageBitmap(userVO.getUserLogo());
@@ -57,6 +64,9 @@ public class UserSettingsActivity extends AppCompatActivity implements View.OnCl
 
         userName = (EditText) findViewById(R.id.userName);
         userName.setText(userVO.getUserName());
+
+        userID = (TextView) findViewById(R.id.userID);
+        userID.setText(userVO.getUserID());
 
         educationInfo = (EditText) findViewById(R.id.educationInfo);
         educationInfo.setText(userVO.getEducationInfo());
@@ -79,8 +89,7 @@ public class UserSettingsActivity extends AppCompatActivity implements View.OnCl
 
         if (id == android.R.id.home) {
             finish();
-            ClientData.getInstance().setUserInfo(getNewUserVO());
-            ClientData.getInstance().setUserInfoChanged(true);
+            saveClientData();
             overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
         }
         return true;
@@ -94,17 +103,32 @@ public class UserSettingsActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        ClientData.getInstance().setUserInfo(getNewUserVO());
-        ClientData.getInstance().setUserInfoChanged(true);
+        saveClientData();
         overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
     }
 
+    /**
+     * 获得界面中修改过的用户数据，生成新的UserVO
+     *
+     * @return newUserVO
+     */
     private UserVO getNewUserVO() {
-        UserVO newUserVO = new UserVO(userName.getText().toString(),
+        UserVO newUserVO = new UserVO(userVO.getUserID(),
+                userName.getText().toString(),
                 educationInfo.getText().toString(),
                 condition.getText().toString(),
                 ((BitmapDrawable) userLogo.getDrawable()).getBitmap());
         return newUserVO;
+    }
+
+    /**
+     * 保存ClientData
+     */
+    private void saveClientData() {
+        clientData.setUserInfo(getNewUserVO());
+        clientData.setUserInfoChanged(true);
+        ClientData.saveUserInfo(getNewUserVO());
+        ClientData.saveUserLogo(((BitmapDrawable) userLogo.getDrawable()).getBitmap());
     }
 
     @Override
@@ -127,20 +151,12 @@ public class UserSettingsActivity extends AppCompatActivity implements View.OnCl
         int id = v.getId();
 
         if (id == R.id.userLogo) {
-            File outputImage = new File(Environment.getExternalStorageDirectory(), "output_image.jpg");
-            try {
-                if (outputImage.exists()) {
-                    outputImage.delete();
-                }
-                outputImage.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            File outputImage = DataTool.createFile(saveDir, "output_image.jpg");
             imageUri = Uri.fromFile(outputImage);
 
             Intent intent = new Intent("android.intent.action.GET_CONTENT");
-            intent.setDataAndType(MediaStore.Images.Media.INTERNAL_CONTENT_URI, "image/*");
-            intent.putExtra("output", imageUri);
+            intent.setType("image/*");
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
             intent.putExtra("crop", "true");
             intent.putExtra("aspectX", 1);
             intent.putExtra("aspectY", 1);

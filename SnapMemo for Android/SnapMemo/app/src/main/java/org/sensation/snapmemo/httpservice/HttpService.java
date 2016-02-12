@@ -1,8 +1,12 @@
 package org.sensation.snapmemo.httpservice;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import org.sensation.snapmemo.VO.MemoVO;
+import org.sensation.snapmemo.VO.MemoVOLite;
+import org.sensation.snapmemo.VO.UserVOLite;
 import org.sensation.snapmemo.tool.ClientData;
 import org.sensation.snapmemo.tool.JSONHandler;
 
@@ -70,18 +74,18 @@ public class HttpService {
     /**
      * 登录后根据userName获得memo列表
      *
-     * @param userName 用户名
+     * @param userID 用户ID
      * @return
      */
-    public List<MemoVO> getMemoList(String userName) {
-        String resultJSONString = null;
+    public List<MemoVO> getMemoList(String userID) {
+        String resultJSONString;
         List<MemoVO> memoVOList;
 
         setConnection(RequestMethod.POST, RequestProperty.PLAINTEXT);
         conn.setRequestProperty("Request-Type", "Get-List");
 
         try {
-            flushInfo(userName);
+            flushInfo(userID);
 
             resultJSONString = getJSONString();
 
@@ -99,19 +103,19 @@ public class HttpService {
     }
 
     /**
-     * 根据Memo内容删除该Memo
+     * 根据MemoID删除该Memo
      *
-     * @param memoVO
-     * @return
+     * @param memoID
+     * @return 是否删除成功
      */
-    public boolean deleteMemo(MemoVO memoVO) {
+    public boolean deleteMemo(String memoID) {
         boolean result;
         setConnection(RequestMethod.POST, RequestProperty.JSON);
         conn.setRequestProperty("Request-Type", "Delete-Memo");
 
         try {
-            flushInfo(JSONHandler.getMemoJSON(memoVO));
-            result = getResponseCondition();
+            flushInfo(JSONHandler.getMemoIDJSON(memoID));
+            result = isResponseSucceed();
             closeConn();
         } catch (IOException e) {
             e.printStackTrace();
@@ -124,16 +128,16 @@ public class HttpService {
      * 根据Memo内容修改该Memo
      *
      * @param memoVO
-     * @return
+     * @return 是否修改成功
      */
-    public boolean modifyMemo(MemoVO memoVO) {
+    public boolean modifyMemo(MemoVOLite memoVO) {
         boolean result;
         setConnection(RequestMethod.POST, RequestProperty.JSON);
         conn.setRequestProperty("Request-Type", "Modify-Memo");
 
         try {
             flushInfo(JSONHandler.getMemoJSON(memoVO));
-            result = getResponseCondition();
+            result = isResponseSucceed();
             closeConn();
         } catch (IOException e) {
             e.printStackTrace();
@@ -147,23 +151,71 @@ public class HttpService {
      *
      * @param userName 用户名
      * @param password 密码
-     * @return 是否成功登录
+     * @return 成功就返回userID，失败就返回null
      */
-    public boolean signIn(String userName, String password) {
+    public String signIn(String userName, String password) {
         boolean result;
+        String resultString = null;
         setConnection(RequestMethod.POST, RequestProperty.JSON);
         conn.setRequestProperty("Request-Type", "Sign-In");
 
         try {
             flushInfo(JSONHandler.getSignInJSON(userName, password));
-            result = getResponseCondition();
+            result = isResponseSucceed();
+            if (result) {
+                resultString = getJSONString();
+                resultString = JSONHandler.getUserID(resultString);
+            }
             closeConn();
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
+            return null;
+        }
+        return resultString;
+    }
+
+    /**
+     * @param userID
+     * @return 返回服务器中的用户信息
+     */
+    public UserVOLite getUserInfo(String userID) {
+        String resultString = null;
+        setConnection(RequestMethod.POST, RequestProperty.JSON);
+        conn.setRequestProperty("Request-Type", "Get-User-Info");
+
+        try {
+            flushInfo(JSONHandler.getUserIDJSON(userID));
+            resultString = getJSONString();
+            closeConn();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        return result;
+        return JSONHandler.getUserInfo(resultString);
+    }
+
+    /**
+     * @param userID
+     * @return 返回服务器中的用户头像
+     */
+    public Bitmap getUserLogo(String userID) {
+        Bitmap logo = null;
+        boolean result;
+        setConnection(RequestMethod.POST, RequestProperty.JSON);
+        conn.setRequestProperty("Request-Type", "Get-Logo");
+
+        try {
+            flushInfo(JSONHandler.getUserIDJSON(userID));
+            result = isResponseSucceed();
+            if (result) {
+                logo = BitmapFactory.decodeStream(conn.getInputStream());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return logo;
     }
 
 
@@ -272,7 +324,7 @@ public class HttpService {
      * @return 是否成功
      * @throws IOException
      */
-    private boolean getResponseCondition() throws IOException {
+    private boolean isResponseSucceed() throws IOException {
         return (conn.getResponseCode() == 200);
     }
 

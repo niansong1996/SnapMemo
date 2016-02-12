@@ -19,17 +19,17 @@
         android:id="@+id/userLogo"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_above="@+id/userName"
+        android:layout_above="@+id/userNameText"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="10dp"
         android:layout_marginStart="25dp"
         android:src="@android:drawable/sym_def_app_icon" />
 
     <TextView
-        android:id="@+id/userName"
+        android:id="@+id/userNameText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/condition"
+        android:layout_above="@+id/signiture"
         android:layout_alignParentStart="true"
         android:paddingLeft="25dp"
         android:text="Alan"
@@ -37,7 +37,7 @@
         android:textSize="30sp" />
 
     <TextView
-        android:id="@+id/condition"
+        android:id="@+id/signiture"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

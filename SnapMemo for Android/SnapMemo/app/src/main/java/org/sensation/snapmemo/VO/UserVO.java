@@ -7,16 +7,26 @@ import android.graphics.Bitmap;
  */
 public class UserVO {
 
+    String userID;
     String userName;
     String educationInfo;
     String condition;
     Bitmap userLogo;
 
-    public UserVO(String userName, String educationInfo, String condition, Bitmap userLogo) {
+    public UserVO(String userID, String userName, String educationInfo, String condition, Bitmap userLogo) {
+        this.userID = userID;
         this.userName = userName;
         this.educationInfo = educationInfo;
         this.condition = condition;
         this.userLogo = userLogo;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
     public String getUserName() {
@@ -50,4 +60,5 @@ public class UserVO {
     public void setUserLogo(Bitmap userLogo) {
         this.userLogo = userLogo;
     }
+
 }

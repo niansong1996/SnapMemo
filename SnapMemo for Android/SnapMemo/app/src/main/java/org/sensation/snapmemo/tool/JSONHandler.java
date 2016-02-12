@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.sensation.snapmemo.VO.MemoVO;
 import org.sensation.snapmemo.VO.MemoVOLite;
+import org.sensation.snapmemo.VO.UserVOLite;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -33,7 +34,8 @@ public class JSONHandler {
         MemoVOLite memoVOLite = gson.fromJson(JSONMemoVO, MemoVOLite.class);
         String date = memoVOLite.getDate();
         String day = getDay(date);
-        MemoVO memoVO = new MemoVO(memoVOLite.getTopic(), memoVOLite.getDate(), day, memoVOLite.getContent());
+        MemoVO memoVO = new MemoVO(memoVOLite.getMemoID(), memoVOLite.getTopic(),
+                memoVOLite.getDate(), day, memoVOLite.getContent());
 
         return memoVO;
     }
@@ -67,15 +69,15 @@ public class JSONHandler {
     /**
      * 生成memoVO的JSON语句
      *
-     * @param memoVO
-     * @return
+     * @param memoVOLite
+     * @return memoVOLite的JSON String
      */
-    public static String getMemoJSON(MemoVO memoVO) {
+    public static String getMemoJSON(MemoVOLite memoVOLite) {
         Gson gson = new Gson();
         String memoJSON;
-        TypeAdapter<MemoVO> typeAdapter = gson.getAdapter(MemoVO.class);
+        TypeAdapter<MemoVOLite> typeAdapter = gson.getAdapter(MemoVOLite.class);
         try {
-            memoJSON = typeAdapter.toJson(memoVO);
+            memoJSON = typeAdapter.toJson(memoVOLite);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -83,6 +85,19 @@ public class JSONHandler {
         return memoJSON;
     }
 
+    /**
+     * @param memoID
+     * @return memoID生成的JSON String
+     */
+    public static String getMemoIDJSON(String memoID) {
+        JSONObject memoIDJSON = new JSONObject();
+        try {
+            memoIDJSON.put("memoID", memoID);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return memoIDJSON.toString();
+    }
 
     /**
      * 生成登录的JSON字符串
@@ -150,4 +165,49 @@ public class JSONHandler {
 
         return dayOfWeek;
     }
+
+    /**
+     * 转换userIDJSONString为userID
+     *
+     * @param userIDJSON
+     * @return
+     */
+    public static String getUserID(String userIDJSON) {
+        try {
+            JSONObject userJSON = new JSONObject(userIDJSON);
+            return userJSON.get("userID").toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * 转换userIDString为userIDJSONString
+     *
+     * @param userID
+     * @return
+     */
+    public static String getUserIDJSON(String userID) {
+        JSONObject userIDJSON = new JSONObject();
+        try {
+            userIDJSON.put("userID", userID);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return userIDJSON.toString();
+    }
+
+    /**
+     * 转换userVOLiteJSON为userVOLite
+     *
+     * @param userInfoJSON
+     * @return
+     */
+    public static UserVOLite getUserInfo(String userInfoJSON) {
+        Gson gson = new Gson();
+        UserVOLite userVOLite = gson.fromJson(userInfoJSON, UserVOLite.class);
+        return userVOLite;
+    }
+
 }

@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity
         }
         String action = intent.getAction();
         String type = intent.getType();
+        //将传入的intent设为null以免onRestart时错误检测
         setIntent(null);
 
         if (type != null) {
@@ -197,12 +198,13 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        TextView userName = (TextView) headerView.findViewById(R.id.userName);
+        TextView userName = (TextView) headerView.findViewById(R.id.userNameText);
         userName.setText(userVO.getUserName());
 
         TextView condition = (TextView) headerView.findViewById(R.id.condition);
         condition.setText(userVO.getCondition());
 
+        //Drawer头部背景
         ImageView userLogoBackground = (ImageView) headerView.findViewById(R.id.userLogoBackground);
         Bitmap originalUserLogo = userVO.getUserLogo(), newUserLogo;
         Point p = new Point();
@@ -283,6 +285,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
+            //stub
             Toast.makeText(MainActivity.this, "Settings", Toast.LENGTH_SHORT).show();
         }
 
