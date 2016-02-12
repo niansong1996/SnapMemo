@@ -1,0 +1,23 @@
+﻿<Page
+    x:Class="SnapMemo.src.ui.PictureChoosePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SnapMemo.src.ui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Name="gridView" Background="AntiqueWhite">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="0">
+            <Image Name="imgView"/>
+        </ScrollViewer>
+        <StackPanel Name="btnList" HorizontalAlignment="Right" Orientation="Horizontal" Grid.Row="1">
+            <Button Content="ok" FontSize="24" Margin="0,0,20,0" Click="OnOK"/>
+            <Button Content="cancel" FontSize="24" Margin="0,0,0,0" Click="OnCancel" VerticalAlignment="Stretch"/>
+        </StackPanel>
+    </Grid>
+</Page>
