@@ -66,15 +66,16 @@ namespace SnapMemo.src.ui
             if(type == OperateType.ADD)
             {
                 DBHelper.AddMemo(modifyingMemo);
-                NotificationHelper.AddToSchedule(modifyingMemo);
+                NotificationHelper.AddToastToSchedule(modifyingMemo);
+                NotificationHelper.AddTileNotification();
 
                 root.Navigate(typeof(MainPage));
             }
             else if(type == OperateType.MODIFY)
             {
                 DBHelper.UpdateMemo(modifyingMemo);
-                NotificationHelper.RemoveFromSchedule(modifyingMemo);
-                NotificationHelper.AddToSchedule(modifyingMemo);
+                NotificationHelper.RemoveToastFromSchedule(modifyingMemo);
+                NotificationHelper.AddToastToSchedule(modifyingMemo);
 
                 root.Navigate(typeof(MainPage));
             }

@@ -144,7 +144,7 @@ namespace SnapMemo
                 else
                 {
                     DBHelper.DeleteMemo(memoBlock.Memo);
-                    NotificationHelper.RemoveFromSchedule(memoBlock.Memo);
+                    NotificationHelper.RemoveToastFromSchedule(memoBlock.Memo);
                 }
             }
         }
