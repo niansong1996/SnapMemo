@@ -18,8 +18,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.sensation.snapmemo.R;
 import org.sensation.snapmemo.VO.MemoVO;
@@ -28,6 +28,7 @@ import org.sensation.snapmemo.tool.ClientData;
 import org.sensation.snapmemo.tool.Resource_stub;
 import org.sensation.snapmemo.widget.ListViewAdapter;
 import org.sensation.snapmemo.widget.RoundImageView;
+import org.sensation.snapmemo.widget.SwipeDismissListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * 列表
      */
-    ListView listView;
+    SwipeDismissListView listView;
 
     /**
      * 列表适配器
@@ -78,14 +79,38 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         clientData = ClientData.getInstance();
         userVO = clientData.getUserVO();
+
         init();
 
-        //在此获得截得的Action，如果不为空就启动StartActivity并将图片Uri传入
-        Intent intent = getIntent();
+        interceptIntent(getIntent());
+    }
+
+    /**
+     * 初始化部件和数据加载
+     */
+    private void init() {
+        initToolBar();
+        initDrawer();
+        initNavigation();
+        initListView();
+    }
+
+    /**
+     * 在此获得截得的Action，如果不为空就启动StartActivity并将图片Uri传入
+     *
+     * @param intent
+     */
+    private void interceptIntent(Intent intent) {
+        if (intent == null) {
+            return;
+        }
         String action = intent.getAction();
         String type = intent.getType();
+        //将传入的intent设为null以免onRestart时错误检测
+        setIntent(null);
 
         if (type != null) {
             if (type.startsWith("image/")) {
@@ -102,30 +127,20 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /**
-     * 初始化部件和数据加载
-     */
-    private void init() {
-
-        initToolBar();
-
-        initDrawer();
-
-        initNavigation();
-
-        initListView();
-
-
-    }
-
 
     /**
      * 初始化列表显示，在网络连通后才进行更新
      */
     private void initListView() {
-        listView = (ListView) findViewById(R.id.listView);
+        listView = (SwipeDismissListView) findViewById(R.id.listView);
+        listView.setOnDismissCallback(new SwipeDismissListView.OnDismissCallback() {
+            @Override
+            public void onDismiss(int dismissPosition) {
+                listViewAdapter.remove(listViewAdapter.getItem(dismissPosition));
+            }
+        });
 
-        //stub
+        //TODO 从服务器获得MemoList
         memoVOList = new Resource_stub().getMemoVOs();
 
         listViewAdapter = new ListViewAdapter(this, R.layout.listview_item, memoVOList);
@@ -144,11 +159,6 @@ public class MainActivity extends AppCompatActivity
         clientData.setPosition(memoVOList.size());
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
     /**
      * 初始化ToolBar，设置监听
      */
@@ -156,8 +166,6 @@ public class MainActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
-
-
     }
 
     /**
@@ -190,12 +198,13 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        TextView userName = (TextView) headerView.findViewById(R.id.userName);
+        TextView userName = (TextView) headerView.findViewById(R.id.userNameText);
         userName.setText(userVO.getUserName());
 
         TextView condition = (TextView) headerView.findViewById(R.id.condition);
         condition.setText(userVO.getCondition());
 
+        //Drawer头部背景
         ImageView userLogoBackground = (ImageView) headerView.findViewById(R.id.userLogoBackground);
         Bitmap originalUserLogo = userVO.getUserLogo(), newUserLogo;
         Point p = new Point();
@@ -206,8 +215,6 @@ public class MainActivity extends AppCompatActivity
             newUserLogo = Bitmap.createBitmap(originalUserLogo, 0, 0,
                     originalUserLogo.getWidth(),
                     (int) (originalUserLogo.getWidth() * scaleOfContainer));
-
-
         } else {
             newUserLogo = Bitmap.createBitmap(originalUserLogo, 0, 0,
                     (int) (originalUserLogo.getHeight() / scaleOfContainer),
@@ -229,6 +236,7 @@ public class MainActivity extends AppCompatActivity
 
         MemoVO newMemoVO = clientData.getNewMemoVO();
 
+        //有新添加的Memo
         if (newMemoVO != null) {
             if (clientData.isAdd()) {//新增状态，添加listView内容
                 memoVOList.add(newMemoVO);
@@ -237,6 +245,7 @@ public class MainActivity extends AppCompatActivity
             }
             listViewAdapter.notifyDataSetChanged();
         }
+        //修改过用户信息
         if (clientData.isUserInfoChanged()) {
             //刷新左滑菜单头部显示
             clientData.setUserInfoChanged(false);
@@ -244,6 +253,15 @@ public class MainActivity extends AppCompatActivity
             initNavigation();
         }
 
+        //后台情况下再次启动，需要再截取一次intent
+        interceptIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        //重新设置新的intent
+        setIntent(intent);
     }
 
     @Override
@@ -253,35 +271,29 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
-            overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            //stub
+            Toast.makeText(MainActivity.this, "Settings", Toast.LENGTH_SHORT).show();
         }
 
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {

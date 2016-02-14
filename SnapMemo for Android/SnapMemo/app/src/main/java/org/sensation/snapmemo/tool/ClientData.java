@@ -4,15 +4,22 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import org.sensation.snapmemo.R;
 import org.sensation.snapmemo.VO.MemoVO;
 import org.sensation.snapmemo.VO.UserVO;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Properties;
 
 /**
@@ -61,15 +68,134 @@ public class ClientData {
         return clientData;
     }
 
+    /**
+     * 保存userVO至本地文件
+     *
+     * @param userVO
+     */
+    public static void saveUserInfo(UserVO userVO) {
+        FileOutputStream out;
+        BufferedWriter writer = null;
+
+        try {
+            out = MyApplication.getContext().openFileOutput("userInfo", Context.MODE_PRIVATE);
+            writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+            writer.write("userID=" + userVO.getUserID());
+            writer.newLine();
+            writer.write("userName=" + userVO.getUserName());
+            writer.newLine();
+            writer.write("educationInfo=" + userVO.getEducationInfo());
+            writer.newLine();
+            writer.write("condition=" + userVO.getCondition());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static void saveUserLogo(Bitmap userLogo) {
+        FileOutputStream out = null;
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        InputStream in = null;
+
+        try {
+            out = MyApplication.getContext().openFileOutput("userLogo", Context.MODE_PRIVATE);
+            userLogo.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+            in = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+            byte[] b = new byte[10 * 1024];
+            while (in.read(b, 0, 10240) != -1) {
+                out.write(b, 0, 10240);
+            }
+            out.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static ArrayList<String> getUserPreference() {
+        String tempPreference;
+        ArrayList<String> userPreferenceList = new ArrayList<String>();
+        FileInputStream fileInputStream = null;
+        BufferedReader bufferedReader = null;
+
+        try {
+            fileInputStream = MyApplication.getContext().openFileInput("userLoginPreference");
+            bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
+
+            while ((tempPreference = bufferedReader.readLine()) != null) {
+                userPreferenceList.add(tempPreference);
+            }
+        } catch (FileNotFoundException e1) {
+            e1.printStackTrace();
+            try {
+                MyApplication.getContext().openFileOutput("userLoginPreference", Context.MODE_PRIVATE);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (bufferedReader != null) {
+                    bufferedReader.close();
+                }
+                if (fileInputStream != null) {
+                    fileInputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return userPreferenceList;
+    }
+
+    public static void saveUserPreference(String userSucceedInput) {
+        FileOutputStream out;
+        BufferedWriter writer = null;
+
+        try {
+            out = MyApplication.getContext().openFileOutput("userLoginPreference", Context.MODE_APPEND);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void initInfo() {
-        String userName, condition, educationInfo;
+        String userID, userName, condition, educationInfo;
         Bitmap userLogo;
         FileInputStream fileInputStream = null;
+        BufferedReader bufferedReader;
         Properties userInfo = new Properties();
         try {
             //加载用户信息
-            userInfo.load(MyApplication.getContext().openFileInput("userInfo"));
+            fileInputStream = MyApplication.getContext().openFileInput("userInfo");
+            //再包装一层BufferedReader是因为中文编码问题
+            bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
+            userInfo.load(bufferedReader);
 
+            userID = userInfo.getProperty("userID");
+            if (userID == null) {
+                initUserInfo();
+            }
             userName = userInfo.getProperty("userName");
             educationInfo = userInfo.getProperty("educationInfo");
             condition = userInfo.getProperty("condition");
@@ -80,7 +206,7 @@ public class ClientData {
 
             userLogo = BitmapFactory.decodeStream(fileInputStream);
 
-            userVO = new UserVO(userName, educationInfo, condition, userLogo);
+            userVO = new UserVO(userID, userName, educationInfo, condition, userLogo);
         } catch (IOException e) {
             e.printStackTrace();
             if (userInfo.size() == 0) {
@@ -89,6 +215,7 @@ public class ClientData {
             if (fileInputStream == null) {
                 initLogo();
             }
+            //重新加载
             initInfo();
         }
     }
@@ -97,14 +224,17 @@ public class ClientData {
      * 初始化本地数据，包括用户信息
      */
     private void initUserInfo() {
-        String defaultUserName = "userName=Alan",
-                defaultEducationInfo = "educationInfo=Nanjing University",
-                defaultCondition = "condition=In love with Grace";
+        String defaultUserID = MyApplication.getContext().getString(R.string.default_user_id),
+                defaultUserName = MyApplication.getContext().getString(R.string.default_user_name),
+                defaultEducationInfo = MyApplication.getContext().getString(R.string.default_education_info),
+                defaultCondition = MyApplication.getContext().getString(R.string.default_condition);
         FileOutputStream out;
         BufferedWriter writer = null;
         try {
             out = MyApplication.getContext().openFileOutput("userInfo", Context.MODE_PRIVATE);
-            writer = new BufferedWriter(new OutputStreamWriter(out));
+            writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+            writer.write(defaultUserID);
+            writer.newLine();
             writer.write(defaultUserName);
             writer.newLine();
             writer.write(defaultEducationInfo);
@@ -150,8 +280,6 @@ public class ClientData {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-
         }
     }
 
@@ -161,7 +289,6 @@ public class ClientData {
      * @return
      */
     public String getServerIP() {
-        //TODO 通过读取配置文件来获得IP地址
         String IP = null;
         Properties IPAddress = new Properties();
         try {

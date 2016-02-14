@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">SnapMemo</string>
+    <string name="designer_ad">Sensation Design.</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -24,4 +25,31 @@
     <string name="undefine">undefine</string>
 
     <string name="user_settings_title">用户设置</string>
+
+    <string name="default_user_name">userName=Alan</string>
+    <string name="default_education_info">educationInfo=Nanjing University</string>
+    <string name="default_condition">signiture=In love with Grace</string>
+    <string name="default_user_id">userID=000000</string>
+
+    <string name="progress_dialog_title">微软牛津计划</string>
+
+    <string name="user_name">用户名</string>
+    <string name="user_id">用户ID</string>
+    <string name="education_info">学校</string>
+    <string name="signiture">签名档</string>
+
+    <string name="internet_failure">网络错误</string>
+    <string name="title_activity_login">登录</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_user_name">帐号 User Name</string>
+    <string name="prompt_password">密码 Password</string>
+    <string name="action_sign_in">登录 Sign in</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">帐号格式不正确</string>
+    <string name="error_invalid_password">密码太短了</string>
+    <string name="error_incorrect_password">密码不正确</string>
+    <string name="error_field_required">这里要填</string>
+    <string name="permission_rationale">需要通讯录权限哟~</string>
+    <string name="title_activity_signin">SigninActivity</string>
 </resources>

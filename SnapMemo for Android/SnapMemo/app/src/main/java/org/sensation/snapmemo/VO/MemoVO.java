@@ -4,16 +4,27 @@ package org.sensation.snapmemo.VO;
  * Created by Alan on 2016/2/3.
  */
 public class MemoVO {
+
+    String memoID;
     String topic;
     String date;
     String day;
     String content;
 
-    public MemoVO(String topic, String date, String day, String content) {
+    public MemoVO(String memoID, String topic, String date, String day, String content) {
+        this.memoID = memoID;
         this.topic = topic;
         this.date = date;
         this.day = day;
         this.content = content;
+    }
+
+    public String getMemoID() {
+        return memoID;
+    }
+
+    public void setMemoID(String memoID) {
+        this.memoID = memoID;
     }
 
     public String getTopic() {
@@ -46,5 +57,9 @@ public class MemoVO {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public MemoVOLite toMemoVOLite() {
+        return new MemoVOLite(memoID, topic, date, content);
     }
 }
