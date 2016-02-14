@@ -1,4 +1,4 @@
-package org.sensation.snapmemo.server.BusinessLogic;
+package org.sensation.snapmemo.server.BusinessLogic.NLP;
 
 import org.sensation.snapmemo.server.BusinessLogicService.NLPModuleService;
 

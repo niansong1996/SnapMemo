@@ -8,6 +8,7 @@ public class UserPO {
 	private String password;
 	private String groupID;
 	private String logoLocation;
+	private String signature;
 	private Collection<MemoPO> memos;
 	
 	public UserPO(String iD, String userName, String password) {
@@ -15,6 +16,8 @@ public class UserPO {
 		this.userName = userName;
 		this.password = password;
 		this.groupID = "no_group";
+		this.logoLocation = "/home/SnapMemoData/userLogo/"+this.ID+".png";
+		this.signature = "Take a SNAP and everything gets easier";
 	}
 	public void addMemo(MemoPO memo){
 		this.memos.add(memo);
@@ -51,6 +54,12 @@ public class UserPO {
 	}
 	public void setLogoLocation(String logoLocation) {
 		this.logoLocation = logoLocation;
+	}
+	public String getSignature() {
+		return signature;
+	}
+	public void setSignature(String signature) {
+		this.signature = signature;
 	}
 	@Override
 	public boolean equals(Object o){

@@ -1,12 +1,14 @@
-package org.sensation.snapmemo.server.BusinessLogic;
+package org.sensation.snapmemo.server.BusinessLogic.OCR;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ByteArrayEntity;
@@ -14,13 +16,18 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.sensation.snapmemo.server.BusinessLogicService.OCRModuleService;
+import org.sensation.snapmemo.server.Utility.IntStringWrapper;
 
-public class OCRModule implements OCRModuleService{
-	public String Img2String(byte[] img){
-		String OCRResponseJSON = OxfordOCR(img);
-		return JSONModule.getOCRResult(OCRResponseJSON);
+public class OCRController implements OCRModuleService{
+	private JSON4OCR json;
+	public OCRController(){
+		this.json = new JSON4OCR();
 	}
-	private String OxfordOCR(byte[] img){
+	public IntStringWrapper getOCRResult(byte[] img){
+		IntStringWrapper OCRResponse = OxfordOCR(img);
+		return json.getOCRResult(OCRResponse);
+	}
+	private IntStringWrapper OxfordOCR(byte[] img){
 		CloseableHttpClient httpclient = HttpClients.createDefault();  
 		try{
 			URIBuilder builder = new URIBuilder("https://api.projectoxford.ai/vision/v1/ocr");
@@ -37,19 +44,25 @@ public class OCRModule implements OCRModuleService{
 			// Request body
 			ByteArrayEntity reqEntity = new ByteArrayEntity(img);
 			request.setEntity(reqEntity);
-
+			
+			
 			HttpResponse response = httpclient.execute(request);
+			
 			HttpEntity entity = response.getEntity();
 
 			if (entity != null){
 				String result = EntityUtils.toString(entity);
 				System.out.println(result);
-				return result;
+				return new IntStringWrapper(response.getStatusLine().getStatusCode(),result);
 			}
-		}catch (Exception e){
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return "Failed";
+		return new IntStringWrapper(300,"Unknown Error");
 	}
 	public static byte[] InputStream2Img(InputStream is){
 		ByteArrayOutputStream swapStream = new ByteArrayOutputStream(); 

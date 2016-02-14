@@ -1,58 +1,58 @@
 package org.sensation.snapmemo.server.PO;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+
+import org.sensation.snapmemo.server.Utility.UtilityTools;
 
 public class MemoPO {
-	private String theme;
+	private String memoId;
+	private String topic;
 	//times is annotated as yyyy-mm-dd HH:mm:ss
-	private String startTime;
-	private String endTime;
-	private String description;
+	private Calendar time;
+	private String content;
 	
-	public MemoPO(String theme, String startTime, String endTime, String description) {
-		this.theme = theme;
-		this.startTime = startTime;
-		this.endTime = endTime;
-		this.description = description;
+	public MemoPO(String userID, String topic, String time,String content){
+		SimpleDateFormat myFmt=new SimpleDateFormat("yyyyMMddHHmmssSSSS");
+		this.memoId = userID + myFmt.format(new Date());
+		this.topic = topic;
+		this.time = UtilityTools.String2Cal(time);
+		this.content = content;
 	}
-	public String getTheme() {
-		return theme;
-	}
-
-	public void setTheme(String theme) {
-		this.theme = theme;
+	public String getMemoId() {
+		return memoId;
 	}
 
-	public String getStartTime() {
-		return startTime;
+	public void setMemoId(String memoId) {
+		this.memoId = memoId;
 	}
 
-	public void setStartTime(String startTime) {
-		this.startTime = startTime;
+	public String getTopic() {
+		return topic;
 	}
 
-	public String getEndTime() {
-		return endTime;
+	public void setTopic(String topic) {
+		this.topic = topic;
 	}
 
-	public void setEndTime(String endTime) {
-		this.endTime = endTime;
+	public Calendar getTime() {
+		return time;
 	}
-
-	public String getDescription() {
-		return description;
+	public void setTime(Calendar time) {
+		this.time = time;
 	}
-
-	public void setDescription(String description) {
-		this.description = description;
+	public String getContent() {
+		return content;
 	}
-
+	
+	public void setContent(String content) {
+		this.content = content;
+	}
+	
 	@Override
 	public boolean equals(Object o){
 		//TODO
 		return false;
-	}
-	public static void main(String[] args){
-		Calendar cal = Calendar.getInstance();
 	}
 }

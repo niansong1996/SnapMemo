@@ -1,18 +1,19 @@
 package org.sensation.snapmemo.server.BusinessLogic;
 
+import org.sensation.snapmemo.server.BusinessLogic.NLP.NLPModule;
+import org.sensation.snapmemo.server.BusinessLogic.OCR.OCRController;
+import org.sensation.snapmemo.server.Utility.IntStringWrapper;
 import org.sensation.snapmemo.server.Utility.Request;
 import org.sensation.snapmemo.server.Utility.RequestQueue;
 import org.sensation.snapmemo.server.Utility.Response;
 import org.sensation.snapmemo.server.Utility.ResponseQueue;
 
 public class BLExecutor implements Runnable{
-	OCRModule ocr;
+	OCRController ocr;
 	NLPModule nlp;
-	JSONModule json;
 	public BLExecutor(){
-		this.ocr = new OCRModule();
+		this.ocr = new OCRController();
 		this.nlp = new NLPModule();
-		this.json = new JSONModule();
 	}
 	private void execute(Request request){
 		if(request==null) return;
@@ -22,11 +23,17 @@ public class BLExecutor implements Runnable{
 		}
 	}
 	private void resolveImage(Request request){
-		byte[] img = OCRModule.InputStream2Img(request.is);
-		String info = ocr.Img2String(img);
-		info = "{\"topic\":\"test\",\"date\":\"2016-02-09\",\"content\":\""+info+"\"}";
-		Response response = new Response(request.exchange,info,200);
-		ResponseQueue.put(response);
+		byte[] img = OCRController.InputStream2Img(request.is);
+		IntStringWrapper wrapper = ocr.getOCRResult(img);
+		if(wrapper.getCode()==200){
+			String info = wrapper.getInfo();
+			info = "{\"topic\":\"test\",\"date\":\"2016-02-09\",\"content\":\""+info+"\"}";
+			Response response = new Response(request.exchange,info,200);
+			ResponseQueue.put(response);
+		}else{
+			Response response = new Response(request.exchange,wrapper.getInfo(),wrapper.getCode());
+			ResponseQueue.put(response);
+		}
 	}
 
 	@Override
