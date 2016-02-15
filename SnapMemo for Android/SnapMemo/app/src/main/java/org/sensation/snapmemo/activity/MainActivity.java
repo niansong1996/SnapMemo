@@ -89,9 +89,10 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        init();
         clientData = ClientData.getInstance();
         userVO = clientData.getUserVO();
+        
+        init();
 
         interceptIntent(getIntent());
     }
