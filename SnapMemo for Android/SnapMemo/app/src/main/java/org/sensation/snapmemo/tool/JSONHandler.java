@@ -15,7 +15,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 /**
  * JSON工具类
@@ -41,21 +40,20 @@ public class JSONHandler {
     }
 
     /**
-     * 字符串转成ArrayList
+     * JSONString转成ArrayList
      *
      * @param resultJSONString
      * @return
      */
-    public static List<MemoVO> getMemoList(String resultJSONString) {
+    public static ArrayList<MemoVO> getMemoList(String resultJSONString) {
         JSONArray memo;
-        Gson gson = new Gson();
-        List<MemoVO> memoVOList = new ArrayList<MemoVO>();
+        ArrayList<MemoVO> memoVOList = new ArrayList<MemoVO>();
         try {
             JSONObject memoList = new JSONObject(resultJSONString);
             memo = memoList.getJSONArray("memo");
 
             for (int i = 0; i < memo.length(); i++) {
-                MemoVO memoVO = gson.fromJson(memo.getString(i), MemoVO.class);
+                MemoVO memoVO = getMemoVO(memo.getString(i));
                 memoVOList.add(memoVO);
             }
         } catch (JSONException e) {
@@ -65,6 +63,18 @@ public class JSONHandler {
 
         return memoVOList;
     }
+
+//    /**
+//     * ArrayList转JSONString
+//     * @param memoVOList
+//     * @return
+//     */
+//    public static String getMemoListJSON(ArrayList<MemoVO> memoVOList){
+//        Gson gson = new Gson();
+//        JSONObject memo = new JSONObject();
+//        JSONArray memoList = new JSONArray();
+//
+//    }
 
     /**
      * 生成memoVO的JSON语句
@@ -141,25 +151,25 @@ public class JSONHandler {
 
         switch (dayOfWeekNum) {
             case 1:
-                dayOfWeek = "星期日";
+                dayOfWeek = "周日";
                 break;
             case 2:
-                dayOfWeek = "星期一";
+                dayOfWeek = "周一";
                 break;
             case 3:
-                dayOfWeek = "星期二";
+                dayOfWeek = "周二";
                 break;
             case 4:
-                dayOfWeek = "星期三";
+                dayOfWeek = "周三";
                 break;
             case 5:
-                dayOfWeek = "星期四";
+                dayOfWeek = "周四";
                 break;
             case 6:
-                dayOfWeek = "星期五";
+                dayOfWeek = "周五";
                 break;
             case 7:
-                dayOfWeek = "星期六";
+                dayOfWeek = "周六";
                 break;
         }
 

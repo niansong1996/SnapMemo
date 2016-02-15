@@ -39,7 +39,7 @@ public class UserSettingsActivity extends AppCompatActivity implements View.OnCl
     /**
      * 保存文件的根路径
      */
-    String saveDir = DataTool.defaultSaveDir;
+    String saveDir = DataTool.DEFAULT_SAVING_DIR;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +71,7 @@ public class UserSettingsActivity extends AppCompatActivity implements View.OnCl
         educationInfo = (EditText) findViewById(R.id.educationInfo);
         educationInfo.setText(userVO.getEducationInfo());
 
-        condition = (EditText) findViewById(R.id.condition);
+        condition = (EditText) findViewById(R.id.signiture);
         condition.setText(userVO.getCondition());
     }
 

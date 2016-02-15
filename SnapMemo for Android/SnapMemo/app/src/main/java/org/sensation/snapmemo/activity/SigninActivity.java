@@ -1,6 +1,7 @@
 package org.sensation.snapmemo.activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +22,8 @@ import org.sensation.snapmemo.tool.ClientData;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class SigninActivity extends AppCompatActivity {
 
@@ -76,7 +79,7 @@ public class SigninActivity extends AppCompatActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == R.id.signIn || actionId == EditorInfo.IME_NULL) {
-                    attempLogin();
+                    attemptLogin();
                     return true;
                 }
                 return false;
@@ -86,16 +89,18 @@ public class SigninActivity extends AppCompatActivity {
 
 
     private void initButton() {
-        Button signin = (Button) findViewById(R.id.signIn);
-        signin.setOnClickListener(new View.OnClickListener() {
+        Button signIn = (Button) findViewById(R.id.signIn);
+        signIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO 登录
+                //登录
+                new UserLoginTask(mUserNameView.getText().toString(),
+                        mPasswordView.getText().toString()).execute();
             }
         });
     }
 
-    private void attempLogin() {
+    private void attemptLogin() {
         mUserNameView.setError(null);
         mPasswordView.setError(null);
 
@@ -123,13 +128,16 @@ public class SigninActivity extends AppCompatActivity {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
-        } else {
-            new UserLoginTask(userName, password).execute();
         }
     }
 
     private boolean isPasswordValid(String password) {
         return (password.length() >= 6);
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(new CalligraphyContextWrapper(newBase));
     }
 
     class UserLoginTask extends AsyncTask<Void, Void, String> {
@@ -161,6 +169,7 @@ public class SigninActivity extends AppCompatActivity {
             progressDialog.dismiss();
             if (userID != null) {
                 //TODO 登录成功，ClientData加载用户信息，跳转至MainActivity
+                ClientData.getInstance().setOnline(true);
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();

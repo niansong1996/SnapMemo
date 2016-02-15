@@ -96,7 +96,6 @@ public class ContentActivity extends AppCompatActivity {
 
     private void initToolBar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(getString(R.string.content_title));
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(Color.WHITE);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -127,7 +126,12 @@ public class ContentActivity extends AppCompatActivity {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new DeleteTask().execute(id);
+                if (clientData.isConnected()) {
+                    new DeleteTask().execute(id);
+                } else {
+                    finish();
+                    overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
+                }
             }
         });
     }
@@ -145,14 +149,24 @@ public class ContentActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == android.R.id.home) {
-            new DeleteTask().execute(this.id);
+            if (clientData.isConnected()) {
+                new DeleteTask().execute(this.id);
+            } else {
+                finish();
+                overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
+            }
         }
         return true;
     }
 
     @Override
     public void onBackPressed() {
-        new DeleteTask().execute(id);
+        if (clientData.isConnected()) {
+            new DeleteTask().execute(id);
+        } else {
+            finish();
+            overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
+        }
     }
 
     @Override
@@ -219,6 +233,8 @@ public class ContentActivity extends AppCompatActivity {
             if (aBoolean) {
                 finish();
                 overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
+                //删除成功，关闭网络需求标识
+                clientData.setConnected(false);
             } else {
                 Toast.makeText(ContentActivity.this, getString(R.string.internet_failure), Toast.LENGTH_SHORT).show();
             }

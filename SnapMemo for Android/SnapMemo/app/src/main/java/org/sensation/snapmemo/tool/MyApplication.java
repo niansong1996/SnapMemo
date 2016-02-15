@@ -22,6 +22,6 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
-        CalligraphyConfig.initDefault("fonts/msyhl.ttf", R.attr.fontPath);
+        CalligraphyConfig.initDefault("fonts/fzlt.ttf", R.attr.fontPath);
     }
 }

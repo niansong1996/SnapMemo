@@ -48,7 +48,7 @@ public class StartActivity extends AppCompatActivity {
     /**
      * 保存文件的根路径
      */
-    String saveDir = DataTool.defaultSaveDir;
+    String saveDir = DataTool.DEFAULT_SAVING_DIR;
     /**
      * 从外部传入的图片Uri地址和裁剪后的保存地址
      */
@@ -86,10 +86,11 @@ public class StartActivity extends AppCompatActivity {
         initButton();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(getString(R.string.start_title));
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(Color.WHITE);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         handleImage();
     }
@@ -185,8 +186,7 @@ public class StartActivity extends AppCompatActivity {
         @Override
         protected MemoVO doInBackground(ByteArrayOutputStream... params) {
 //            MemoVO memoVO = new HttpService_stub().transPic(params[0]);
-            MemoVO memoVO = new HttpService().transPic(params[0]);
-            return memoVO;
+            return new HttpService().transPic(params[0]);
 
         }
 

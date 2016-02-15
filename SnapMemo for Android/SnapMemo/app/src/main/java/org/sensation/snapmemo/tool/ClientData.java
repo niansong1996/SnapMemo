@@ -59,6 +59,16 @@ public class ClientData {
      */
     boolean isUserInfoChanged;
 
+    /**
+     * 判断是否需要联网，默认不需要联网
+     */
+    boolean isConnected = false;
+
+    /**
+     * 判断是否用户已登录，默认未登录
+     */
+    boolean isOnline = false;
+
     private ClientData() {
         //加载本地用户信息
         initInfo();
@@ -168,15 +178,144 @@ public class ClientData {
         return userPreferenceList;
     }
 
+    /**
+     * 保存成功登录的用户名数据
+     *
+     * @param userSucceedInput 成功登录的用户名
+     */
     public static void saveUserPreference(String userSucceedInput) {
-        FileOutputStream out;
+        FileOutputStream out = null;
         BufferedWriter writer = null;
 
         try {
             out = MyApplication.getContext().openFileOutput("userLoginPreference", Context.MODE_APPEND);
-        } catch (FileNotFoundException e) {
+            writer = new BufferedWriter(new OutputStreamWriter(out));
+            writer.write(userSucceedInput);
+            writer.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+                if (writer != null) {
+                    writer.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * @return 是否登录过
+     */
+    public boolean isSigned() {
+        try {
+            MyApplication.getContext().openFileInput("userSignedInfo");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @return 已经登录过的帐号和密码，作为数组的0和1位置传回
+     */
+    public String[] getUserSignInfo() {
+        String userName = "", password = "";
+        FileInputStream in = null;
+        BufferedReader reader = null;
+
+        try {
+            in = MyApplication.getContext().openFileInput("userSignedInfo");
+            reader = new BufferedReader(new InputStreamReader(in));
+            userName = reader.readLine();
+            password = reader.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return new String[]{userName, password};
+    }
+
+    /**
+     * 保存已经登录的帐号密码信息
+     *
+     * @param signedInfo 以数组形式传入的帐号密码
+     * @return 是否保存成功
+     */
+    public boolean saveUserSignedInfo(String[] signedInfo) {
+        String userName = signedInfo[0], password = signedInfo[1];
+        FileOutputStream out = null;
+        BufferedWriter writer = null;
+
+        try {
+            out = MyApplication.getContext().openFileOutput("userSignedInfo", Context.MODE_PRIVATE);
+            writer = new BufferedWriter(new OutputStreamWriter(out));
+            writer.write(userName);
+            writer.newLine();
+            writer.write(password);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+                if (writer != null) {
+                    writer.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 通过读取配置文件来获得IP地址
+     *
+     * @return 服务器的IP地址
+     */
+    public String getServerIP() {
+        String IP = null;
+        Properties IPAddress = new Properties();
+        try {
+            IPAddress.load(MyApplication.getContext().getAssets().open("ip_address.properties"));
+            IP = IPAddress.getProperty("ip");
+        } catch (IOException e) {
             e.printStackTrace();
         }
+        return IP;
+    }
+
+    /**
+     * @return 是否是首次运行
+     */
+    public boolean isFirstRun() {
+        boolean isFirstRun = true;
+        Properties runtime = new Properties();
+        try {
+            runtime.load(MyApplication.getContext().getAssets().open("runtime.properties"));
+            isFirstRun = Boolean.parseBoolean(runtime.getProperty("isFirstRun"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return isFirstRun;
     }
 
     private void initInfo() {
@@ -228,7 +367,7 @@ public class ClientData {
                 defaultUserName = MyApplication.getContext().getString(R.string.default_user_name),
                 defaultEducationInfo = MyApplication.getContext().getString(R.string.default_education_info),
                 defaultCondition = MyApplication.getContext().getString(R.string.default_condition);
-        FileOutputStream out;
+        FileOutputStream out = null;
         BufferedWriter writer = null;
         try {
             out = MyApplication.getContext().openFileOutput("userInfo", Context.MODE_PRIVATE);
@@ -243,12 +382,15 @@ public class ClientData {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+            try {
+                if (out != null) {
+                    out.close();
                 }
+                if (writer != null) {
+                    writer.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -281,23 +423,6 @@ public class ClientData {
                 e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * 通过读取配置文件来获得IP地址
-     *
-     * @return
-     */
-    public String getServerIP() {
-        String IP = null;
-        Properties IPAddress = new Properties();
-        try {
-            IPAddress.load(MyApplication.getContext().getAssets().open("ip_address.properties"));
-            IP = IPAddress.getProperty("ip");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return IP;
     }
 
     public UserVO getUserVO() {
@@ -347,5 +472,21 @@ public class ClientData {
 
     public void setUserInfo(UserVO userVO) {
         this.userVO = userVO;
+    }
+
+    public boolean isConnected() {
+        return isConnected;
+    }
+
+    public void setConnected(boolean isConnected) {
+        this.isConnected = isConnected;
+    }
+
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    public void setOnline(boolean isOnline) {
+        this.isOnline = isOnline;
     }
 }

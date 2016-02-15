@@ -1,11 +1,13 @@
 package org.sensation.snapmemo.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -24,7 +26,9 @@ import android.widget.Toast;
 import org.sensation.snapmemo.R;
 import org.sensation.snapmemo.VO.MemoVO;
 import org.sensation.snapmemo.VO.UserVO;
+import org.sensation.snapmemo.httpservice.HttpService;
 import org.sensation.snapmemo.tool.ClientData;
+import org.sensation.snapmemo.tool.DataTool;
 import org.sensation.snapmemo.tool.Resource_stub;
 import org.sensation.snapmemo.widget.ListViewAdapter;
 import org.sensation.snapmemo.widget.RoundImageView;
@@ -75,15 +79,19 @@ public class MainActivity extends AppCompatActivity
      */
     UserVO userVO;
 
+    /**
+     * 自动登录进度条
+     */
+    ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        init();
         clientData = ClientData.getInstance();
         userVO = clientData.getUserVO();
-
-        init();
 
         interceptIntent(getIntent());
     }
@@ -92,10 +100,36 @@ public class MainActivity extends AppCompatActivity
      * 初始化部件和数据加载
      */
     private void init() {
+        preLogin();
         initToolBar();
         initDrawer();
         initNavigation();
         initListView();
+    }
+
+    /**
+     * <strong>前置登录状态检查</strong><br>
+     * 1. 如果已经登录过，就从文件读取用户名密码进行登录<br>
+     * 1.1 如果网络连接成功就从服务器加载资源，并同步本地数据<br>
+     * 1.2 如果网络连接不成功或登录失败，就从本地加载资源，但不可进行添加修改<br><br>
+     * 2. 如果没有登录过，设置关键位，从使用默认文件<br>
+     * 2.1 加载保存本地文件，数据不上传<br>
+     * 2.2 如果以后注册新用户，就将本地文件同步至服务器<br>
+     */
+    private void preLogin() {
+        if (clientData.isSigned()) {
+            //TODO 利用已有的帐号密码进行登录
+//            String[] signInfo = clientData.getUserSignInfo();
+//            new UserLoginTask(signInfo[0], signInfo[1]).execute();
+            clientData.setOnline(true);
+        } else {
+            //TODO 设置关键位，加载本地文件
+            clientData.setOnline(false);
+            ArrayList<MemoVO> tempList = DataTool.getLocalMemoList(DataTool.DEFAULT_USER_NAME);
+            if (tempList != null) {
+                memoVOList = tempList;
+            }
+        }
     }
 
     /**
@@ -189,19 +223,26 @@ public class MainActivity extends AppCompatActivity
 
         RoundImageView userLogo = (RoundImageView) headerView.findViewById(R.id.userLogo);
         userLogo.setImageBitmap(userVO.getUserLogo());
+        //已经登录了就跳转至用户设置界面，没有登录就跳转至登录界面
         userLogo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, UserSettingsActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+                if (clientData.isOnline()) {
+                    Intent intent = new Intent(MainActivity.this, UserSettingsActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+                } else {
+                    Intent intent = new Intent(MainActivity.this, SigninActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+                }
             }
         });
 
         TextView userName = (TextView) headerView.findViewById(R.id.userNameText);
         userName.setText(userVO.getUserName());
 
-        TextView condition = (TextView) headerView.findViewById(R.id.condition);
+        TextView condition = (TextView) headerView.findViewById(R.id.signiture);
         condition.setText(userVO.getCondition());
 
         //Drawer头部背景
@@ -314,4 +355,50 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    class UserLoginTask extends AsyncTask<Void, Void, String> {
+        private final String mUserName;
+        private final String mPassword;
+
+        UserLoginTask(String userName, String password) {
+            mUserName = userName;
+            mPassword = password;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = new ProgressDialog(MainActivity.this);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage("SnapMemo正在登录...");
+            progressDialog.show();
+            progressDialog.setCancelable(false);
+            progressDialog.setCanceledOnTouchOutside(false);
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            return new HttpService().signIn(mUserName, mPassword);
+        }
+
+        @Override
+        protected void onPostExecute(String userID) {
+            progressDialog.dismiss();
+            if (userID != null) {
+                //TODO 登录成功，ClientData加载用户信息，跳转至MainActivity
+                ClientData.getInstance().setOnline(true);
+            } else {
+                //登录失效，跳转至SigninActivity
+                Toast.makeText(MainActivity.this, getString(R.string.signin_overtime), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, SigninActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            progressDialog.dismiss();
+        }
+    }
+
 }
