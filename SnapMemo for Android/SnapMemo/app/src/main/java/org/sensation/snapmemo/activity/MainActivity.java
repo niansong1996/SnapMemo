@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity
 
         clientData = ClientData.getInstance();
         userVO = clientData.getUserVO();
-        
+
         init();
 
         interceptIntent(getIntent());

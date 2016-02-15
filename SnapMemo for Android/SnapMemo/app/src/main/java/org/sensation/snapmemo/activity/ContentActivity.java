@@ -24,6 +24,7 @@ import org.sensation.snapmemo.tool.ClientData;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class ContentActivity extends AppCompatActivity {
+    final String TAG = "SnapMemo";
     ClientData clientData = ClientData.getInstance();
     EditText topicContent, timeContent, contentContent;
     ProgressDialog progressDialog;
@@ -118,6 +119,11 @@ public class ContentActivity extends AppCompatActivity {
                 //如果用户修改了内容就发送修改请求
                 if (isModified()) {
                     new ModifyTask().execute(newMemoVO.toMemoVOLite());
+                }else{
+                    Intent intent = new Intent(ContentActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                    overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
                 }
             }
         });
@@ -140,7 +146,7 @@ public class ContentActivity extends AppCompatActivity {
      * @return 是否修改过memo内容
      */
     private boolean isModified() {
-        return !(id.equals(originID) && topic.equals(originTopic) && date.equals(originDate)
+        return !(topic.equals(originTopic) && date.equals(originDate)
                 && day.equals(originDay) && content.equals(originContent));
     }
 
