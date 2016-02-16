@@ -1,14 +1,22 @@
 package org.sensation.snapmemo.server.PO;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 public class GroupPO {
 	private String ID;
 	private String groupName;
 	private Collection<UserPO> users;
+	
+	public GroupPO(){}
 	public GroupPO(String iD, String groupName) {
+		this.users = new ArrayList<UserPO>();
 		ID = iD;
 		this.groupName = groupName;
+	}
+	public Iterator<UserPO> getUsers(){
+		return this.users.iterator();
 	}
 	public void addUser(UserPO user){
 		this.users.add(user);

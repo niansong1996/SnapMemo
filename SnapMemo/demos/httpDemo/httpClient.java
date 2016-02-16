@@ -48,7 +48,7 @@ public class httpClient {
 		}
 	}   
 	static byte[] getImageBinary(){    
-		File f = new File("D:\\1.jpg");           
+		File f = new File("D:\\2.jpg");           
 		BufferedImage bi;    
 		try {    
 			bi = ImageIO.read(f);    

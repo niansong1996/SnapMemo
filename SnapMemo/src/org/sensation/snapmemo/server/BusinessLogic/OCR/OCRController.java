@@ -17,6 +17,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.sensation.snapmemo.server.BusinessLogicService.OCRModuleService;
 import org.sensation.snapmemo.server.Utility.IntStringWrapper;
+import org.sensation.snapmemo.server.Utility.UtilityTools;
 
 public class OCRController implements OCRModuleService{
 	private JSON4OCR json;
@@ -25,6 +26,7 @@ public class OCRController implements OCRModuleService{
 	}
 	public IntStringWrapper getOCRResult(byte[] img){
 		IntStringWrapper OCRResponse = OxfordOCR(img);
+		System.out.println("Oxford Responsed @ "+UtilityTools.getCurrentTime());
 		return json.getOCRResult(OCRResponse);
 	}
 	private IntStringWrapper OxfordOCR(byte[] img){

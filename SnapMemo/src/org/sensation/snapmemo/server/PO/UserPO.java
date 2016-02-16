@@ -1,9 +1,11 @@
 package org.sensation.snapmemo.server.PO;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 public class UserPO {
-	private String ID;
+	private String userID;
 	private String userName;
 	private String password;
 	private String groupID;
@@ -11,13 +13,18 @@ public class UserPO {
 	private String signature;
 	private Collection<MemoPO> memos;
 	
+	public UserPO(){}
 	public UserPO(String iD, String userName, String password) {
-		ID = iD;
+		this.userID = iD;
+		this.memos = new ArrayList<MemoPO>();
 		this.userName = userName;
 		this.password = password;
 		this.groupID = "no_group";
-		this.logoLocation = "/home/SnapMemoData/userLogo/"+this.ID+".png";
+		this.logoLocation = "/home/SnapMemoData/userLogo/"+this.userID+".png";
 		this.signature = "Take a SNAP and everything gets easier";
+	}
+	public Iterator<MemoPO> getMemos(){
+		return this.memos.iterator();
 	}
 	public void addMemo(MemoPO memo){
 		this.memos.add(memo);
@@ -26,10 +33,10 @@ public class UserPO {
 		this.memos.remove(memo);
 	}
 	public String getID() {
-		return ID;
+		return userID;
 	}
 	public void setID(String iD) {
-		ID = iD;
+		userID = iD;
 	}
 	public String getUserName() {
 		return userName;

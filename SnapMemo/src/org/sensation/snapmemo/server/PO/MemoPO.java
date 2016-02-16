@@ -7,25 +7,25 @@ import java.util.Date;
 import org.sensation.snapmemo.server.Utility.UtilityTools;
 
 public class MemoPO {
-	private String memoId;
+	private String memoID;
 	private String topic;
 	//times is annotated as yyyy-mm-dd HH:mm:ss
 	private Calendar time;
 	private String content;
-	
+	public MemoPO(){}
 	public MemoPO(String userID, String topic, String time,String content){
 		SimpleDateFormat myFmt=new SimpleDateFormat("yyyyMMddHHmmssSSSS");
-		this.memoId = userID + myFmt.format(new Date());
+		this.memoID = userID + myFmt.format(new Date());
 		this.topic = topic;
 		this.time = UtilityTools.String2Cal(time);
 		this.content = content;
 	}
 	public String getMemoId() {
-		return memoId;
+		return memoID;
 	}
 
 	public void setMemoId(String memoId) {
-		this.memoId = memoId;
+		this.memoID = memoId;
 	}
 
 	public String getTopic() {

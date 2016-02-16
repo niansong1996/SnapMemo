@@ -7,6 +7,7 @@ import org.sensation.snapmemo.server.Utility.Request;
 import org.sensation.snapmemo.server.Utility.RequestQueue;
 import org.sensation.snapmemo.server.Utility.Response;
 import org.sensation.snapmemo.server.Utility.ResponseQueue;
+import org.sensation.snapmemo.server.Utility.UtilityTools;
 
 public class BLExecutor implements Runnable{
 	OCRController ocr;
@@ -23,8 +24,10 @@ public class BLExecutor implements Runnable{
 		}
 	}
 	private void resolveImage(Request request){
+		System.out.println("Resolve Image Begin @ "+UtilityTools.getCurrentTime());
 		byte[] img = OCRController.InputStream2Img(request.is);
 		IntStringWrapper wrapper = ocr.getOCRResult(img);
+		System.out.println("JSON Module responsed @ "+UtilityTools.getCurrentTime());
 		if(wrapper.getCode()==200){
 			String info = wrapper.getInfo();
 			info = "{\"topic\":\"test\",\"date\":\"2016-02-09\",\"content\":\""+info+"\"}";

@@ -9,10 +9,10 @@ public class ResponseQueue {
 	}
 	public static void put(Response response){
 		ResponseQueue.queue.add(response);
-		System.out.println("ResponseQueue IN, Current size: "+queue.size());
+//		System.out.println("ResponseQueue IN, Current size: "+queue.size());
 	}
 	public static Response get(){
-		System.out.println("ResponseQueue OUT, Current size: "+(queue.size()-1));
+//		System.out.println("ResponseQueue OUT, Current size: "+(queue.size()-1));
 		return queue.poll();
 	}
 	public static boolean isEmpty(){

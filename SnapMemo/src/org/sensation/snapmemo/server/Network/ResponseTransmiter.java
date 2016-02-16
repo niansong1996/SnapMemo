@@ -30,7 +30,7 @@ public class ResponseTransmiter implements Runnable{
 		try {
 			exchange.sendResponseHeaders(code, responseString.getBytes().length);
 			OutputStream os = exchange.getResponseBody();     
-			os.write(responseString.getBytes());     
+			os.write(responseString.getBytes("UTF-8"));     
 			os.close();  
 		} catch (IOException e) {
 			e.printStackTrace();
