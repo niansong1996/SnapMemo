@@ -133,24 +133,21 @@ namespace SnapMemo
 
         private void OnDelete(object sender, RoutedEventArgs e)
         {
-            //var memos = memoList.Children.ToList();
-            //memoList.Children.Clear();
-            //foreach (var one in memos)
-            //{
-            //    MemoBlock memoBlock = one as MemoBlock;
-            //    if (!memoBlock.Selected)
-            //    {
-            //        memoList.Children.Add(memoBlock);
-            //    }
-            //    else
-            //    {
-            //        DBHelper.DeleteMemo(memoBlock.Memo);
-            //        NotificationHelper.RemoveToastFromSchedule(memoBlock.Memo);
-            //    }
-            //}
-            JsonObject js = new JsonObject();
-            JsonObject.TryParse("{\"name\":\"json\"}", out js);
-            Debug.WriteLine(js);
+            var memos = memoList.Children.ToList();
+            memoList.Children.Clear();
+            foreach (var one in memos)
+            {
+                MemoBlock memoBlock = one as MemoBlock;
+                if (!memoBlock.Selected)
+                {
+                    memoList.Children.Add(memoBlock);
+                }
+                else
+                {
+                    DBHelper.DeleteMemo(memoBlock.Memo);
+                    NotificationHelper.RemoveToastFromSchedule(memoBlock.Memo);
+                }
+            }
         }
 
         private async void OnSnap(object sender, RoutedEventArgs e)

@@ -72,6 +72,5 @@ namespace SnapMemo.src.logic
             return null;
         }
 
-
     }
 }
