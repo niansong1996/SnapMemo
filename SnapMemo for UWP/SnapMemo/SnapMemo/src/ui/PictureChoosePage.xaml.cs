@@ -18,6 +18,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using Windows.Web.Http;
+using Windows.Web.Http.Filters;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -36,16 +38,28 @@ namespace SnapMemo.src.ui
             this.InitializeComponent();
         }
 
-        private async void capture()
+        private async void Capture()
         {
             var memStream = new InMemoryRandomAccessStream();
             var encoder = await BitmapEncoder.CreateForTranscodingAsync(memStream, decoder);
 
+            var imgViewW = imgView.RenderSize.Width;
+            var imgViewH = imgView.RenderSize.Height;
+
+            var deviationW = (containerGrid.RenderSize.Width - imgViewW) / 2;
+            var deviationH = (containerGrid.RenderSize.Height - imgViewH) / 2;
+
             BitmapBounds bounds = new BitmapBounds();
-            bounds.X = 0;
-            bounds.Y = 0;
-            bounds.Height = 34;
-            bounds.Width = 77;
+            bounds.X = (uint)((border.Margin.Left - deviationW) / imgViewW * decoder.PixelWidth);
+            bounds.Y = (uint)((border.Margin.Top - deviationH) / imgViewH * decoder.PixelHeight);
+            bounds.Width = (uint)(border.Width / imgViewW * decoder.PixelWidth);
+            bounds.Height = (uint)(border.Height / imgViewH * decoder.PixelHeight);
+
+            Debug.WriteLine("left:{0}, top:{1}, width:{2}, height:{3}", border.Margin.Left, border.Margin.Top, border.Width, border.Height);
+            Debug.WriteLine("cwidth:{0}, cheight:{1}", imgViewW, imgViewH);
+            Debug.WriteLine("pixelWidth:{0}, pixelHeight:{1}", decoder.PixelWidth, decoder.PixelHeight);
+            Debug.WriteLine("x:{0}, y:{1}, w:{2}, h:{3}", bounds.X, bounds.Y, bounds.Width, bounds.Height);
+
             encoder.BitmapTransform.Bounds = bounds;
 
             await encoder.FlushAsync();
@@ -95,7 +109,7 @@ namespace SnapMemo.src.ui
 
         private void OnOK(object sender, RoutedEventArgs e)
         {
-            capture();
+            Capture();
 
             // TODO send to server
             //Frame root = Window.Current.Content as Frame;

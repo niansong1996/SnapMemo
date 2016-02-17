@@ -99,6 +99,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="src\logic\NetHelper.cs" />
     <Compile Include="src\logic\NotificationHelper.cs" />
     <Compile Include="src\logic\PictureHelper.cs" />
     <Compile Include="src\logic\DBHelper.cs" />
