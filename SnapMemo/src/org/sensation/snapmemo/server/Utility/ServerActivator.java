@@ -1,11 +1,8 @@
 package org.sensation.snapmemo.server.Utility;
 
 import org.sensation.snapmemo.server.BusinessLogic.BLController;
-import org.sensation.snapmemo.server.BusinessLogicService.NetworkService;
 import org.sensation.snapmemo.server.Data.MemoData;
 import org.sensation.snapmemo.server.Data.UserData;
-import org.sensation.snapmemo.server.DataService.MemoDataService;
-import org.sensation.snapmemo.server.DataService.UserDataService;
 import org.sensation.snapmemo.server.Network.NetworkController;
 
 public class ServerActivator {
@@ -14,8 +11,8 @@ public class ServerActivator {
 		activator.activate();
 	}
 	
-	MemoDataService memoData;
-	UserDataService userData;
+	MemoData memoData;
+	UserData userData;
 	NetworkController networkController;
 	BLController businessLogicController;
 	public ServerActivator(){
