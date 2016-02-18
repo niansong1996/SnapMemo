@@ -16,12 +16,11 @@ public class Request {
 		this.is = exchange.getRequestBody();
 		Map<String,List<String>> map = exchange.getRequestHeaders();
 		String type = map.get("Request-Type").get(0);
-		switch(type){
-		case "Resolve-Image": this.type = RequestType.ResolveImage;break;
-		default : this.type = RequestType.ResolveImage;break;
+		try{
+		this.type = RequestType.valueOf(type.replace("-", ""));
+		}catch(IllegalArgumentException e){
+			ResponseQueue.put(new Response(exchange,400));
 		}
 	}
-	
-	
 	
 }

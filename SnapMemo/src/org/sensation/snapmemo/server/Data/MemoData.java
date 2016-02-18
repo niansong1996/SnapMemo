@@ -1,5 +1,7 @@
 package org.sensation.snapmemo.server.Data;
 
+import java.util.Iterator;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -12,7 +14,7 @@ public class MemoData{
 		this.session = MySessionFactory.sessionFactory.openSession();
 	}
 	public ResultMessage addMemo(MemoPO memo){
-		if(findMemo(memo.getMemoId())!=null)
+		if(findMemo(memo.getMemoID())!=null)
 			return new ResultMessage(false,"this memo already exists!");
 		else{
 			session.beginTransaction();
@@ -28,14 +30,14 @@ public class MemoData{
 		else{
 			session.beginTransaction();
 			MemoPO tmp = new MemoPO();
-			tmp.setMemoId(memoID);
+			tmp.setMemoID(memoID);
 			session.delete(tmp);
 			session.getTransaction().commit();
 			return new ResultMessage(true,"success");
 		}
 	}
 	public ResultMessage updateMemo(MemoPO memo){
-		if(findMemo(memo.getMemoId())==null)
+		if(findMemo(memo.getMemoID())==null)
 			return new ResultMessage(false,"this memo doesn't exist!");
 		else{
 			session.beginTransaction();
@@ -52,5 +54,13 @@ public class MemoData{
 			return null;
 		else
 			return (MemoPO) cri.list().get(0);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Iterator<MemoPO> getMemoList(String userID){
+		session.beginTransaction();
+		Criteria cri = session.createCriteria(MemoPO.class);
+		cri.add(Restrictions.eq("userID", userID));
+		return (Iterator<MemoPO>)cri.list().iterator();
 	}
 }

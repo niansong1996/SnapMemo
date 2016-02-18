@@ -12,7 +12,7 @@ public class UserData{
 		this.session = MySessionFactory.sessionFactory.openSession();
 	}
 	public ResultMessage addUser(UserPO user){
-		if(findUser(user.getID())!=null)
+		if(findUserByID(user.getID())!=null)
 			return new ResultMessage(false,"this user already exists!");
 		else{
 			session.beginTransaction();
@@ -23,7 +23,7 @@ public class UserData{
 
 	}
 	public ResultMessage deleteUser(String userID){
-		if(findUser(userID)==null)
+		if(findUserByID(userID)==null)
 			return new ResultMessage(false,"this user doesn't exist!");
 		else{
 			session.beginTransaction();
@@ -35,7 +35,7 @@ public class UserData{
 		}
 	}
 	public ResultMessage updateUser(UserPO user){
-		if(findUser(user.getID())==null)
+		if(findUserByID(user.getID())==null)
 			return new ResultMessage(false,"this user doesn't exist!");
 		else{
 			session.beginTransaction();
@@ -44,10 +44,19 @@ public class UserData{
 			return new ResultMessage(true,"success");
 		}
 	}
-	public UserPO findUser(String userID){
+	public UserPO findUserByID(String userID){
 		session.beginTransaction();
 		Criteria cri = session.createCriteria(UserPO.class);
 		cri.add(Restrictions.eq("userID", userID));
+		if(cri.list().isEmpty())
+			return null;
+		else
+			return (UserPO) cri.list().get(0);
+	}
+	public UserPO findUserByName(String userName){
+		session.beginTransaction();
+		Criteria cri = session.createCriteria(UserPO.class);
+		cri.add(Restrictions.eq("userName", userName));
 		if(cri.list().isEmpty())
 			return null;
 		else

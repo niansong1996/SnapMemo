@@ -20,11 +20,11 @@ public class MemoPO {
 		this.time = UtilityTools.String2Cal(time);
 		this.content = content;
 	}
-	public String getMemoId() {
+	public String getMemoID() {
 		return memoID;
 	}
 
-	public void setMemoId(String memoId) {
+	public void setMemoID(String memoId) {
 		this.memoID = memoId;
 	}
 

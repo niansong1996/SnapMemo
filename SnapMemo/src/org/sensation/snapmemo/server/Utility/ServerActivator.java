@@ -1,8 +1,7 @@
 package org.sensation.snapmemo.server.Utility;
 
 import org.sensation.snapmemo.server.BusinessLogic.BLController;
-import org.sensation.snapmemo.server.Data.MemoData;
-import org.sensation.snapmemo.server.Data.UserData;
+import org.sensation.snapmemo.server.Data.MySessionFactory;
 import org.sensation.snapmemo.server.Network.NetworkController;
 
 public class ServerActivator {
@@ -10,18 +9,16 @@ public class ServerActivator {
 		ServerActivator activator = new ServerActivator();
 		activator.activate();
 	}
-	
-	MemoData memoData;
-	UserData userData;
 	NetworkController networkController;
 	BLController businessLogicController;
 	public ServerActivator(){
-		memoData = new MemoData();
-		userData = new UserData();
 		networkController = new NetworkController();
 		businessLogicController = new BLController();
 	}
+	@SuppressWarnings("unused")
 	public void activate(){
+		ResponseCodeInterpreter interpreter = new ResponseCodeInterpreter();
+		MySessionFactory sessionFactory = new MySessionFactory();
 		RequestQueue requestQ = new RequestQueue();
 		ResponseQueue responseQ = new ResponseQueue();
 		networkController.startListen();

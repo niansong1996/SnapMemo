@@ -12,7 +12,7 @@ public class UserPO {
 	private String logoLocation;
 	private String signature;
 	private Collection<MemoPO> memos;
-	
+
 	public UserPO(){}
 	public UserPO(String iD, String userName, String password) {
 		this.userID = iD;
@@ -20,7 +20,7 @@ public class UserPO {
 		this.userName = userName;
 		this.password = password;
 		this.groupID = "no_group";
-		this.logoLocation = "/home/SnapMemoData/userLogo/"+this.userID+".png";
+		this.logoLocation = "/home/SnapMemoData/userLogo/defaultLogo_"+((int)(Math.random()*5)+1)+".png";
 		this.signature = "Take a SNAP and everything gets easier";
 	}
 	public Iterator<MemoPO> getMemos(){
@@ -68,6 +68,7 @@ public class UserPO {
 	public void setSignature(String signature) {
 		this.signature = signature;
 	}
+
 	@Override
 	public boolean equals(Object o){
 		UserPO source = (UserPO) o;
@@ -75,6 +76,6 @@ public class UserPO {
 			return true;
 		return false;
 	}
-	
-	
+
+
 }

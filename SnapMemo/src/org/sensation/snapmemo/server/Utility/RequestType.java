@@ -1,5 +1,5 @@
 package org.sensation.snapmemo.server.Utility;
 
 public enum RequestType {
-	ResolveImage
+	ResolveImage,GetMemoList,DeleteMemo,ModifyMemo,SaveMemo,SignIn,GetLogo,GetUserInfo,SignUp
 }
