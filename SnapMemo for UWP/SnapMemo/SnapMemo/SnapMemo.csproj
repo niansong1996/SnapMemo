@@ -104,6 +104,7 @@
     <Compile Include="src\logic\PictureHelper.cs" />
     <Compile Include="src\logic\DBHelper.cs" />
     <Compile Include="src\model\Memo.cs" />
+    <Compile Include="src\model\UserInfo.cs" />
     <Compile Include="src\ui\LogInPage.xaml.cs">
       <DependentUpon>LogInPage.xaml</DependentUpon>
     </Compile>

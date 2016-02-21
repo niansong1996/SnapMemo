@@ -143,13 +143,38 @@ namespace SnapMemo.src.logic
 
             var returnJson = await sendInJson("Get-User-Info", requestJson);
 
-            return new UserInfo()
-            {
-                UserID = userID,
-                UserName = returnJson["userName"].ToString(),
-                EducationInfo = returnJson["educationInfo"].ToString(),
-                Signature = returnJson["signature"].ToString()
-            };
+            return new UserInfo(returnJson);
+        }
+
+        public static async Task<string> AddMemo(string userID, Memo memo)
+        {
+            var requestJson = memo.ToJsonObject();
+            requestJson["userID"] = JsonValue.CreateStringValue(userID);
+
+            var returnJson = await sendInJson("Save-Memo", requestJson);
+
+            return returnJson["memoID"].ToString();
+        }
+
+        // TODO: return type
+        public static async Task<bool> ModifyMemo(Memo memo)
+        {
+            var requestJson = memo.ToJsonObject();
+            requestJson["memoID"] = JsonValue.CreateStringValue(memo.MemoID);
+
+            var returnJson = await sendInJson("Modify-Memo", requestJson);
+
+            return true;
+        }
+
+        public static async Task<bool> DeleteMemo(string memoID)
+        {
+            var requestJson = new JsonObject();
+            requestJson["memoID"] = JsonValue.CreateStringValue(memoID);
+
+            var returnJson = await sendInJson("Delete-Memo", requestJson);
+
+            return true;
         }
     }
 }

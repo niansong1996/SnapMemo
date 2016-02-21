@@ -28,7 +28,7 @@ namespace SnapMemo.src.logic
             try
             {
                 var toast = new ScheduledToastNotification(toastXml, memo.Time);
-                toast.Id = toastIdPrefix + memo.Id;
+                toast.Id = toastIdPrefix + memo.LocalID;
                 ToastNotificationManager.CreateToastNotifier().AddToSchedule(toast);
             }
             catch (ArgumentException)
@@ -44,7 +44,7 @@ namespace SnapMemo.src.logic
 
             foreach(var one in toasts)
             {
-                if(one.Id == toastIdPrefix + memo.Id)
+                if(one.Id == toastIdPrefix + memo.LocalID)
                 {
                     toastNotifier.RemoveFromSchedule(one);
                     break;
