@@ -7,19 +7,40 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Name="gridView" Background="AntiqueWhite">
+    <Grid  Background="AntiqueWhite">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="0">
-            <StackPanel Name="memoList"/>
-        </ScrollViewer>
-        <StackPanel Name="btnList" HorizontalAlignment="Right" Orientation="Horizontal" Grid.Row="1">
-            <Button Content="add" FontSize="18" Margin="0,0,20,0" Click="OnAdd"/>
-            <Button Content="snap" FontSize="18" Margin="0,0,20,0" Click="OnSnap"/>
-            <Button Content="choose" FontSize="18" Margin="0,0,20,0" Click="OnChoose"/>
-            <Button Content="delete" FontSize="18" Margin="0,0,0,0" Click="OnDelete"/>
-        </StackPanel>
+
+        <RelativePanel Background="LightGray">
+            <Button Name="hamburgerButton" FontFamily="Segoe MDL2 Assets" FontSize="36" Click="hamburgerButton_Click">&#xE700;</Button>
+            <TextBlock Name="titleTB" RelativePanel.RightOf="hamburgerButton" FontSize="36" Margin="20,0,0,0">title</TextBlock>
+        </RelativePanel>
+
+        <SplitView Name="mySplitView" Grid.Row="1" OpenPaneLength="160" DisplayMode="Inline">
+            <SplitView.Pane>
+                <ListBox Name="pagesListBox" SelectionChanged="pagesListBox_SelectionChanged">
+                    <ListBoxItem Name="accountBoxItem">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="24">
+                        		<Run Text="&#xE13D;"/>
+                            </TextBlock>
+                            <TextBlock FontSize="24" Margin="24,0,0,0">
+                        		<Run Text="Account"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Name="memoListBoxItem">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="24">&#xE133;</TextBlock>
+                            <TextBlock FontSize="24" Margin="24,0,0,0">Memos</TextBlock>
+                        </StackPanel>
+                    </ListBoxItem>
+                </ListBox>
+            </SplitView.Pane>
+
+            <Frame Name="myFrame" />
+        </SplitView>
     </Grid>
 </Page>

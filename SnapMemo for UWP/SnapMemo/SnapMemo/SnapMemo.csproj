@@ -107,6 +107,9 @@
     <Compile Include="src\ui\LogInPage.xaml.cs">
       <DependentUpon>LogInPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="src\ui\MemoListPage.xaml.cs">
+      <DependentUpon>MemoListPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="src\ui\ModifyMemo.xaml.cs">
       <DependentUpon>ModifyMemo.xaml</DependentUpon>
     </Compile>
@@ -116,6 +119,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\ui\PictureChoosePage.xaml.cs">
       <DependentUpon>PictureChoosePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="src\ui\SignUpPage.xaml.cs">
+      <DependentUpon>SignUpPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -143,6 +149,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="src\ui\MemoListPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="src\ui\ModifyMemo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -152,6 +162,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="src\ui\PictureChoosePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="src\ui\SignUpPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

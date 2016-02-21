@@ -62,14 +62,14 @@ namespace SnapMemo.src.ui
             modifyingMemo.Time = new DateTime(ds.Year, ds.Month, ds.Day, ts.Hours, ts.Minutes, ts.Seconds);
             modifyingMemo.Content = contentTB.Text;
 
-            Frame root = Window.Current.Content as Frame;
+            Frame frame = MainPage.Instance.ContentFrame;
             if(type == OperateType.ADD)
             {
                 DBHelper.AddMemo(modifyingMemo);
                 NotificationHelper.AddToastToSchedule(modifyingMemo);
                 NotificationHelper.AddTileNotification();
 
-                root.Navigate(typeof(MainPage));
+                frame.Navigate(typeof(MainPage));
             }
             else if(type == OperateType.MODIFY)
             {
@@ -77,14 +77,13 @@ namespace SnapMemo.src.ui
                 NotificationHelper.RemoveToastFromSchedule(modifyingMemo);
                 NotificationHelper.AddToastToSchedule(modifyingMemo);
 
-                root.Navigate(typeof(MainPage));
+                frame.Navigate(typeof(MainPage));
             }
         }
 
         private void onCancel(object sender, RoutedEventArgs e)
         {
-            Frame root = Window.Current.Content as Frame;
-            root.Navigate(typeof(MainPage));
+            MainPage.Instance.ContentFrame.Navigate(typeof(MainPage));
         }
     }
 }

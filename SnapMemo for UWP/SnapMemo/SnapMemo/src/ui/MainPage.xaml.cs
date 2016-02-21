@@ -25,60 +25,32 @@ using Windows.UI.Xaml.Navigation;
 
 namespace SnapMemo
 {
-    class MemoBlock : Button
-    {
-        public Memo Memo
-        {
-            get;  private set;
-        }
-        public bool Selected { get; set; }
-
-        public MemoBlock(Memo memo)
-        {
-            // TODO presentation part
-            this.Margin = new Thickness(10, 10, 10, 10);
-            this.Background = new SolidColorBrush(Colors.Gray);
-
-            this.Memo = memo;
-            this.Content = memo.ToString();
-            this.Click += ClickToModify;
-        }
-
-        public void ClickToModify(object sender, RoutedEventArgs e)
-        {
-            Frame root = Window.Current.Content as Frame;
-            root.Navigate(typeof(MemoModifyPage), Memo);
-        }
-
-        public void ClickToSelect(object sender, RoutedEventArgs e)
-        {
-            var gray = new SolidColorBrush(Colors.Gray);
-            var blue = new SolidColorBrush(Colors.CornflowerBlue);
-
-            if (Selected)
-            {
-                Selected = false;
-                Background = gray;
-            }
-            else
-            {
-                Selected = true;
-                Background = blue;
-            }
-        }
-    }
-
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private bool isSelectMode = false;
+        public static MainPage Instance {
+            get; private set;
+        }
+
+        public string Title
+        {
+            get { return titleTB.Text; }
+            set { titleTB.Text = value; }
+        }
+
+        public Frame ContentFrame
+        {
+            get; private set;
+        }
 
         public MainPage()
         {
             this.InitializeComponent();
-            LoadMemos();
+            Instance = this;
+            ContentFrame = myFrame;
+            myFrame.Navigate(typeof(MemoListPage));
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -93,82 +65,22 @@ namespace SnapMemo
             var pType = e.Parameter.GetType();
         }
 
-        private void LoadMemos()
+        private void hamburgerButton_Click(object sender, RoutedEventArgs e)
         {
-            List<Memo> memos = DBHelper.GetAllMemo();
-            foreach(var memo in memos)
-            {
-                memoList.Children.Add(new MemoBlock(memo));
-            }
+            mySplitView.IsPaneOpen = !mySplitView.IsPaneOpen;
         }
 
-        private void OnAdd(object sender, RoutedEventArgs e)
+        private void pagesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Frame root = Window.Current.Content as Frame;
-            root.Navigate(typeof(MemoModifyPage));
-        }
-
-        private void OnChoose(object sender, RoutedEventArgs e)
-        {
-            var gray = new SolidColorBrush(Colors.Gray);
-            var memos = memoList.Children.ToList();
-            foreach(var one in memos)
+            if (memoListBoxItem.IsSelected)
             {
-                MemoBlock memoBlock = one as MemoBlock;
-                if (isSelectMode)
-                {
-                    memoBlock.Background = gray;
-                    memoBlock.Selected = false;
-                    memoBlock.Click += memoBlock.ClickToModify;
-                    memoBlock.Click -= memoBlock.ClickToSelect;
-                }
-                else
-                {
-                    memoBlock.Click -= memoBlock.ClickToModify;
-                    memoBlock.Click += memoBlock.ClickToSelect;
-                }
+                myFrame.Navigate(typeof(MemoListPage));
+                mySplitView.IsPaneOpen = false;
             }
-            isSelectMode = !isSelectMode;
-        }
-
-        private void OnDelete(object sender, RoutedEventArgs e)
-        {
-            var memos = memoList.Children.ToList();
-            memoList.Children.Clear();
-            foreach (var one in memos)
+            else if (accountBoxItem.IsSelected)
             {
-                MemoBlock memoBlock = one as MemoBlock;
-                if (!memoBlock.Selected)
-                {
-                    memoList.Children.Add(memoBlock);
-                }
-                else
-                {
-                    DBHelper.DeleteMemo(memoBlock.Memo);
-                    NotificationHelper.RemoveToastFromSchedule(memoBlock.Memo);
-                }
-            }
-        }
-
-        private async void OnSnap(object sender, RoutedEventArgs e)
-        {
-            FileOpenPicker fileOpenPicker = new FileOpenPicker();
-            fileOpenPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            fileOpenPicker.FileTypeFilter.Add(".jpg");
-            fileOpenPicker.FileTypeFilter.Add(".png");
-            fileOpenPicker.ViewMode = PickerViewMode.Thumbnail;
-
-            var inputFile = await fileOpenPicker.PickSingleFileAsync();
-
-            if (inputFile == null)
-            {
-                // The user cancelled the picking operation
-                return;
-            }
-            else
-            {
-                Frame root = Window.Current.Content as Frame;
-                root.Navigate(typeof(PictureChoosePage), inputFile);
+                myFrame.Navigate(typeof(LogInPage));
+                mySplitView.IsPaneOpen = false;
             }
         }
     }

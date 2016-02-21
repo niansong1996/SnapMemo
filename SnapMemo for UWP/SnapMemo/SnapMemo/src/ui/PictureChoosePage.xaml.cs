@@ -118,8 +118,7 @@ namespace SnapMemo.src.ui
 
         private void OnCancel(object sender, RoutedEventArgs e)
         {
-            Frame root = Window.Current.Content as Frame;
-            root.Navigate(typeof(MainPage));
+            MainPage.Instance.ContentFrame.Navigate(typeof(MainPage));
         }
 
         enum EventMode
