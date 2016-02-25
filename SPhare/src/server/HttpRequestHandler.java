@@ -15,8 +15,9 @@ import com.sun.net.httpserver.HttpServer;
 
 
 public class HttpRequestHandler {
-	private final String IPAddress = "139.129.40.103";
+//	private final String IPAddress = "139.129.40.103";
 //	private final String IPAddress = "127.0.0.1";
+	private final String IPAddress = "172.25.187.48";
 	private final int port = 5678;
 	private final int maxConn = 10;
 	HttpServer server;
@@ -69,13 +70,14 @@ class HandlerA implements HttpHandler{
 		System.out.println("get a request");
 //		String result = exchange.getRequestURI().getRawQuery();
 		Map<String,List<String>> map = exchange.getRequestHeaders();
-		String type = map.get("Request-Type").get(0);
-		switch(type){
-		case "Get-Group-Info": getGroupInfo(exchange);break;
-		case "Add-Free-Time": setFreeTime(exchange);break;
-		case "Delete-Free-Time": deleteFreeTime(exchange);break;
-		default : System.out.println("bad request");invalidRequest(exchange);break;
-		}
+		response(exchange,html.getResponseHtml(),200);
+//		String type = map.get("Request-Type").get(0);
+//		switch(type){
+//		case "Get-Group-Info": getGroupInfo(exchange);break;
+//		case "Add-Free-Time": setFreeTime(exchange);break;
+//		case "Delete-Free-Time": deleteFreeTime(exchange);break;
+//		default : System.out.println("bad request");invalidRequest(exchange);break;
+//		}
 	}
 	public void getGroupInfo(HttpExchange exchange) throws IOException{
 		InputStream stream = exchange.getRequestBody();

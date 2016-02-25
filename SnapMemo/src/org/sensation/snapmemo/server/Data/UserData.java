@@ -62,4 +62,14 @@ public class UserData{
 		else
 			return (UserPO) cri.list().get(0);
 	}
+	public static void main(String[] args){
+		UserPO user1 = new UserPO(null,"Alan","123456");
+		MySessionFactory factory = new MySessionFactory();
+		UserData data = new UserData();
+		Session session = data.session;
+		session.beginTransaction();
+		session.save(user1);
+		session.getTransaction().commit();
+	}
+
 }

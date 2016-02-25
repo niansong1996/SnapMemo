@@ -30,7 +30,7 @@ public class UtilityTools {
 		return cal;
 	}
 	public static String getCurrentTime(){
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-DD HH:mm:ss SSSS");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSSS");
 		return sdf.format(new Date());
 	}
 	public static String Stream2String(InputStream stream){

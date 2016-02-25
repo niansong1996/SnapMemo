@@ -9,7 +9,7 @@ import org.sensation.snapmemo.server.Utility.UtilityTools;
 public class MemoPO {
 	private String memoID;
 	private String topic;
-	//times is annotated as yyyy-mm-dd HH:mm:ss
+	//times is annotated as yyyy-mm-dd HH:mm
 	private Calendar time;
 	private String content;
 	public MemoPO(){}

@@ -2,6 +2,7 @@ package org.sensation.snapmemo.server.BusinessLogic;
 
 import java.net.HttpURLConnection;
 
+import org.sensation.snapmemo.server.Data.MySessionFactory;
 import org.sensation.snapmemo.server.Data.UserData;
 import org.sensation.snapmemo.server.PO.UserPO;
 import org.sensation.snapmemo.server.Utility.Request;
@@ -34,9 +35,14 @@ public class UserExecutor {
 		ResponseQueue.put(new Response(request.exchange,HttpURLConnection.HTTP_OK,logo));
 	}
 	public void GetUserInfo(Request request){
-		this.sendBadResponse(request);
+		UserPO user = this.getUser(request);
+		JSONObject tmp = new JSONObject();
+		tmp.accumulate("signature", user.getSignature());
+		ResponseQueue.put(new Response(request.exchange,tmp.toString(),HttpURLConnection.HTTP_OK));
 	}
 	public void SignUp(Request request){
+		String userName = this.getAttribute(request, "userName");
+		String password = this.getAttribute(request, "password");
 	}
 	
 	private void sendBadResponse(Request request){

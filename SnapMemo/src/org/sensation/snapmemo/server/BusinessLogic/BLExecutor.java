@@ -36,6 +36,7 @@ public class BLExecutor implements Runnable{
 			synchronized(this){
 				if(!RequestQueue.isEmpty()){
 					request = RequestQueue.get();
+					System.out.println("Get a request");
 				}
 			}
 			execute(request);

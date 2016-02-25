@@ -3,7 +3,6 @@ package org.sensation.snapmemo.server.BusinessLogic;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.sensation.snapmemo.server.Data.MemoData;
 import org.sensation.snapmemo.server.PO.MemoPO;
@@ -40,8 +39,13 @@ public class MemoExecutor {
 		this.sendResponse(request, result);
 	}
 	public void SaveMemo(Request request){
-		MemoPO memo = this.getMemoPO(request);
-		ResultMessage result = data.updateMemo(memo);
+		JSONObject source = JSONObject.fromObject(UtilityTools.Stream2String(request.is));
+		String userID = source.getString("userID");
+		String topic = source.getString("topic");
+		String time = source.getString("time");
+		String content = source.getString("content");
+		MemoPO memo = new MemoPO(userID,topic,time,content);
+		ResultMessage result = data.addMemo(memo);
 		this.sendResponse(request, result);
 	}
 	

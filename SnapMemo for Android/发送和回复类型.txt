@@ -117,8 +117,6 @@
     接收RequestCode：200为成功，其他为失败
 	接受JSON:
 	{
-	    "userName":"Alan"
-	    "educationInfo":"NJU"
 	    "signature":"Life is hard, coding is harder"
 	}
 -------------------------------------------------------------------------------

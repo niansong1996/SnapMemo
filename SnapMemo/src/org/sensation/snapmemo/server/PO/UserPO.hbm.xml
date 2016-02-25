@@ -6,7 +6,7 @@
     <class name="org.sensation.snapmemo.server.PO.UserPO" table="USERPO">
         <id name="userID" type="java.lang.String" access="field">
             <column name="USERID" />
-            <generator class="assigned" />
+            <generator class="increment" />
         </id>
         <property name="userName" type="java.lang.String">
             <column name="USERNAME" />
