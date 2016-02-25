@@ -1,5 +1,7 @@
-﻿using System;
+﻿using SnapMemo.src.logic;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -20,21 +22,24 @@ namespace SnapMemo.src.ui
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class LogInPage : Page
+    public sealed partial class SignUpPage : Page
     {
-        public LogInPage()
+        public SignUpPage()
         {
             this.InitializeComponent();
         }
 
-        private async void OnSignIn(object sender, RoutedEventArgs e)
+        private async void OnSignUp(object sender, RoutedEventArgs e)
         {
+            string userID = await NetHelper.SignUp(nameTB.Text, passwordTB.Text);
 
+            Debug.WriteLine("Sign up successfully");
+            Debug.WriteLine("userID: " + userID);
         }
 
-        private void OnSignUp(object sender, RoutedEventArgs e)
+        private void OnLogin(object sender, RoutedEventArgs e)
         {
-            MainPage.Instance.ContentFrame.Navigate(typeof(SignUpPage));
+            MainPage.Instance.ContentFrame.Navigate(typeof(LogInPage));
         }
     }
 }
