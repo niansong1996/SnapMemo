@@ -47,7 +47,7 @@ public class UserData{
 	public UserPO findUserByID(String userID){
 		session.beginTransaction();
 		Criteria cri = session.createCriteria(UserPO.class);
-		cri.add(Restrictions.eq("userID", userID));
+		cri.add(Restrictions.eq("userID", Integer.parseInt(userID)));
 		if(cri.list().isEmpty())
 			return null;
 		else
@@ -63,7 +63,7 @@ public class UserData{
 			return (UserPO) cri.list().get(0);
 	}
 	public static void main(String[] args){
-		UserPO user1 = new UserPO(null,"Alan","123456");
+		UserPO user1 = new UserPO("Alan","123456");
 		MySessionFactory factory = new MySessionFactory();
 		UserData data = new UserData();
 		Session session = data.session;

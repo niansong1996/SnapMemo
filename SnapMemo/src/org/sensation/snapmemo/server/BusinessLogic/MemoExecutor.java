@@ -46,7 +46,11 @@ public class MemoExecutor {
 		String content = source.getString("content");
 		MemoPO memo = new MemoPO(userID,topic,time,content);
 		ResultMessage result = data.addMemo(memo);
-		this.sendResponse(request, result);
+		if(result.isSuccess()){
+			String repString = "{\"memoID\":\""+memo.getMemoID()+"\"}";
+			ResponseQueue.put(new Response(request.exchange,repString,HttpURLConnection.HTTP_OK));
+		}
+		else ResponseQueue.put(new Response(request.exchange,HttpURLConnection.HTTP_NOT_FOUND));
 	}
 	
 	private void sendResponse(Request request,ResultMessage result){
@@ -66,8 +70,12 @@ public class MemoExecutor {
 		return memoID;
 	}
 	private MemoPO getMemoPO(Request request){
-		String json = UtilityTools.Stream2String(request.is);
-		return (MemoPO) JSONObject.toBean(JSONObject.fromObject(json));
+		JSONObject json = JSONObject.fromObject(UtilityTools.Stream2String(request.is));
+		MemoPO memo = new MemoPO(null,
+				json.getString("topic"),json.getString("time"),
+				json.getString("content"));
+		memo.setMemoID(json.getString("memoID"));
+		return memo;
 	}
 //	public static void main(String[] args){
 //		JSONObject jo = new JSONObject();

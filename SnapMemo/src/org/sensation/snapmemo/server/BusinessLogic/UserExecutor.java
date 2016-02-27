@@ -18,13 +18,14 @@ public class UserExecutor {
 		this.data = new UserData();
 	}
 	public void SignIn(Request request){
-		String userName = this.getAttribute(request, "userName");
+		String source = UtilityTools.Stream2String(request.is);
+		String userName = this.getAttribute(source, "userName");
 		UserPO user = data.findUserByName(userName);
 		if(user==null){
 			this.sendBadResponse(request);
 			return;
 		}
-		if(user.getPassword().equals(this.getAttribute(request, "password")))
+		if(user.getPassword().equals(this.getAttribute(source, "password")))
 			ResponseQueue.put(new Response(request.exchange,this.getResponseJSON(user),HttpURLConnection.HTTP_OK));
 		else
 			ResponseQueue.put(new Response(request.exchange,HttpURLConnection.HTTP_FORBIDDEN));
@@ -41,27 +42,38 @@ public class UserExecutor {
 		ResponseQueue.put(new Response(request.exchange,tmp.toString(),HttpURLConnection.HTTP_OK));
 	}
 	public void SignUp(Request request){
-		String userName = this.getAttribute(request, "userName");
-		String password = this.getAttribute(request, "password");
+		String source = UtilityTools.Stream2String(request.is);
+		String userName = this.getAttribute(source, "userName");
+		String password = this.getAttribute(source, "password");
+		UserPO user = new UserPO(userName,password);
+		data.addUser(user);
+		UserPO tmp = data.findUserByName(userName);
+		String repString = "{\"userID\":\""+tmp.getID()+"\"}";
+		ResponseQueue.put(new Response(request.exchange,repString,HttpURLConnection.HTTP_OK));
 	}
 	
 	private void sendBadResponse(Request request){
 		ResponseQueue.put(new Response(request.exchange,HttpURLConnection.HTTP_NOT_FOUND));
 	}
 	private UserPO getUser(Request request){
-		String userID = this.getAttribute(request, "userID");
+		String source = UtilityTools.Stream2String(request.is);
+		String userID = this.getAttribute(source, "userID");
 		UserPO user = data.findUserByID(userID);
 		return user;
 	}
-	private String getAttribute(Request request, String attribute){
-		String userID = JSONObject.fromObject(
-				UtilityTools.Stream2String(request.is)
-				).getString(attribute);
+	private String getAttribute(String source, String attribute){
+		String userID = JSONObject.fromObject(source).getString(attribute);
 		return userID;
 	}
 	private String getResponseJSON(UserPO user){
 		JSONObject tmp = new JSONObject();
 		tmp.accumulate("userID", user.getID());
 		return tmp.toString();
+	}
+	public static void main(String[] args){
+		String source = "{\"userName\":\"wrr\",\"password\":\"132\"}";
+		System.out.println(source);
+		JSONObject jo = JSONObject.fromObject(source);
+		
 	}
 }

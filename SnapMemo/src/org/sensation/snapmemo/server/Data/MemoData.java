@@ -31,6 +31,7 @@ public class MemoData{
 			session.beginTransaction();
 			MemoPO tmp = new MemoPO();
 			tmp.setMemoID(memoID);
+			session.clear();
 			session.delete(tmp);
 			session.getTransaction().commit();
 			return new ResultMessage(true,"success");
@@ -41,6 +42,7 @@ public class MemoData{
 			return new ResultMessage(false,"this memo doesn't exist!");
 		else{
 			session.beginTransaction();
+			session.clear();
 			session.update(memo);
 			session.getTransaction().commit();
 			return new ResultMessage(true,"success");

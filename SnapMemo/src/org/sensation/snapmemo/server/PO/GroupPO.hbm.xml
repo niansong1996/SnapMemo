@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2016-2-25 21:24:07 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="org.sensation.snapmemo.server.PO.GroupPO" table="GROUPPO">
+        <id name="ID" type="java.lang.String">
+            <column name="ID" />
+            <generator class="assigned" />
+        </id>
+        <property name="groupName" type="java.lang.String">
+            <column name="GROUPNAME" />
+        </property>
+        <bag name="users" table="USERPO" inverse="false" lazy="true" access="field">
+            <key>
+                <column name="ID" />
+            </key>
+            <one-to-many class="org.sensation.snapmemo.server.PO.UserPO" />
+        </bag>
+    </class>
+</hibernate-mapping>

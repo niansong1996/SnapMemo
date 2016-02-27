@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 public class UserPO {
-	private String userID;
+	private int userID;
 	private String userName;
 	private String password;
 	private String groupID;
@@ -14,13 +14,14 @@ public class UserPO {
 	private Collection<MemoPO> memos;
 
 	public UserPO(){}
-	public UserPO(String iD, String userName, String password) {
-		this.userID = iD;
+	public UserPO(String userName, String password) {
+//		this.userID = Integer.parseInt(iD);
 		this.memos = new ArrayList<MemoPO>();
 		this.userName = userName;
 		this.password = password;
 		this.groupID = "no_group";
-		this.logoLocation = "/home/SnapMemoData/userLogo/defaultLogo_"+((int)(Math.random()*5)+1)+".png";
+//		this.logoLocation = "/home/SnapMemoData/userLogo/defaultLogo_"+((int)(Math.random()*5)+1)+".png";
+		this.logoLocation = "logo.jpg";
 		this.signature = "Take a SNAP and everything gets easier";
 	}
 	public Iterator<MemoPO> getMemos(){
@@ -33,10 +34,10 @@ public class UserPO {
 		this.memos.remove(memo);
 	}
 	public String getID() {
-		return userID;
+		return this.toStringID();
 	}
 	public void setID(String iD) {
-		userID = iD;
+		userID = Integer.parseInt(iD);
 	}
 	public String getUserName() {
 		return userName;
@@ -68,7 +69,13 @@ public class UserPO {
 	public void setSignature(String signature) {
 		this.signature = signature;
 	}
-
+	private String toStringID(){
+		String tmp = this.userID+"";
+		while(tmp.length()!=6){
+			tmp = "0"+tmp;
+		}
+		return tmp;
+	}
 	@Override
 	public boolean equals(Object o){
 		UserPO source = (UserPO) o;

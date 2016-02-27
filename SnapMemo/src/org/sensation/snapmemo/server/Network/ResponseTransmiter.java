@@ -19,15 +19,18 @@ public class ResponseTransmiter implements Runnable{
 				if(!ResponseQueue.isEmpty())
 					response = ResponseQueue.get();
 			}
-				response(response);
-				response = null;
+			response(response);
+			response = null;
 		}
 	}
 	public void response(Response response){
 		if(response==null) return;
 		HttpExchange exchange = response.exchange;
 		String responseString = UtilityTools.byte2String(response.responseByteArray);
-		System.out.println("response json is : "+responseString);
+		if(responseString.length()>100)
+			System.out.println("response is a image");
+		else
+			System.out.println("response json is : "+responseString);
 		int code = response.code;
 		try {
 			exchange.sendResponseHeaders(code, response.responseByteArray.length);
