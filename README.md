@@ -1,2 +1,7 @@
 # SnapMemo
-a project for imagine cup
+a project for imagine cup  
+
+
+
+
+

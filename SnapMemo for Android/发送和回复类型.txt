@@ -5,7 +5,7 @@
     Request-Method:   POST
 	Request-Type:     Resolve-Image
 	Request-Property: application/octet-stream(字节流-ByteArrayOutputStream)
-	发送内容：图片的字节流
+	发送内容：图片的字节流 
 -------------------------------------------------------------------------------
 	接收JSON格式:
 	{   
