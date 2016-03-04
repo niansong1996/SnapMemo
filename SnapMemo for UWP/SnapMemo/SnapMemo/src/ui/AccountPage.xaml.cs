@@ -1,8 +1,6 @@
 ﻿using SnapMemo.src.logic;
-using SnapMemo.src.tool;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -23,32 +21,23 @@ namespace SnapMemo.src.ui
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class SignUpPage : Page
+    public sealed partial class AccountPage : Page
     {
-        public SignUpPage()
+        public AccountPage()
         {
             this.InitializeComponent();
+
+            userNameTB.Text = Preference.GetUserID();
+            signatureTB.Text = Preference.GetSignature();
         }
 
-        private async void OnSignUp(object sender, RoutedEventArgs e)
+        private void OnLogout(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine("send Sign up : " + nameTB.Text + passwordTB.Text);
-
-            string userID = JsonString.DeQuotes(
-                await NetHelper.SignUp(nameTB.Text, passwordTB.Text));
-
-            Debug.WriteLine("Sign up successfully");
-            Debug.WriteLine("userID: " + userID);
-
-            Preference.SetUserID(userID);
+            Preference.SetUserID(Preference.DefaultID);
+            Preference.SetSignature(Preference.DefaultSignature);
 
             var frame = MainPage.Instance.ContentFrame;
-            frame.Navigate(typeof(AccountPage));
-        }
-
-        private void OnLogin(object sender, RoutedEventArgs e)
-        {
-            MainPage.Instance.ContentFrame.Navigate(typeof(LogInPage));
+            frame.Navigate(typeof(LogInPage));
         }
     }
 }

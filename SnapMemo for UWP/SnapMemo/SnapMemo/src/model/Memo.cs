@@ -1,4 +1,5 @@
-﻿using SQLite.Net.Attributes;
+﻿using SnapMemo.src.tool;
+using SQLite.Net.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,7 +19,18 @@ namespace SnapMemo.src.model
 
         [PrimaryKey]
         public uint LocalID { get; private set; }
-        public DateTime Time { get; set; }
+        private DateTime time;
+        public DateTime Time
+        {
+            get
+            {
+                return time.ToLocalTime();
+            }
+            set
+            {
+                time = value.ToUniversalTime();
+            }
+        }
         public string Location { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
@@ -58,11 +70,11 @@ namespace SnapMemo.src.model
 
         public Memo(JsonObject jsonObject): this()
         {
-            Title = jsonObject["topic"].ToString();
-            Content = jsonObject["content"].ToString();
+            Title = JsonString.DeQuotes(jsonObject["topic"].ToString());
+            Content = JsonString.DeQuotes(jsonObject["content"].ToString());
 
             // time format : 2016-02-07 15:32
-            var dateTimeStr = jsonObject["time"].ToString();
+            var dateTimeStr = JsonString.DeQuotes(jsonObject["time"].ToString());
             var dateTimeArr = dateTimeStr.Split(' ');
 
             var dateStr = dateTimeArr[0];

@@ -115,7 +115,7 @@ namespace SnapMemo.src.ui
             isSelectMode = !isSelectMode;
         }
 
-        private void OnDelete(object sender, RoutedEventArgs e)
+        private async void OnDelete(object sender, RoutedEventArgs e)
         {
             var memos = memoList.Children.ToList();
             memoList.Children.Clear();
@@ -128,6 +128,7 @@ namespace SnapMemo.src.ui
                 }
                 else
                 {
+                    await NetHelper.DeleteMemo(memoBlock.Memo.MemoID);
                     DBHelper.DeleteMemo(memoBlock.Memo);
                     NotificationHelper.RemoveToastFromSchedule(memoBlock.Memo);
                 }

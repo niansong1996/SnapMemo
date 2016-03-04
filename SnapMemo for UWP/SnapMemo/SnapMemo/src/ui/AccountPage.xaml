@@ -1,0 +1,35 @@
+﻿<Page
+    x:Class="SnapMemo.src.ui.AccountPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SnapMemo.src.ui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <RelativePanel Background="White">
+        <Image Name="imageView" Width="100" Height="100" 
+               RelativePanel.AlignHorizontalCenterWithPanel="True" Margin="0,130,0,0"/>
+        <Grid RelativePanel.Below="imageView" RelativePanel.AlignHorizontalCenterWithPanel="True">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" FontSize="20" Margin="10,0,10,0">userName</TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="0" FontSize="20" Margin="10,16,10,0">signature</TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="1" FontSize="20" Name="userNameTB" Margin="10,0,10,0">czy</TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="1" FontSize="20" Name="signatureTB" Margin="10,16,10,0" TextWrapping="Wrap">where is Liu Jia?</TextBlock>
+
+        </Grid>
+
+        <StackPanel RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True" Orientation="Horizontal">
+            <Button FontSize="20" Margin="0,0,20,0">edit</Button>
+            <Button FontSize="20" Click="OnLogout">log out</Button>
+        </StackPanel>
+    </RelativePanel>
+</Page>

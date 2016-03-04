@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SnapMemo.src.tool;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,10 +26,10 @@ namespace SnapMemo.src.model
 
         public UserInfo(JsonObject returnJson)
         {
-            UserID = localValues["userID"].ToString();
-            UserName = returnJson["userName"].ToString();
-            EducationInfo = returnJson["educationInfo"].ToString();
-            Signature = returnJson["signature"].ToString();
+            UserID = JsonString.DeQuotes(localValues["userID"].ToString());
+            UserName = JsonString.DeQuotes(returnJson["userName"].ToString());
+            EducationInfo = JsonString.DeQuotes(returnJson["educationInfo"].ToString());
+            Signature = JsonString.DeQuotes(returnJson["signature"].ToString());
         }
     }
 }

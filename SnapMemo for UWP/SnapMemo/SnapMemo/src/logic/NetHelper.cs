@@ -1,4 +1,5 @@
 ﻿using SnapMemo.src.model;
+using SnapMemo.src.tool;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,7 +18,8 @@ namespace SnapMemo.src.logic
 
         static NetHelper()
         {
-            uri = new Uri("http://139.129.40.103:5678/SnapMemo");
+            //uri = new Uri("http://139.129.40.103:5678/SnapMemo");
+            uri = new Uri("http://172.25.183.163:5678/SnapMemo");
         }
 
 
@@ -35,6 +37,8 @@ namespace SnapMemo.src.logic
 
             var request = new HttpRequestMessage(HttpMethod.Post, uri);
             request.Content = new HttpStringContent(requestJson.ToString());
+            // Test
+            Debug.WriteLine(request.Content.ToString());
             request.Content.Headers.ContentType =
                 new Windows.Web.Http.Headers.HttpMediaTypeHeaderValue("application/json");
 
@@ -72,13 +76,17 @@ namespace SnapMemo.src.logic
                 new Windows.Web.Http.Headers.HttpMediaTypeHeaderValue("application/octet-stream");
 
             var response = await httpClient.SendRequestAsync(request);
+            Debug.WriteLine("================got response==========");
+            Debug.WriteLine(response.Content.ToString());
+
             if (response.IsSuccessStatusCode)
             {
                 var rJson = new JsonObject();
                 JsonObject.TryParse(response.Content.ToString(), out rJson);
-
-                Debug.WriteLine("================got response==========");
+                Debug.WriteLine("converted to Json");
                 Debug.WriteLine(rJson);
+
+                return new Memo(rJson);
             }
             httpClient.Dispose();
 
@@ -153,8 +161,8 @@ namespace SnapMemo.src.logic
 
             var returnJson = await sendInJson("Save-Memo", requestJson);
 
-            return returnJson["memoID"].ToString();
-        }
+            return JsonString.DeQuotes(returnJson["memoID"].ToString());
+         }
 
         // TODO: return type
         public static async Task<bool> ModifyMemo(Memo memo)

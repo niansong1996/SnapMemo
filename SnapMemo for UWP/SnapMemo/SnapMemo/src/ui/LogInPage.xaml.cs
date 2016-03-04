@@ -1,5 +1,8 @@
-﻿using System;
+﻿using SnapMemo.src.logic;
+using SnapMemo.src.tool;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -29,7 +32,19 @@ namespace SnapMemo.src.ui
 
         private async void OnSignIn(object sender, RoutedEventArgs e)
         {
+            Debug.WriteLine("send Login : " + nameTB.Text + passwordTB.Text);
 
+            string userID = JsonString.DeQuotes(
+                await NetHelper.Login(nameTB.Text, passwordTB.Text));
+
+            // debug
+            Debug.WriteLine("Log in successfully");
+            Debug.WriteLine("userID: " + userID);
+
+            Preference.SetUserID(userID);
+
+            var frame = MainPage.Instance.ContentFrame;
+            frame.Navigate(typeof(AccountPage));
         }
 
         private void OnSignUp(object sender, RoutedEventArgs e)

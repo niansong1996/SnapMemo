@@ -14,9 +14,12 @@
         </Grid.RowDefinitions>
         <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="0">
             <Grid Name="containerGrid">
-                <Image Name="imgView" PointerPressed="OnImagePressed" PointerMoved="OnMoved" PointerReleased="OnReleased"/>
+                <Image Name="imgView" 
+                       
+                       ManipulationMode="TranslateX,TranslateY" ManipulationStarted="imgView_ManipulationStarted" ManipulationDelta="manipulationDelta" ManipulationCompleted="manipulationCompleted"/>
                 <Rectangle Name="border" Width="0" Height="0" Fill="AliceBlue" HorizontalAlignment="Left" VerticalAlignment="Top"
-                           StrokeThickness="10" Opacity="0.46" Tapped="BorderOnTapped" Visibility="Visible" PointerMoved="OnMoved" PointerReleased="OnReleased" PointerPressed="OnRectPressed"/>
+                           StrokeThickness="10" Opacity="0.46" Visibility="Visible"
+                           ManipulationMode="TranslateX,TranslateY" ManipulationStarted="border_ManipulationStarted" ManipulationDelta="manipulationDelta" ManipulationCompleted="manipulationCompleted"/>
             </Grid>
         </ScrollViewer>
         <StackPanel Name="btnList" HorizontalAlignment="Right" Orientation="Horizontal" Grid.Row="1">

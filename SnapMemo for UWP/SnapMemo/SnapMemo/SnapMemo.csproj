@@ -103,8 +103,13 @@
     <Compile Include="src\logic\NotificationHelper.cs" />
     <Compile Include="src\logic\PictureHelper.cs" />
     <Compile Include="src\logic\DBHelper.cs" />
+    <Compile Include="src\logic\Preference.cs" />
     <Compile Include="src\model\Memo.cs" />
     <Compile Include="src\model\UserInfo.cs" />
+    <Compile Include="src\tool\JsonString.cs" />
+    <Compile Include="src\ui\AccountPage.xaml.cs">
+      <DependentUpon>AccountPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="src\ui\LogInPage.xaml.cs">
       <DependentUpon>LogInPage.xaml</DependentUpon>
     </Compile>
@@ -146,6 +151,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="src\ui\AccountPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="src\ui\LogInPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

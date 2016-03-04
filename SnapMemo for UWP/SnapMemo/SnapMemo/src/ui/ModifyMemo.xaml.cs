@@ -34,6 +34,8 @@ namespace SnapMemo.src.ui
         private Memo modifyingMemo;
         private OperateType type;
 
+        private static readonly bool debugWithoutNet = false;
+
         public MemoModifyPage()
         {
             this.InitializeComponent();
@@ -54,36 +56,56 @@ namespace SnapMemo.src.ui
             }
         }
 
-        private void onSave(object sender, RoutedEventArgs e)
+        private async void onSave(object sender, RoutedEventArgs e)
         {
             modifyingMemo.Title = titleTB.Text;
             var ds = timeDP.Date;
             var ts = timeTP.Time;
-            modifyingMemo.Time = new DateTime(ds.Year, ds.Month, ds.Day, ts.Hours, ts.Minutes, ts.Seconds);
+            modifyingMemo.Time = new DateTime(ds.Year, ds.Month, ds.Day, ts.Hours, ts.Minutes, ts.Seconds, DateTimeKind.Local).ToUniversalTime();
             modifyingMemo.Content = contentTB.Text;
 
-            Frame frame = MainPage.Instance.ContentFrame;
+            Frame rootFrame = Window.Current.Content as Frame;
             if(type == OperateType.ADD)
             {
+                // sync in server-end
+                if (!debugWithoutNet)
+                {
+                    var memoID = await NetHelper.AddMemo(Preference.GetUserID(), modifyingMemo);
+                    modifyingMemo.MemoID = memoID;
+                }
+                
+                // save in local DB
                 DBHelper.AddMemo(modifyingMemo);
+
+                // add notification
                 NotificationHelper.AddToastToSchedule(modifyingMemo);
                 NotificationHelper.AddTileNotification();
 
-                frame.Navigate(typeof(MainPage));
+                rootFrame.Navigate(typeof(MainPage));
             }
             else if(type == OperateType.MODIFY)
             {
+                // sync in server-end
+                if (!debugWithoutNet)
+                {
+                    var isSuccess = await NetHelper.ModifyMemo(modifyingMemo);
+                }
+
+                // save in local DB
                 DBHelper.UpdateMemo(modifyingMemo);
+
+                // add notification
                 NotificationHelper.RemoveToastFromSchedule(modifyingMemo);
                 NotificationHelper.AddToastToSchedule(modifyingMemo);
 
-                frame.Navigate(typeof(MainPage));
+                rootFrame.Navigate(typeof(MainPage));
             }
         }
 
         private void onCancel(object sender, RoutedEventArgs e)
         {
-            MainPage.Instance.ContentFrame.Navigate(typeof(MainPage));
+            var rootFrame = Window.Current.Content as Frame;
+            rootFrame.Navigate(typeof(MainPage));
         }
     }
 }

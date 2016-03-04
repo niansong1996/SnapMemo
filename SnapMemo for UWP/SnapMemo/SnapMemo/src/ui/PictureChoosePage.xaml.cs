@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SnapMemo.src.logic;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -18,6 +19,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Shapes;
 using Windows.Web.Http;
 using Windows.Web.Http.Filters;
 
@@ -38,7 +40,7 @@ namespace SnapMemo.src.ui
             this.InitializeComponent();
         }
 
-        private async void Capture()
+        private async Task<IRandomAccessStream> Capture()
         {
             var memStream = new InMemoryRandomAccessStream();
             var encoder = await BitmapEncoder.CreateForTranscodingAsync(memStream, decoder);
@@ -64,8 +66,7 @@ namespace SnapMemo.src.ui
 
             await encoder.FlushAsync();
 
-            await WriteToFile(memStream);
-            memStream.Dispose();
+            return memStream;
         }
 
         private async Task WriteToFile(IRandomAccessStream memStream)
@@ -107,18 +108,21 @@ namespace SnapMemo.src.ui
             imgView.Source = source;
         }
 
-        private void OnOK(object sender, RoutedEventArgs e)
+        private async void OnOK(object sender, RoutedEventArgs e)
         {
-            Capture();
+            var memStream = await Capture();
 
-            // TODO send to server
+            //var memo = await NetHelper.ResolveImage(memStream);
+            await WriteToFile(memStream);
+
             //Frame root = Window.Current.Content as Frame;
-            //root.Navigate(typeof(MemoModifyPage));
+            //root.Navigate(typeof(MemoModifyPage), memo);
         }
 
         private void OnCancel(object sender, RoutedEventArgs e)
         {
-            MainPage.Instance.ContentFrame.Navigate(typeof(MainPage));
+            Frame frame = Window.Current.Content as Frame;
+            frame.Navigate(typeof(MainPage));
         }
 
         enum EventMode
@@ -130,22 +134,6 @@ namespace SnapMemo.src.ui
         private EventMode mode;
         private Point initTappedPos;
         private Point initRectPos;
-
-        private void BorderOnTapped(object sender, TappedRoutedEventArgs e)
-        {
-            var x = e.GetPosition(border).X;
-            var y = e.GetPosition(border).Y;
-            Debug.WriteLine("border detect tap:{0}, {1}", x, y);
-
-            var thickness = border.Margin;
-            Debug.WriteLine("origin margin: " + thickness.ToString());
-
-            thickness.Left += x;
-            thickness.Top += y;
-            border.Margin = thickness;
-
-            Debug.WriteLine("final margin: " + border.Margin.ToString());
-        }
 
         private void OnImagePressed(object sender, PointerRoutedEventArgs e)
         {
@@ -204,6 +192,126 @@ namespace SnapMemo.src.ui
             double bottomSide = topSide + border.Height;
 
             var currentPos = e.GetCurrentPoint(containerGrid).Position;
+
+            // whether the current tapped position is close to the sides
+            bool closeLeft = currentPos.X - leftSide < sensitiveRadius;
+            bool closeRight = rightSide - currentPos.X < sensitiveRadius;
+            bool closeTop = currentPos.Y - topSide < sensitiveRadius;
+            bool closeBottom = bottomSide - currentPos.Y < sensitiveRadius;
+
+            if (closeLeft && closeTop)
+            {
+                mode = EventMode.DRAW;
+                initTappedPos = new Point(rightSide, bottomSide);
+            }
+            else if (closeLeft && closeBottom)
+            {
+                mode = EventMode.DRAW;
+                initTappedPos = new Point(rightSide, topSide);
+            }
+            else if (closeRight && closeTop)
+            {
+                mode = EventMode.DRAW;
+                initTappedPos = new Point(leftSide, bottomSide);
+            }
+            else if (closeRight && closeBottom)
+            {
+                mode = EventMode.DRAW;
+                initTappedPos = new Point(leftSide, topSide);
+            }
+            else // not in 4 corner, move the rect without resizing
+            {
+                mode = EventMode.MOVE;
+                initTappedPos = currentPos;
+                initRectPos = new Point(leftSide, topSide);
+            }
+        }
+
+        private void imgView_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
+        {
+            var currentPos = calPointRelativeToContainerGrid(e.Position, sender);
+
+            initTappedPos = currentPos;
+            mode = EventMode.DRAW;
+
+            border.Width = 0;
+            border.Height = 0;
+            border.Margin = new Thickness(currentPos.X, currentPos.Y, 0, 0);
+        }
+
+        private Point calPointRelativeToContainerGrid(Point origin, object sender)
+        {
+            var currentPos = origin;
+            var imgViewW = imgView.RenderSize.Width;
+            var imgViewH = imgView.RenderSize.Height;
+
+            var deviationW = (containerGrid.RenderSize.Width - imgViewW) / 2;
+            var deviationH = (containerGrid.RenderSize.Height - imgViewH) / 2;
+
+            if(deviationW > 0)
+            {
+                currentPos.X += deviationW;
+            }
+
+            if(deviationH > 0)
+            {
+                currentPos.Y += deviationH;
+            }
+
+            if (sender.GetType() == typeof(Rectangle))
+            {
+                currentPos.X += border.Margin.Left;
+                currentPos.Y += border.Margin.Top;
+            }
+
+            return currentPos;
+        }
+
+        private void manipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            var currentPos = calPointRelativeToContainerGrid(e.Position, sender);
+
+            if (mode == EventMode.DRAW)
+            {
+                // the position of the left-top of the rectangle
+                var startPoint = new Point(
+                    Math.Min(currentPos.X, initTappedPos.X),
+                    Math.Min(currentPos.Y, initTappedPos.Y));
+
+                border.Margin = new Thickness(startPoint.X, startPoint.Y, 0, 0);
+                border.Width = Math.Abs(currentPos.X - initTappedPos.X);
+                border.Height = Math.Abs(currentPos.Y - initTappedPos.Y);
+            }
+            else if (mode == EventMode.MOVE)
+            {
+                border.Margin = new Thickness(
+                    initRectPos.X + (currentPos.X - initTappedPos.X),
+                    initRectPos.Y + (currentPos.Y - initTappedPos.Y),
+                    0, 0);
+            }
+            else
+            {
+                // nothing
+            }
+        }
+
+        private void manipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        {
+            Debug.WriteLine("complete manipulating");
+
+            mode = EventMode.NONE;
+            initTappedPos = new Point(0, 0);
+        }
+
+        private void border_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
+        {
+            // the side value relative to the container
+            double leftSide = border.Margin.Left;
+            double rightSide = leftSide + border.Width;
+            double topSide = border.Margin.Top;
+            double bottomSide = topSide + border.Height;
+
+            var currentPos = calPointRelativeToContainerGrid(e.Position, sender);
 
             // whether the current tapped position is close to the sides
             bool closeLeft = currentPos.X - leftSide < sensitiveRadius;

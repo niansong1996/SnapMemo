@@ -79,7 +79,15 @@ namespace SnapMemo
             }
             else if (accountBoxItem.IsSelected)
             {
-                myFrame.Navigate(typeof(LogInPage));
+                if(Preference.GetUserID() == Preference.DefaultID)
+                {
+                    myFrame.Navigate(typeof(LogInPage));
+                }
+                else
+                {
+                    myFrame.Navigate(typeof(AccountPage));
+                }
+                
                 mySplitView.IsPaneOpen = false;
             }
         }
