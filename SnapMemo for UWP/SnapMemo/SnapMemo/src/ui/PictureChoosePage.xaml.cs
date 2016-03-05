@@ -88,17 +88,25 @@ namespace SnapMemo.src.ui
         {
             base.OnNavigatedTo(e);
 
-            var inputFile = e.Parameter as StorageFile;
+            Debug.WriteLine("navigate finish");
 
-            SoftwareBitmap picture;
-            using (IRandomAccessStream stream = await inputFile.OpenAsync(FileAccessMode.Read))
+            IRandomAccessStream stream = null;
+
+            try
             {
-                // Create the decoder from the stream
-                decoder = await BitmapDecoder.CreateAsync(stream);
-
-                // Get the SoftwareBitmap representation of the file
-                picture = await decoder.GetSoftwareBitmapAsync();
+                stream = e.Parameter as IRandomAccessStream;
             }
+            catch (Exception)
+            {
+                Debug.WriteLine("wrong type convert");
+            }
+            
+
+            // Create the decoder from the stream
+            decoder = await BitmapDecoder.CreateAsync(stream);
+
+            // Get the SoftwareBitmap representation of the file
+            SoftwareBitmap picture = await decoder.GetSoftwareBitmapAsync();
 
             SoftwareBitmap bitmapBGRA8 = SoftwareBitmap.Convert(picture, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
 
@@ -106,6 +114,8 @@ namespace SnapMemo.src.ui
             await source.SetBitmapAsync(bitmapBGRA8);
 
             imgView.Source = source;
+
+            Debug.WriteLine("already finish");
         }
 
         private async void OnOK(object sender, RoutedEventArgs e)

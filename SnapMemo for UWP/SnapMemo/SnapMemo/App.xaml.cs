@@ -1,12 +1,16 @@
-﻿using System;
+﻿using SnapMemo.src.ui;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Graphics.Imaging;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -103,6 +107,31 @@ namespace SnapMemo
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
+        }
+
+        protected override async void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
+        {
+            Debug.WriteLine("catch share stream");
+
+            var shareOperation = args.ShareOperation;
+            if (shareOperation.Data.Contains(StandardDataFormats.Bitmap))
+            {
+                var bitmap = await shareOperation.Data.GetBitmapAsync();
+
+                Frame root = Window.Current.Content as Frame;
+                if (root == null)
+                {
+                    root = new Frame();
+                    Window.Current.Content = root;
+                }
+
+                var memStream = await bitmap.OpenReadAsync();
+                Debug.WriteLine("stream is ready");
+
+                root.Navigate(typeof(PictureChoosePage), memStream);
+
+                Window.Current.Activate();
+            }
         }
     }
 }

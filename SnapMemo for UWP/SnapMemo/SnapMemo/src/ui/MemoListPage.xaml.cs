@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -153,7 +154,7 @@ namespace SnapMemo.src.ui
             else
             {
                 Frame frame = Window.Current.Content as Frame;
-                frame.Navigate(typeof(PictureChoosePage), inputFile);
+                frame.Navigate(typeof(PictureChoosePage), await inputFile.OpenAsync(FileAccessMode.Read));
             }
         }
     }
