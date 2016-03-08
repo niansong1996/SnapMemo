@@ -9,23 +9,47 @@
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0">
-            <TextBlock FontSize="24" Margin="14,14,0,0">Title</TextBlock>
-            <TextBox Name="titleTB" FontSize="20" Margin="14,14,14,0"></TextBox>
-            <TextBlock FontSize="24" Margin="14,14,0,0">Time</TextBlock>
-            <DatePicker Name="timeDP" Margin="14,14,14,0" HorizontalAlignment="Stretch"></DatePicker>
-            <TimePicker Name="timeTP" Margin="14,14,14,0" HorizontalAlignment="Stretch"></TimePicker>
-            <TextBlock FontSize="24" Margin="14,14,0,0">Content</TextBlock>
-            <TextBox Name="contentTB" FontSize="20" Margin="14,14,14,0" TextWrapping="Wrap" AcceptsReturn="True" ></TextBox>
+        <RelativePanel Background="LightGreen">
+            <Button Name="backButton" FontFamily="Segoe MDL2 Assets" Background="LightGreen" FontSize="36" Foreground="White" Click="backButton_Click">&#xE112;</Button>
+            <TextBlock Name="appTitleTB" RelativePanel.RightOf="backButton" FontSize="36" Foreground="White" Margin="20,0,0,0">SnapMemo</TextBlock>
+        </RelativePanel>
+
+        <StackPanel Grid.Row="1">
+            <StackPanel Width="120" Background="Red" Margin="0,14,0,0" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <TextBlock FontSize="24" Margin="14,6,6,6" Foreground="White">Title</TextBlock>
+            </StackPanel>
+            
+            <TextBox Name="titleTB" FontSize="20" Margin="14,4,14,0"></TextBox>
+
+            <StackPanel Width="120" Background="LightBlue" Margin="0,14,0,0" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <TextBlock FontSize="24" Margin="14,6,6,6" Foreground="White">Time</TextBlock>
+            </StackPanel>
+            <DatePicker Name="timeDP" Margin="14,4,14,0" HorizontalAlignment="Stretch"></DatePicker>
+            <TimePicker Name="timeTP" Margin="14,4,14,0" HorizontalAlignment="Stretch"></TimePicker>
+
+            <StackPanel Width="120" Background="Yellow" Margin="0,14,0,0" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <TextBlock FontSize="24" Margin="14,6,6,6" Foreground="Black">Content</TextBlock>
+            </StackPanel>
+            <TextBox Name="contentTB" FontSize="20" Margin="14,4,14,0" TextWrapping="Wrap" AcceptsReturn="True" ></TextBox>
         </StackPanel>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Name="save" FontSize="20" Margin="0,0,20,-0.333" VerticalAlignment="Stretch" Click="onSave">Save</Button>
-            <Button Name="cancel" FontSize="20" Margin="0,0,20,0" Click="onCancel">Cancel</Button>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="1" Name="save" FontSize="20" Margin="0,0,0,0" Background="LightGreen" HorizontalAlignment="Stretch" Click="onSave">Save</Button>
+            <Button Grid.Column="0" Name="cancel" FontSize="20" Margin="0,0,0,0" HorizontalAlignment="Stretch" Click="onCancel">Cancel</Button>
+        </Grid>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            
         </StackPanel>
     </Grid>
 </Page>

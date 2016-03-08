@@ -7,15 +7,15 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid  Background="AntiqueWhite">
+    <Grid  Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <RelativePanel Background="LightGray">
-            <Button Name="hamburgerButton" FontFamily="Segoe MDL2 Assets" FontSize="36" Click="hamburgerButton_Click">&#xE700;</Button>
-            <TextBlock Name="titleTB" RelativePanel.RightOf="hamburgerButton" FontSize="36" Margin="20,0,0,0">title</TextBlock>
+        <RelativePanel Background="LightGreen">
+            <Button Name="hamburgerButton" FontFamily="Segoe MDL2 Assets" Background="LightGreen" FontSize="36" Foreground="White" Click="hamburgerButton_Click">&#xE700;</Button>
+            <TextBlock Name="titleTB" RelativePanel.RightOf="hamburgerButton" FontSize="36" Foreground="White" Margin="20,0,0,0">SnapMemo</TextBlock>
         </RelativePanel>
 
         <SplitView Name="mySplitView" Grid.Row="1" OpenPaneLength="160" DisplayMode="Inline">
@@ -23,7 +23,7 @@
                 <ListBox Name="pagesListBox" SelectionChanged="pagesListBox_SelectionChanged">
                     <ListBoxItem Name="accountBoxItem">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="24">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="24" >
                         		<Run Text="&#xE13D;"/>
                             </TextBlock>
                             <TextBlock FontSize="24" Margin="24,0,0,0">
