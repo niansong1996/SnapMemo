@@ -26,6 +26,7 @@ public class httpClient {
 			URIBuilder builder = new URIBuilder("http://127.0.0.1:5678/SnapMemo");
 			URI uri = builder.build();
 			HttpPost request = new HttpPost(uri);
+//			HttpPost request = new HttpPost(uri);
 			// Request body
 			System.out.println("sending the request");
 			request.setHeader("Request-Type", "Resolve-Image");
@@ -61,5 +62,5 @@ public class httpClient {
 			e.printStackTrace();    
 		}    
 		return null;    
-	}    
+	}   
 }
