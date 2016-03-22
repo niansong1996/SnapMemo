@@ -40,10 +40,10 @@ namespace SnapMemo.src.ui
 
         private async void OnSignIn(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine("send Login : " + nameTB.Text + passwordTB.Text);
+            Debug.WriteLine("send Login : " + nameTB.Text + passwordTB.Password);
 
             string userID = JsonString.DeQuotes(
-                await NetHelper.Login(nameTB.Text, passwordTB.Text));
+                await NetHelper.Login(nameTB.Text, passwordTB.Password));
 
             // debug
             Debug.WriteLine("Log in successfully");

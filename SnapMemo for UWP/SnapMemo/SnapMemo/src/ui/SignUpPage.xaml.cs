@@ -32,10 +32,17 @@ namespace SnapMemo.src.ui
 
         private async void OnSignUp(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine("send Sign up : " + nameTB.Text + passwordTB.Text);
+            if(passwordTB.Password != confirmTB.Password)
+            {
+                Debug.WriteLine("password differs!");
+                warnTB.Text = "password differs!";
+                return;
+            }
+
+            Debug.WriteLine("send Sign up : " + nameTB.Text + passwordTB.Password);
 
             string userID = JsonString.DeQuotes(
-                await NetHelper.SignUp(nameTB.Text, passwordTB.Text));
+                await NetHelper.SignUp(nameTB.Text, passwordTB.Password));
 
             Debug.WriteLine("Sign up successfully");
             Debug.WriteLine("userID: " + userID);
