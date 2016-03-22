@@ -13,9 +13,14 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <RelativePanel Background="LightGreen">
+        <RelativePanel Name="relativePanel" Background="LightGreen">
             <Button Name="hamburgerButton" FontFamily="Segoe MDL2 Assets" Background="LightGreen" FontSize="36" Foreground="White" Click="hamburgerButton_Click">&#xE700;</Button>
-            <TextBlock Name="titleTB" RelativePanel.RightOf="hamburgerButton" FontSize="36" Foreground="White" Margin="20,0,0,0">SnapMemo</TextBlock>
+            <TextBlock Name="titleTB" RelativePanel.RightOf="hamburgerButton" FontSize="36" Foreground="White" Margin="20,0,0,0">Memos</TextBlock>
+            <Button Name="plusButton" RelativePanel.AlignRightWithPanel="True" Background="LightGreen" FontFamily="Segoe MDL2 Assets" FontSize="36" Foreground="White" Tapped="plusTB_Tapped">&#xE109;</Button>
+            <Button Name="cameraButton" RelativePanel.LeftOf="plusButton" Background="LightGreen" FontFamily="Segoe MDL2 Assets" FontSize="36" Foreground="White" Tapped="plusTB_Tapped">&#xE114;</Button>
+
+            <Button Name="deleteButton" RelativePanel.AlignRightWithPanel="True" Background="LightGreen" Visibility="Collapsed" FontFamily="Segoe MDL2 Assets" FontSize="36" Foreground="White">&#xE107;</Button>
+            <Button Name="cancelButton" Background="LightGreen" Visibility="Collapsed" FontFamily="Segoe MDL2 Assets" FontSize="36" Foreground="White">&#xE112;</Button>
         </RelativePanel>
 
         <SplitView Name="mySplitView" Grid.Row="1" OpenPaneLength="160" DisplayMode="Inline">

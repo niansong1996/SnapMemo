@@ -28,6 +28,14 @@ namespace SnapMemo.src.ui
         public LogInPage()
         {
             this.InitializeComponent();
+
+            // set plus button and camera button in title
+            MainPage.Instance.CameraButton.Visibility = Visibility.Collapsed;
+            MainPage.Instance.PlusButton.Visibility = Visibility.Collapsed;
+            MainPage.Instance.DeleteButton.Visibility = Visibility.Collapsed;
+
+            // set title
+            MainPage.Instance.Title = "Account";
         }
 
         private async void OnSignIn(object sender, RoutedEventArgs e)

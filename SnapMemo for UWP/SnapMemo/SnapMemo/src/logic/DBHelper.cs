@@ -28,7 +28,7 @@ namespace SnapMemo.src.logic
                     path);
 
                 // crate a table for memos if not existed
-                db.DropTable<Memo>();
+                //db.DropTable<Memo>();
                 db.CreateTable<Memo>();
 
                 return db;

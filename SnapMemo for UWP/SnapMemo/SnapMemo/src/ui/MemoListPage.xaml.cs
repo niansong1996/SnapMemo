@@ -70,12 +70,24 @@ namespace SnapMemo.src.ui
     /// </summary>
     public sealed partial class MemoListPage : Page
     {
-        private bool isSelectMode = false;
+        private static bool debugWithoutNet = true;
 
         public MemoListPage()
         {
             this.InitializeComponent();
             LoadMemos();
+
+            // set buttons in title
+            MainPage.Instance.CameraButton.Visibility = Visibility.Visible;
+            MainPage.Instance.PlusButton.Visibility = Visibility.Visible;
+            MainPage.Instance.DeleteButton.Visibility = Visibility.Collapsed;
+
+            MainPage.Instance.CameraButton.Click += OnSnap;
+            MainPage.Instance.PlusButton.Click += OnAdd;
+            MainPage.Instance.DeleteButton.Click += OnDelete;
+
+            // set title
+            MainPage.Instance.Title = "Memos";
         }
 
         private void LoadMemos()
@@ -83,7 +95,10 @@ namespace SnapMemo.src.ui
             List<Memo> memos = DBHelper.GetAllMemo();
             foreach (var memo in memos)
             {
-                memoList.Children.Add(new MemoBlock(memo));
+                var memoBlock = new MemoBlock(memo);
+                memoBlock.Holding += OnChoose;
+                memoBlock.RightTapped += OnChoose;
+                memoList.Children.Add(memoBlock);
             }
         }
 
@@ -96,24 +111,62 @@ namespace SnapMemo.src.ui
         private void OnChoose(object sender, RoutedEventArgs e)
         {
             var gray = new SolidColorBrush(Colors.Gray);
+            var blue = new SolidColorBrush(Colors.CornflowerBlue);
             var memos = memoList.Children.ToList();
             foreach (var one in memos)
             {
                 MemoBlock memoBlock = one as MemoBlock;
-                if (isSelectMode)
-                {
-                    memoBlock.Background = gray;
-                    memoBlock.Selected = false;
-                    memoBlock.Click += memoBlock.ClickToModify;
-                    memoBlock.Click -= memoBlock.ClickToSelect;
-                }
-                else
-                {
-                    memoBlock.Click -= memoBlock.ClickToModify;
-                    memoBlock.Click += memoBlock.ClickToSelect;
-                }
+
+                memoBlock.Background = gray;
+                memoBlock.Selected = false;
+                memoBlock.Click -= memoBlock.ClickToModify;
+                memoBlock.Click += memoBlock.ClickToSelect;
+                memoBlock.Holding -= OnChoose;
+                memoBlock.RightTapped -= OnChoose;
             }
-            isSelectMode = !isSelectMode;
+
+            // change the state of the first selected one
+            var firstMemo = sender as MemoBlock;
+            firstMemo.Background = blue;
+            firstMemo.Selected = true;
+
+            // change view of cancel Button
+            var cancelBtn = MainPage.Instance.CancelButton;
+            cancelBtn.Visibility = Visibility.Visible;
+            cancelBtn.Click += OnCancelChoose;
+
+            // hide add and camera, show delete
+            MainPage.Instance.PlusButton.Visibility = Visibility.Collapsed;
+            MainPage.Instance.CameraButton.Visibility = Visibility.Collapsed;
+            MainPage.Instance.DeleteButton.Visibility = Visibility.Visible;
+        }
+
+        private void OnCancelChoose(object sender, RoutedEventArgs e)
+        {
+            // change states of memoBlocks
+            var gray = new SolidColorBrush(Colors.Gray);
+            var memos = memoList.Children.ToList();
+            foreach (var one in memos)
+            {
+                MemoBlock memoBlock = one as MemoBlock;
+
+                memoBlock.Background = gray;
+                memoBlock.Selected = false;
+                memoBlock.Click += memoBlock.ClickToModify;
+                memoBlock.Click -= memoBlock.ClickToSelect;
+                memoBlock.Holding += OnChoose;
+                memoBlock.RightTapped += OnChoose;
+            }
+
+            // hide cancel Button
+            var cancelBtn = MainPage.Instance.CancelButton;
+            cancelBtn.Visibility = Visibility.Collapsed;
+            cancelBtn.Click -= OnCancelChoose;
+
+            // show add and camera, hide delete
+            MainPage.Instance.PlusButton.Visibility = Visibility.Visible;
+            MainPage.Instance.CameraButton.Visibility = Visibility.Visible;
+            MainPage.Instance.DeleteButton.Visibility = Visibility.Collapsed; 
         }
 
         private async void OnDelete(object sender, RoutedEventArgs e)
@@ -129,11 +182,16 @@ namespace SnapMemo.src.ui
                 }
                 else
                 {
-                    await NetHelper.DeleteMemo(memoBlock.Memo.MemoID);
+                    if (!debugWithoutNet)
+                    {
+                        await NetHelper.DeleteMemo(memoBlock.Memo.MemoID);
+                    }
                     DBHelper.DeleteMemo(memoBlock.Memo);
                     NotificationHelper.RemoveToastFromSchedule(memoBlock.Memo);
                 }
             }
+
+            OnCancelChoose(null, e);
         }
 
         private async void OnSnap(object sender, RoutedEventArgs e)

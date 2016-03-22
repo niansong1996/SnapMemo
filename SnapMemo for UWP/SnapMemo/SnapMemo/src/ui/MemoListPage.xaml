@@ -16,10 +16,7 @@
             <StackPanel Name="memoList"/>
         </ScrollViewer>
         <StackPanel Name="btnList" HorizontalAlignment="Right" Orientation="Horizontal" Grid.Row="1">
-            <Button Content="add" FontSize="18" Margin="0,0,20,0" Click="OnAdd"/>
-            <Button Content="snap" FontSize="18" Margin="0,0,20,0" Click="OnSnap"/>
-            <Button Content="choose" FontSize="18" Margin="0,0,20,0" Click="OnChoose"/>
-            <Button Content="delete" FontSize="18" Margin="0,0,0,0" Click="OnDelete"/>
+            
         </StackPanel>
     </Grid>
 </Page>

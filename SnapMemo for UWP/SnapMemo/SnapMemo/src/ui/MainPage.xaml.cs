@@ -40,6 +40,36 @@ namespace SnapMemo
             set { titleTB.Text = value; }
         }
 
+        public Button PlusButton
+        {
+            get { return plusButton; }
+            private set { }
+        }
+
+        public Button CameraButton
+        {
+            get { return cameraButton; }
+            private set { }
+        }
+
+        public Button DeleteButton
+        {
+            get { return deleteButton; }
+            private set { }
+        }
+
+        public Button CancelButton
+        {
+            get { return cancelButton; }
+            private set { }
+        }
+
+        public Button HamburgerButton
+        {
+            get { return hamburgerButton; }
+            private set { }
+        }
+
         public Frame ContentFrame
         {
             get; private set;
@@ -90,6 +120,11 @@ namespace SnapMemo
                 
                 mySplitView.IsPaneOpen = false;
             }
+        }
+
+        private void plusTB_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+
         }
     }
 }
