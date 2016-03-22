@@ -10,10 +10,7 @@ import org.sensation.snapmemo.VO.UserVO;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,17 +32,12 @@ public class ClientData {
     MemoVO newMemoVO;
 
     /**
-     * 判断是否为一次更新
-     */
-    boolean isUpdate;
-
-    /**
      * 判断是数据第一次添加还是后序修改
      */
     boolean isAdd;
 
     /**
-     * 需要更新的item位置
+     * 需要更新的item位置，用于重启主界面时替换该位置上的memo
      */
     int position;
 
@@ -60,14 +52,21 @@ public class ClientData {
     boolean isUserInfoChanged;
 
     /**
-     * 判断是否需要联网，默认不需要联网
+     * 判断是否需要联网，默认不需要联网；这个标志位用于判断ContentActivity的取消键，
+     * 在新建时取消需要发送删除请求，而在正常查看时取消不需要
      */
     boolean isConnected = false;
 
     /**
-     * 判断是否用户已登录，默认未登录
+     * 判断是否用户已登录，默认未登录；这个标志位用于判断是否应该提供用户添加和删除功能，
+     * 未登录的状态下，添加和删除信息是不进行网络通信的
      */
     boolean isOnline = false;
+
+    /**
+     * 新的列表内容，登录界面登录后会设置，会在重启主界面时检测到并更新
+     */
+    ArrayList<MemoVO> newMemoVOList;
 
     private ClientData() {
         //加载本地用户信息
@@ -78,135 +77,6 @@ public class ClientData {
         return clientData;
     }
 
-    /**
-     * 保存userVO至本地文件
-     *
-     * @param userVO
-     */
-    public static void saveUserInfo(UserVO userVO) {
-        FileOutputStream out;
-        BufferedWriter writer = null;
-
-        try {
-            out = MyApplication.getContext().openFileOutput("userInfo", Context.MODE_PRIVATE);
-            writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-            writer.write("userID=" + userVO.getUserID());
-            writer.newLine();
-            writer.write("userName=" + userVO.getUserName());
-            writer.newLine();
-            writer.write("educationInfo=" + userVO.getEducationInfo());
-            writer.newLine();
-            writer.write("condition=" + userVO.getCondition());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    public static void saveUserLogo(Bitmap userLogo) {
-        FileOutputStream out = null;
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        InputStream in = null;
-
-        try {
-            out = MyApplication.getContext().openFileOutput("userLogo", Context.MODE_PRIVATE);
-            userLogo.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-            in = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-            byte[] b = new byte[10 * 1024];
-            while (in.read(b, 0, 10240) != -1) {
-                out.write(b, 0, 10240);
-            }
-            out.flush();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public static ArrayList<String> getUserPreference() {
-        String tempPreference;
-        ArrayList<String> userPreferenceList = new ArrayList<String>();
-        FileInputStream fileInputStream = null;
-        BufferedReader bufferedReader = null;
-
-        try {
-            fileInputStream = MyApplication.getContext().openFileInput("userLoginPreference");
-            bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
-
-            while ((tempPreference = bufferedReader.readLine()) != null) {
-                userPreferenceList.add(tempPreference);
-            }
-        } catch (FileNotFoundException e1) {
-            e1.printStackTrace();
-            try {
-                MyApplication.getContext().openFileOutput("userLoginPreference", Context.MODE_PRIVATE);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (bufferedReader != null) {
-                    bufferedReader.close();
-                }
-                if (fileInputStream != null) {
-                    fileInputStream.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return userPreferenceList;
-    }
-
-    /**
-     * 保存成功登录的用户名数据
-     *
-     * @param userSucceedInput 成功登录的用户名
-     */
-    public static void saveUserPreference(String userSucceedInput) {
-        FileOutputStream out = null;
-        BufferedWriter writer = null;
-
-        try {
-            out = MyApplication.getContext().openFileOutput("userLoginPreference", Context.MODE_APPEND);
-            writer = new BufferedWriter(new OutputStreamWriter(out));
-            writer.write(userSucceedInput);
-            writer.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-                if (writer != null) {
-                    writer.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     /**
      * @return 是否登录过
@@ -238,9 +108,6 @@ public class ClientData {
             e.printStackTrace();
         } finally {
             try {
-                if (in != null) {
-                    in.close();
-                }
                 if (reader != null) {
                     reader.close();
                 }
@@ -268,14 +135,12 @@ public class ClientData {
             writer.write(userName);
             writer.newLine();
             writer.write(password);
+            writer.newLine();
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         } finally {
             try {
-                if (out != null) {
-                    out.close();
-                }
                 if (writer != null) {
                     writer.close();
                 }
@@ -306,6 +171,7 @@ public class ClientData {
     /**
      * @return 是否是首次运行
      */
+    //TODO 首次运行进行引导
     public boolean isFirstRun() {
         boolean isFirstRun = true;
         Properties runtime = new Properties();
@@ -318,8 +184,13 @@ public class ClientData {
         return isFirstRun;
     }
 
+    /**
+     * 初始化用户信息（userID,userName,educationInfo,signiture,userLogo），如果之前没有过就采用默认的加载方案<br><br>
+     * <strong>注意:</strong><br>
+     * 由于采用静态单例模式，加载程序时就会提前加载信息，即使联网后可能将原有数据覆盖
+     */
     private void initInfo() {
-        String userID, userName, condition, educationInfo;
+        String userID, userName, signature;
         Bitmap userLogo;
         FileInputStream fileInputStream = null;
         BufferedReader bufferedReader;
@@ -336,8 +207,7 @@ public class ClientData {
                 initUserInfo();
             }
             userName = userInfo.getProperty("userName");
-            educationInfo = userInfo.getProperty("educationInfo");
-            condition = userInfo.getProperty("condition");
+            signature = userInfo.getProperty("signature");
 
 
             //加载用户头像
@@ -345,7 +215,7 @@ public class ClientData {
 
             userLogo = BitmapFactory.decodeStream(fileInputStream);
 
-            userVO = new UserVO(userID, userName, educationInfo, condition, userLogo);
+            userVO = new UserVO(userID, userName, signature, userLogo);
         } catch (IOException e) {
             e.printStackTrace();
             if (userInfo.size() == 0) {
@@ -360,32 +230,27 @@ public class ClientData {
     }
 
     /**
-     * 初始化本地数据，包括用户信息
+     * 在本地没有上一次的用户数据时加载的原始设定数据(用户信息)
      */
     private void initUserInfo() {
         String defaultUserID = MyApplication.getContext().getString(R.string.default_user_id),
                 defaultUserName = MyApplication.getContext().getString(R.string.default_user_name),
-                defaultEducationInfo = MyApplication.getContext().getString(R.string.default_education_info),
-                defaultCondition = MyApplication.getContext().getString(R.string.default_condition);
+                defaultCondition = MyApplication.getContext().getString(R.string.default_signature);
         FileOutputStream out = null;
         BufferedWriter writer = null;
         try {
             out = MyApplication.getContext().openFileOutput("userInfo", Context.MODE_PRIVATE);
-            writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+            writer = new BufferedWriter(new OutputStreamWriter(out));
             writer.write(defaultUserID);
             writer.newLine();
             writer.write(defaultUserName);
             writer.newLine();
-            writer.write(defaultEducationInfo);
-            writer.newLine();
             writer.write(defaultCondition);
+            writer.newLine();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             try {
-                if (out != null) {
-                    out.close();
-                }
                 if (writer != null) {
                     writer.close();
                 }
@@ -396,7 +261,7 @@ public class ClientData {
     }
 
     /**
-     * 初始化本地数据，包括用户头像
+     * 在本地没有上一次的用户数据时加载的原始设定数据(用户头像)
      */
     private void initLogo() {
         FileOutputStream out = null;
@@ -430,12 +295,7 @@ public class ClientData {
     }
 
     public MemoVO getNewMemoVO() {
-        if (isUpdate) {
-            setUpdateCondition(false);
-            return newMemoVO;
-        } else {
-            return null;
-        }
+        return newMemoVO;
     }
 
     public void setNewMemoVO(MemoVO newMemoVO) {
@@ -456,10 +316,6 @@ public class ClientData {
 
     public void setAdd(boolean isAdd) {
         this.isAdd = isAdd;
-    }
-
-    public void setUpdateCondition(boolean condition) {
-        isUpdate = condition;
     }
 
     public boolean isUserInfoChanged() {
@@ -488,5 +344,17 @@ public class ClientData {
 
     public void setOnline(boolean isOnline) {
         this.isOnline = isOnline;
+    }
+
+    public ArrayList<MemoVO> getNewMemoVOList() {
+        return newMemoVOList;
+    }
+
+    public void setNewMemoVOList(ArrayList<MemoVO> newMemoVOList) {
+        this.newMemoVOList = newMemoVOList;
+    }
+
+    public void setUserID(String userID) {
+        userVO.setUserID(userID);
     }
 }

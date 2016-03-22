@@ -1,28 +1,17 @@
 package org.sensation.snapmemo.VO;
 
 /**
- * Created by Alan on 2016/2/8.
+ * Created by Alan on 2016/2/19.
  */
-public class MemoVOLite {
-
-    String memoID;
+public class MemoVOLite2 {
     String topic;
     String time;
     String content;
 
-    public MemoVOLite(String memoID, String topic, String time, String content) {
-        this.memoID = memoID;
+    public MemoVOLite2(String topic, String time, String content) {
         this.topic = topic;
         this.time = time;
         this.content = content;
-    }
-
-    public String getMemoID() {
-        return memoID;
-    }
-
-    public void setMemoID(String memoID) {
-        this.memoID = memoID;
     }
 
     public String getTopic() {

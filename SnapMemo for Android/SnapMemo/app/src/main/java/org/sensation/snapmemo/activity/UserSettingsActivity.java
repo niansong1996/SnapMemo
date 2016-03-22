@@ -18,9 +18,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.sensation.snapmemo.R;
-import org.sensation.snapmemo.VO.UserVO;
+import org.sensation.snapmemo.dao.UserInfoDao;
 import org.sensation.snapmemo.tool.ClientData;
-import org.sensation.snapmemo.tool.DataTool;
+import org.sensation.snapmemo.tool.IOTool;
+import org.sensation.snapmemo.VO.UserVO;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -39,7 +40,7 @@ public class UserSettingsActivity extends AppCompatActivity implements View.OnCl
     /**
      * 保存文件的根路径
      */
-    String saveDir = DataTool.DEFAULT_SAVING_DIR;
+    String saveDir = IOTool.DEFAULT_SAVING_DIR;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,29 @@ public class UserSettingsActivity extends AppCompatActivity implements View.OnCl
         clientData = ClientData.getInstance();
         initToolBar();
         initUserInfo();
+        initButton();
+    }
+
+    private void initButton() {
+        //确认按钮
+        findViewById(R.id.modify).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveClientData();
+                finish();
+                overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
+            }
+        });
+
+        //注销按钮
+        findViewById(R.id.signOut).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClientData.getInstance().setOnline(false);
+                finish();
+                overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
+            }
+        });
     }
 
     private void initUserInfo() {
@@ -68,11 +92,8 @@ public class UserSettingsActivity extends AppCompatActivity implements View.OnCl
         userID = (TextView) findViewById(R.id.userID);
         userID.setText(userVO.getUserID());
 
-        educationInfo = (EditText) findViewById(R.id.educationInfo);
-        educationInfo.setText(userVO.getEducationInfo());
-
         condition = (EditText) findViewById(R.id.signiture);
-        condition.setText(userVO.getCondition());
+        condition.setText(userVO.getSignature());
     }
 
     private void initToolBar() {
@@ -115,7 +136,6 @@ public class UserSettingsActivity extends AppCompatActivity implements View.OnCl
     private UserVO getNewUserVO() {
         UserVO newUserVO = new UserVO(userVO.getUserID(),
                 userName.getText().toString(),
-                educationInfo.getText().toString(),
                 condition.getText().toString(),
                 ((BitmapDrawable) userLogo.getDrawable()).getBitmap());
         return newUserVO;
@@ -127,8 +147,8 @@ public class UserSettingsActivity extends AppCompatActivity implements View.OnCl
     private void saveClientData() {
         clientData.setUserInfo(getNewUserVO());
         clientData.setUserInfoChanged(true);
-        ClientData.saveUserInfo(getNewUserVO());
-        ClientData.saveUserLogo(((BitmapDrawable) userLogo.getDrawable()).getBitmap());
+        UserInfoDao.saveUserInfo(getNewUserVO());
+        UserInfoDao.saveUserLogo(((BitmapDrawable) userLogo.getDrawable()).getBitmap());
     }
 
     @Override
@@ -151,7 +171,7 @@ public class UserSettingsActivity extends AppCompatActivity implements View.OnCl
         int id = v.getId();
 
         if (id == R.id.userLogo) {
-            File outputImage = DataTool.createFile(saveDir, "output_image.jpg");
+            File outputImage = IOTool.createFile(saveDir, "output_image.jpg");
             imageUri = Uri.fromFile(outputImage);
 
             Intent intent = new Intent("android.intent.action.GET_CONTENT");

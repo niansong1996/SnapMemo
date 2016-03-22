@@ -1,7 +1,12 @@
 package org.sensation.snapmemo.tool;
 
-import org.sensation.snapmemo.VO.MemoVO;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
+import org.sensation.snapmemo.VO.MemoVO;
+import org.sensation.snapmemo.VO.UserVO;
+
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -15,5 +20,20 @@ public class Resource_stub {
         memoVOs.add(memoVO1);
         memoVOs.add(memoVO2);
         return memoVOs;
+    }
+
+    public UserVO getUserVO() {
+        UserVO userVO = new UserVO("00000000", "Alan", "In Love With Grace", getUserLogo());
+        return userVO;
+    }
+
+    public Bitmap getUserLogo() {
+        Bitmap userLogo = null;
+        try {
+            userLogo = BitmapFactory.decodeStream(MyApplication.getContext().getAssets().open("defaultUserLogo.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return userLogo;
     }
 }

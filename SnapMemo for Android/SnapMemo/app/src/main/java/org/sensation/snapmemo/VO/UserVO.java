@@ -9,15 +9,13 @@ public class UserVO {
 
     String userID;
     String userName;
-    String educationInfo;
-    String condition;
+    String signature;
     Bitmap userLogo;
 
-    public UserVO(String userID, String userName, String educationInfo, String condition, Bitmap userLogo) {
+    public UserVO(String userID, String userName, String signature, Bitmap userLogo) {
         this.userID = userID;
         this.userName = userName;
-        this.educationInfo = educationInfo;
-        this.condition = condition;
+        this.signature = signature;
         this.userLogo = userLogo;
     }
 
@@ -37,20 +35,13 @@ public class UserVO {
         this.userName = userName;
     }
 
-    public String getEducationInfo() {
-        return educationInfo;
+
+    public String getSignature() {
+        return signature;
     }
 
-    public void setEducationInfo(String educationInfo) {
-        this.educationInfo = educationInfo;
-    }
-
-    public String getCondition() {
-        return condition;
-    }
-
-    public void setCondition(String condition) {
-        this.condition = condition;
+    public void setSignature(String signature) {
+        this.signature = signature;
     }
 
     public Bitmap getUserLogo() {

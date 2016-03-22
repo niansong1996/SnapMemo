@@ -26,12 +26,14 @@
 
     <string name="default_user_name">userName=Alan</string>
     <string name="default_education_info">educationInfo=Nanjing University</string>
-    <string name="default_condition">signiture=In love with Grace</string>
+    <string name="default_signature">signature=In love with Grace</string>
     <string name="default_user_id">userID=000000</string>
 
     <string name="progress_dialog_title">微软牛津计划</string>
 
+    <string name="sign_up">注册</string>
     <string name="user_name">用户名</string>
+    <string name="password">密码</string>
     <string name="user_id">用户ID</string>
     <string name="education_info">学校</string>
     <string name="signiture">签名档</string>
@@ -51,5 +53,17 @@
     <string name="title_activity_signin">用户登录</string>
 
     <string name="modify_success">修改成功</string>
+    <string name="delete_success">删除成功</string>
     <string name="signin_overtime">登录失效，请重新登录</string>
+    <string name="sign_out">注销</string>
+    <string name="title_activity_sign_up">注册</string>
+    <string name="sign_up_success">注册成功</string>
+
+    <string name="start_info">确认生成备忘录吗？</string>
+    <string name="reminder_fail">未添加提醒</string>
+
+    <string name="app_recommend_1">Take a Snap</string>
+    <string name="app_recommend_2">And everything gets easier</string>
+    <string name="app_recommend_3">开启SnapMemo便捷之旅</string>
+
 </resources>

@@ -10,17 +10,17 @@
 
     <Button
         android:id="@+id/cancel"
-        android:layout_width="160dp"
+        android:layout_width="145dp"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:background="@color/backgroundColor"
         android:text="@string/cancel"
         android:textColor="@color/textColor"
-        android:textSize="24sp" />
+        android:textSize="23sp" />
 
     <Button
-        android:id="@+id/confirm"
+        android:id="@+id/modify"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
@@ -29,7 +29,7 @@
         android:background="@color/dominColor"
         android:text="@string/confirm"
         android:textColor="#ffffff"
-        android:textSize="24sp" />
+        android:textSize="23sp" />
 
     <TextView
         android:id="@+id/time"
@@ -85,41 +85,53 @@
         android:layout_alignBottom="@+id/topic"
         android:layout_toEndOf="@+id/cancel"
         android:background="@null"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:maxWidth="200dp"
-        android:paddingBottom="5dp"
+        android:maxWidth="250dp"
+        android:padding="7dp"
+        android:text="欢迎来到SnapMemo"
         android:textColor="@color/textColor"
-        android:textSize="22sp" />
+        android:textSize="20sp" />
 
-    <EditText
+    <TextView
+        android:id="@+id/date_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/topic_content"
+        android:layout_below="@+id/divider_under_topic"
+        android:layout_marginTop="15dp"
+        android:padding="5dp"
+        android:text="08:00"
+        android:textColor="@color/textColor"
+        android:textSize="19sp" />
+
+    <TextView
         android:id="@+id/time_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/content"
-        android:layout_alignStart="@+id/topic_content"
-        android:background="@null"
-        android:paddingBottom="5dp"
+        android:layout_alignStart="@+id/date_content"
+        android:layout_below="@+id/date_content"
+        android:padding="5dp"
+        android:text="2016-12-12 周五"
         android:textColor="@color/textColor"
-        android:textSize="22sp" />
+        android:textSize="19sp" />
 
     <EditText
         android:id="@+id/content_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/time_content"
+        android:layout_alignStart="@+id/date_content"
         android:layout_alignTop="@+id/content"
+        android:layout_marginTop="20dp"
         android:background="@null"
-        android:maxWidth="200dp"
-        android:paddingTop="25dp"
+        android:maxWidth="250dp"
+        android:padding="10dp"
         android:textColor="@color/textColor"
-        android:textSize="22sp" />
+        android:textSize="19sp" />
 
     <ImageView
         android:id="@+id/divider_under_topic"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_alignEnd="@+id/confirm"
+        android:layout_alignEnd="@+id/modify"
         android:layout_below="@+id/topic_content"
         android:layout_marginTop="20dp"
         android:src="#d6d5d5" />
@@ -128,9 +140,10 @@
         android:id="@+id/divider_under_time"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_alignEnd="@+id/confirm"
-        android:layout_below="@+id/time_content"
+        android:layout_alignEnd="@+id/modify"
+        android:layout_below="@+id/time"
         android:layout_marginTop="20dp"
         android:src="#d6d5d5" />
+
 
 </RelativeLayout>

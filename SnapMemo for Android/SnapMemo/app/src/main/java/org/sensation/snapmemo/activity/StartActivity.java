@@ -20,10 +20,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.sensation.snapmemo.R;
-import org.sensation.snapmemo.VO.MemoVO;
+import org.sensation.snapmemo.VO.MemoDisplayVO;
 import org.sensation.snapmemo.httpservice.HttpService;
 import org.sensation.snapmemo.tool.ClientData;
-import org.sensation.snapmemo.tool.DataTool;
+import org.sensation.snapmemo.tool.IOTool;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -32,7 +32,7 @@ import java.io.FileNotFoundException;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class StartActivity extends AppCompatActivity {
-
+    final String TAG = "SnapMemo";
     /**
      * 裁剪照片的标识
      */
@@ -48,7 +48,7 @@ public class StartActivity extends AppCompatActivity {
     /**
      * 保存文件的根路径
      */
-    String saveDir = DataTool.DEFAULT_SAVING_DIR;
+    String saveDir = IOTool.DEFAULT_SAVING_DIR;
     /**
      * 从外部传入的图片Uri地址和裁剪后的保存地址
      */
@@ -102,7 +102,7 @@ public class StartActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 80, os);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
                 new TransTask().execute(os);
             }
         });
@@ -121,7 +121,7 @@ public class StartActivity extends AppCompatActivity {
      */
     private void handleImage() {
         //创建裁剪图片输出缓存文件
-        File outputImage = DataTool.createFile(saveDir, "crop_image.jpg");
+        File outputImage = IOTool.createFile(saveDir, "crop_image.jpg");
         outputImageUri = Uri.fromFile(outputImage);
 
         //设置并启动intent
@@ -171,7 +171,7 @@ public class StartActivity extends AppCompatActivity {
         super.attachBaseContext(new CalligraphyContextWrapper(newBase));
     }
 
-    class TransTask extends AsyncTask<ByteArrayOutputStream, Void, MemoVO> {
+    class TransTask extends AsyncTask<ByteArrayOutputStream, Void, MemoDisplayVO> {
 
         @Override
         protected void onPreExecute() {
@@ -184,21 +184,21 @@ public class StartActivity extends AppCompatActivity {
         }
 
         @Override
-        protected MemoVO doInBackground(ByteArrayOutputStream... params) {
-//            MemoVO memoVO = new HttpService_stub().transPic(params[0]);
+        protected MemoDisplayVO doInBackground(ByteArrayOutputStream... params) {
             return new HttpService().transPic(params[0]);
-
         }
 
         @Override
-        protected void onPostExecute(MemoVO memo) {
+        protected void onPostExecute(MemoDisplayVO memo) {
             progressDialog.dismiss();
             //跳转至内容界面
             if (memo != null) {
+                //设置了此次为添加任务
                 ClientData.getInstance().setAdd(true);
                 ContentActivity.actionStart(StartActivity.this, memo);
                 finish();
-                overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
+                overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+
             } else {
                 //网络异常处理
                 Toast.makeText(StartActivity.this, getString(R.string.internet_failure), Toast.LENGTH_SHORT).show();

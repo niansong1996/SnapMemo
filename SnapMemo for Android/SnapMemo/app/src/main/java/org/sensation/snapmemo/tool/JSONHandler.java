@@ -6,21 +6,37 @@ import com.google.gson.TypeAdapter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.sensation.snapmemo.VO.MemoDisplayVO;
+import org.sensation.snapmemo.VO.MemoTransVO;
 import org.sensation.snapmemo.VO.MemoVO;
 import org.sensation.snapmemo.VO.MemoVOLite;
+import org.sensation.snapmemo.VO.MemoVOLite2;
 import org.sensation.snapmemo.VO.UserVOLite;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 /**
  * JSON工具类
  * Created by Alan on 2016/2/5.
  */
 public class JSONHandler {
+
+    /**
+     * 将图片OCR传回的信息解析为MemoDisplayVO
+     *
+     * @param JSONMemoVO
+     * @return
+     */
+    public static MemoDisplayVO getMemoDisplayVO(String JSONMemoVO) {
+        Gson gson = new Gson();
+        MemoVOLite2 memoVOLite2 = gson.fromJson(JSONMemoVO, MemoVOLite2.class);
+        String day = TimeTool.getDay(memoVOLite2.getTime());
+
+        MemoDisplayVO memoDisplayVO = new MemoDisplayVO(memoVOLite2.getTopic(), memoVOLite2.getTime(),
+                day, memoVOLite2.getContent());
+        return memoDisplayVO;
+    }
 
     /**
      * 利用GSON将传回的JSON字符串直接解析称MemoVO类
@@ -31,10 +47,10 @@ public class JSONHandler {
     public static MemoVO getMemoVO(String JSONMemoVO) {
         Gson gson = new Gson();
         MemoVOLite memoVOLite = gson.fromJson(JSONMemoVO, MemoVOLite.class);
-        String date = memoVOLite.getDate();
-        String day = getDay(date);
+        String date = memoVOLite.getTime();
+        String day = TimeTool.getDay(date);
         MemoVO memoVO = new MemoVO(memoVOLite.getMemoID(), memoVOLite.getTopic(),
-                memoVOLite.getDate(), day, memoVOLite.getContent());
+                memoVOLite.getTime(), day, memoVOLite.getContent());
 
         return memoVO;
     }
@@ -64,17 +80,25 @@ public class JSONHandler {
         return memoVOList;
     }
 
-//    /**
-//     * ArrayList转JSONString
-//     * @param memoVOList
-//     * @return
-//     */
-//    public static String getMemoListJSON(ArrayList<MemoVO> memoVOList){
-//        Gson gson = new Gson();
-//        JSONObject memo = new JSONObject();
-//        JSONArray memoList = new JSONArray();
-//
-//    }
+    /**
+     * ArrayList转JSONString
+     *
+     * @param memoVOList
+     * @return
+     */
+    public static String getMemoListJSON(ArrayList<MemoVO> memoVOList) {
+        JSONObject memo = new JSONObject();
+        JSONArray memoList = new JSONArray();
+        try {
+            for (MemoVO memoVO : memoVOList) {
+                memoList.put(new JSONObject(getMemoJSON(memoVO.toMemoVOLite())));
+            }
+            memo.accumulate("memo", memoList);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return memo.toString();
+    }
 
     /**
      * 生成memoVO的JSON语句
@@ -93,6 +117,25 @@ public class JSONHandler {
             return null;
         }
         return memoJSON;
+    }
+
+    /**
+     * 生成MemoTransVO的JSON语句
+     *
+     * @param memoTransVO
+     * @return
+     */
+    public static String getMemoTransJSON(MemoTransVO memoTransVO) {
+        Gson gson = new Gson();
+        String memoTransJSON;
+        TypeAdapter<MemoTransVO> typeAdapter = gson.getAdapter(MemoTransVO.class);
+        try {
+            memoTransJSON = typeAdapter.toJson(memoTransVO);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return memoTransJSON;
     }
 
     /**
@@ -128,53 +171,20 @@ public class JSONHandler {
     }
 
     /**
-     * 获得根据yyyy-MM-dd格式传入的日期所对应的星期几信息
-     *
-     * @param date
-     * @return
+     * @param memoIDJSON
+     * @return 返回memoID
      */
-    private static String getDay(String date) {
-
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        Calendar c = Calendar.getInstance();
-        int dayOfWeekNum = 0;
-        String dayOfWeek = "未获得";
-
+    public static String getMemoID(String memoIDJSON) {
+        String memoID = null;
         try {
-            c.setTime(format.parse(date));
-
-            dayOfWeekNum = c.get(Calendar.DAY_OF_WEEK);
-
-        } catch (ParseException e) {
+            JSONObject memoJSON = new JSONObject(memoIDJSON);
+            memoID = memoJSON.getString("memoID");
+        } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        switch (dayOfWeekNum) {
-            case 1:
-                dayOfWeek = "周日";
-                break;
-            case 2:
-                dayOfWeek = "周一";
-                break;
-            case 3:
-                dayOfWeek = "周二";
-                break;
-            case 4:
-                dayOfWeek = "周三";
-                break;
-            case 5:
-                dayOfWeek = "周四";
-                break;
-            case 6:
-                dayOfWeek = "周五";
-                break;
-            case 7:
-                dayOfWeek = "周六";
-                break;
-        }
-
-        return dayOfWeek;
+        return memoID;
     }
+
 
     /**
      * 转换userIDJSONString为userID

@@ -40,7 +40,7 @@ public class ListViewAdapter extends ArrayAdapter<MemoVO> {
         topic.setText(memoVO.getTopic());
 
         TextView time = (TextView) view.findViewById(R.id.listview_time_content);
-        time.setText(memoVO.getDate() + " " + memoVO.getDay());
+        time.setText(memoVO.getDate());
 
         TextView content = (TextView) view.findViewById(R.id.listview_content_text);
         content.setText(memoVO.getContent());

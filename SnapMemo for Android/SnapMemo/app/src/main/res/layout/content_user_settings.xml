@@ -9,8 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="org.sensation.snapmemo.activity.UserSettingsActivity"
-    tools:showIn="@layout/activity_user_settings">
+    tools:context="org.sensation.snapmemo.activity.UserSettingsActivity">
 
     <ImageView
         android:id="@+id/userLogo"
@@ -118,5 +117,27 @@
         android:text="@string/signiture"
         android:textColor="@color/deputyColor"
         android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/signOut"
+        android:layout_width="match_parent"
+        android:layout_height="43dp"
+        android:layout_above="@+id/modify"
+        android:background="@color/deputyColorLight"
+        android:text="@string/sign_out"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:layout_alignEnd="@+id/conditionText" />
+
+    <Button
+        android:id="@+id/modify"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:background="@color/dominColor"
+        android:text="@string/confirm"
+        android:textColor="@color/white"
+        android:textSize="20sp" />
 
 </RelativeLayout>

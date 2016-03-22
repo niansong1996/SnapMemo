@@ -2,18 +2,20 @@ package org.sensation.snapmemo.activity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,23 +25,28 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
+
 import org.sensation.snapmemo.R;
 import org.sensation.snapmemo.VO.MemoVO;
 import org.sensation.snapmemo.VO.UserVO;
+import org.sensation.snapmemo.VO.UserVOLite;
+import org.sensation.snapmemo.dao.MemoListDao;
+import org.sensation.snapmemo.dao.UserInfoDao;
 import org.sensation.snapmemo.httpservice.HttpService;
+import org.sensation.snapmemo.service.SnapListenerService;
 import org.sensation.snapmemo.tool.ClientData;
-import org.sensation.snapmemo.tool.DataTool;
+import org.sensation.snapmemo.tool.IOTool;
 import org.sensation.snapmemo.tool.Resource_stub;
 import org.sensation.snapmemo.widget.ListViewAdapter;
 import org.sensation.snapmemo.widget.RoundImageView;
 import org.sensation.snapmemo.widget.SwipeDismissListView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends RxAppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     final String TAG = "SnapMemo";
@@ -62,7 +69,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * 列表内容
      */
-    List<MemoVO> memoVOList = new ArrayList<MemoVO>();
+    ArrayList<MemoVO> memoVOList = new ArrayList<MemoVO>();
 
     /**
      * 左滑菜单
@@ -89,23 +96,65 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //获得用户本地信息
         clientData = ClientData.getInstance();
         userVO = clientData.getUserVO();
 
-        init();
+        //启动后台服务对截屏时间进行监听
+        Intent snapIntent = new Intent(this, SnapListenerService.class);
+        startService(snapIntent);
 
-        interceptIntent(getIntent());
+//        AlarmService.actionStart(this, 301123456, "3月1日的测试", 10 * 1000);
+//        AlarmService.actionStart(this, 302123456, "3月2日的测试", 20 * 1000);
+
+        handleServiceResult();
+
+        init();
+    }
+
+    /**
+     * 处理后台服务获取的事件
+     */
+    private void handleServiceResult() {
+        //从后台服务中监听到的截屏图片地址
+        if (getIntent() != null) {
+            String imagePath = getIntent().getStringExtra("imagePath");
+            Uri mImageUri = null;
+            Uri mUri = Uri.parse("content://media/external/images/media");
+
+            if (imagePath != null) {
+                CursorLoader c = new CursorLoader(this, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, null, null,
+                        MediaStore.Images.Media.DEFAULT_SORT_ORDER);
+                Cursor cursor = c.loadInBackground();
+                cursor.moveToFirst();
+
+                while (!cursor.isAfterLast()) {
+                    String data = cursor.getString(cursor
+                            .getColumnIndex(MediaStore.MediaColumns.DATA));
+                    if (imagePath.equals(data)) {
+                        int ringtoneID = cursor.getInt(cursor
+                                .getColumnIndex(MediaStore.MediaColumns._ID));
+                        mImageUri = Uri.withAppendedPath(mUri, "" + ringtoneID);
+
+                        break;
+                    }
+                    cursor.moveToNext();
+                }
+                //启动开始活动
+                StartActivity.actionStart(this, mImageUri);
+            }
+        }
+
     }
 
     /**
      * 初始化部件和数据加载
      */
     private void init() {
+
         preLogin();
         initToolBar();
         initDrawer();
-        initNavigation();
-        initListView();
     }
 
     /**
@@ -119,17 +168,19 @@ public class MainActivity extends AppCompatActivity
      */
     private void preLogin() {
         if (clientData.isSigned()) {
-            //TODO 利用已有的帐号密码进行登录
-//            String[] signInfo = clientData.getUserSignInfo();
-//            new UserLoginTask(signInfo[0], signInfo[1]).execute();
-            clientData.setOnline(true);
+            //利用已有的帐号密码进行登录
+            String[] signInfo = clientData.getUserSignInfo();
+            new UserLoginTask(signInfo[0], signInfo[1]).execute();
         } else {
-            //TODO 设置关键位，加载本地文件
+            //设置关键位，加载本地文件
             clientData.setOnline(false);
-            ArrayList<MemoVO> tempList = DataTool.getLocalMemoList(DataTool.DEFAULT_USER_NAME);
+            ArrayList<MemoVO> tempList = MemoListDao.getLocalMemoList(IOTool.DEFAULT_USER_NAME);
             if (tempList != null) {
                 memoVOList = tempList;
             }
+            initListView();
+            initNavigation();
+            interceptIntent(getIntent());
         }
     }
 
@@ -171,12 +222,22 @@ public class MainActivity extends AppCompatActivity
         listView.setOnDismissCallback(new SwipeDismissListView.OnDismissCallback() {
             @Override
             public void onDismiss(int dismissPosition) {
-                listViewAdapter.remove(listViewAdapter.getItem(dismissPosition));
+                if (clientData.isOnline()) {
+                    new DeleteTask(dismissPosition).execute(listViewAdapter.getItem(dismissPosition).getMemoID());
+                } else {//用户没有登录
+                    if (clientData.isSigned()) {
+                        //用户曾经登录过，由于本地加载的是网络端同步过的内容，所以不允许进行添加删除修改，除非注销
+                        Toast.makeText(MainActivity.this, getString(R.string.internet_failure),
+                                Toast.LENGTH_SHORT).show();
+                        listViewAdapter.notifyDataSetChanged();
+                    } else {//用户没有登录过，也就是本地用户，只要保存数据至本地，不需要进行网络删除操作
+                        listViewAdapter.remove(listViewAdapter.getItem(dismissPosition));
+                        MemoListDao.saveLocalMemoList(memoVOList, userVO.getUserName());
+
+                    }
+                }
             }
         });
-
-        //TODO 从服务器获得MemoList
-        memoVOList = new Resource_stub().getMemoVOs();
 
         listViewAdapter = new ListViewAdapter(this, R.layout.listview_item, memoVOList);
         listView.setAdapter(listViewAdapter);
@@ -184,6 +245,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 MemoVO clickedMemoVO = (MemoVO) parent.getItemAtPosition(position);
+                //设置改变的memo的位置，从content活动返回后通过onRestart对列表进行更新
                 clientData.setPosition(position);
                 //设置非添加模式
                 clientData.setAdd(false);
@@ -244,23 +306,26 @@ public class MainActivity extends AppCompatActivity
         userName.setText(userVO.getUserName());
 
         TextView condition = (TextView) headerView.findViewById(R.id.signiture);
-        condition.setText(userVO.getCondition());
+        condition.setText(userVO.getSignature());
 
         //Drawer头部背景
         ImageView userLogoBackground = (ImageView) headerView.findViewById(R.id.userLogoBackground);
-        Bitmap originalUserLogo = userVO.getUserLogo(), newUserLogo;
-        Point p = new Point();
-        double scaleOfContainer = 0.6,
-                scaleOfImage = (originalUserLogo.getHeight() + 0.0) / originalUserLogo.getWidth();
+        Bitmap originalUserLogo = userVO.getUserLogo(), newUserLogo = null;
+        if (originalUserLogo != null) {
 
-        if (scaleOfContainer < scaleOfImage) {
-            newUserLogo = Bitmap.createBitmap(originalUserLogo, 0, 0,
-                    originalUserLogo.getWidth(),
-                    (int) (originalUserLogo.getWidth() * scaleOfContainer));
-        } else {
-            newUserLogo = Bitmap.createBitmap(originalUserLogo, 0, 0,
-                    (int) (originalUserLogo.getHeight() / scaleOfContainer),
-                    originalUserLogo.getHeight());
+            Point p = new Point();
+            double scaleOfContainer = 0.6,
+                    scaleOfImage = (originalUserLogo.getHeight() + 0.0) / originalUserLogo.getWidth();
+
+            if (scaleOfContainer < scaleOfImage) {
+                newUserLogo = Bitmap.createBitmap(originalUserLogo, 0, 0,
+                        originalUserLogo.getWidth(),
+                        (int) (originalUserLogo.getWidth() * scaleOfContainer));
+            } else {
+                newUserLogo = Bitmap.createBitmap(originalUserLogo, 0, 0,
+                        (int) (originalUserLogo.getHeight() / scaleOfContainer),
+                        originalUserLogo.getHeight());
+            }
         }
 
         userLogoBackground.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -276,27 +341,48 @@ public class MainActivity extends AppCompatActivity
     protected void onRestart() {
         super.onRestart();
 
-        MemoVO newMemoVO = clientData.getNewMemoVO();
-
         //有新添加的Memo
+        MemoVO newMemoVO = clientData.getNewMemoVO();
         if (newMemoVO != null) {
             if (clientData.isAdd()) {//新增状态，添加listView内容
                 memoVOList.add(newMemoVO);
+                //设置添加状态为false，下次restart不会重复加载
+                clientData.setAdd(false);
             } else if (!clientData.isAdd()) {//修改状态，修改listView内容
                 memoVOList.set(clientData.getPosition(), newMemoVO);
             }
             listViewAdapter.notifyDataSetChanged();
+            //更新本地数据
+            MemoListDao.saveLocalMemoList(memoVOList, userVO.getUserName());
+            //删除缓存的newMemoVO
+            clientData.setNewMemoVO(null);
         }
+
         //修改过用户信息
         if (clientData.isUserInfoChanged()) {
             //刷新左滑菜单头部显示
-            clientData.setUserInfoChanged(false);
             userVO = clientData.getUserVO();
             initNavigation();
+            //设置用户信息变化为false，下次restart不会重复加载
+            clientData.setUserInfoChanged(false);
+            //保存本地数据
+            UserInfoDao.saveUserInfo(userVO);
         }
+
+        //利用clientData中newMemoList判断是否加载了memoList，如果有就加载新列表（清空缓存的newMemoVOList）
+        ArrayList<MemoVO> newMemoList = clientData.getNewMemoVOList();
+        if (newMemoList != null) {
+            memoVOList = newMemoList;
+            listViewAdapter.notifyDataSetChanged();
+            clientData.setNewMemoVOList(null);
+        }
+
+        //后台情况下服务检测到截屏
+        handleServiceResult();
 
         //后台情况下再次启动，需要再截取一次intent
         interceptIntent(getIntent());
+
     }
 
     @Override
@@ -327,7 +413,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            //stub
+            //TODO 主界面设置Stub
             Toast.makeText(MainActivity.this, "Settings", Toast.LENGTH_SHORT).show();
         }
 
@@ -338,28 +424,15 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    class UserLoginTask extends AsyncTask<Void, Void, String> {
+    class UserLoginTask extends AsyncTask<Void, Void, UserVO> {
         private final String mUserName;
         private final String mPassword;
+        private ArrayList<MemoVO> memoList;
 
         UserLoginTask(String userName, String password) {
             mUserName = userName;
@@ -377,28 +450,110 @@ public class MainActivity extends AppCompatActivity
         }
 
         @Override
-        protected String doInBackground(Void... params) {
-            return new HttpService().signIn(mUserName, mPassword);
+        protected UserVO doInBackground(Void... params) {
+            String userID = new HttpService().signIn(mUserName, mPassword);
+            UserVO oldUserVO = clientData.getUserVO();
+            if (userID != null) {
+                UserVOLite userVOLite = new HttpService().getUserInfo(userID);
+                Bitmap userLogo = new HttpService().getUserLogo(userID);
+//                memoList = new HttpService().getMemoList(userID);
+                memoList = new Resource_stub().getMemoVOs();
+                return new UserVO(userID, oldUserVO.getUserName(), userVOLite.getSignature(), userLogo);
+            } else {
+                return null;
+            }
+
+            //TODO 登录的stub
+//            return null;
         }
 
         @Override
-        protected void onPostExecute(String userID) {
+        protected void onPostExecute(UserVO userVO) {
             progressDialog.dismiss();
-            if (userID != null) {
-                //TODO 登录成功，ClientData加载用户信息，跳转至MainActivity
-                ClientData.getInstance().setOnline(true);
+            if (userVO != null) {
+                //登录成功，ClientData加载用户信息，同步本地数据
+
+                //设置显示列表数据
+                memoVOList = memoList;
+
+                //保存本地列表数据
+                MemoListDao.saveLocalMemoList(memoList, userVO.getUserName());
+
+                //设置本地用户数据
+                clientData.setUserInfo(userVO);
+
+                //保存本次登录用户数据至本地
+                UserInfoDao.saveUserInfo(userVO);
+
+                //保存本次登录用户头像至本地
+                UserInfoDao.saveUserLogo(userVO.getUserLogo());
+
+                //设置用户登录状态为已登录
+                clientData.setOnline(true);
+
+                //更新本界面中的userVO
+                MainActivity.this.userVO = userVO;
+
+                //截取Intent
+                interceptIntent(getIntent());
+
             } else {
-                //登录失效，跳转至SigninActivity
+                //登录失效，跳转至登录界面
+                clientData.setOnline(false);
+                MainActivity.this.userVO = clientData.getUserVO();
                 Toast.makeText(MainActivity.this, getString(R.string.signin_overtime), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this, SigninActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
             }
+
+            //初始化左滑面板，显示从网络端下载的用户信息和头像
+            initNavigation();
+
+            //初始化列表，显示从网络端下载的数据
+            initListView();
         }
 
         @Override
         protected void onCancelled() {
             progressDialog.dismiss();
+        }
+    }
+
+    class DeleteTask extends AsyncTask<String, Void, Boolean> {
+        final private int dismissPosition;
+
+        public DeleteTask(int dismissPosition) {
+            this.dismissPosition = dismissPosition;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = new ProgressDialog(MainActivity.this);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage("SnapMemo正在删除...");
+            progressDialog.show();
+            progressDialog.setCanceledOnTouchOutside(false);
+        }
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            //TODO 删除stub
+            return new HttpService().deleteMemo(params[0]);
+//            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            progressDialog.dismiss();
+            if (aBoolean) {//成功删除后，更新界面显示
+                listViewAdapter.remove(listViewAdapter.getItem(dismissPosition));
+                MemoListDao.saveLocalMemoList(memoVOList, userVO.getUserName());
+                Toast.makeText(MainActivity.this, getString(R.string.delete_success), Toast.LENGTH_SHORT).show();
+            } else {//由于网络原因造成的删除失败，更新界面显示
+                listViewAdapter.notifyDataSetChanged();
+                Toast.makeText(MainActivity.this, getString(R.string.internet_failure), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

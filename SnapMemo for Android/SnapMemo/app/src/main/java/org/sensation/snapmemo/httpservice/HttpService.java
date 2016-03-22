@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import org.sensation.snapmemo.VO.MemoDisplayVO;
+import org.sensation.snapmemo.VO.MemoTransVO;
 import org.sensation.snapmemo.VO.MemoVO;
 import org.sensation.snapmemo.VO.MemoVOLite;
 import org.sensation.snapmemo.VO.UserVOLite;
@@ -20,14 +22,14 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * 网络服务
  * Created by Alan on 2016/2/5.
  */
 public class HttpService {
-
+    final String TAG = "SnapMemo";
     /**
      * 定向网络http连接
      */
@@ -43,32 +45,29 @@ public class HttpService {
     }
 
     /**
-     * 将图片上传并利用JSONHandler转换为MemoVO返回
+     * 将图片上传并利用JSONHandler转换为MemoVOLite返回
      *
      * @param os
-     * @return memoVO
+     * @return memoDisplayVO
      */
-    public MemoVO transPic(ByteArrayOutputStream os) {
+    public MemoDisplayVO transPic(ByteArrayOutputStream os) {
         String resultJSONString;
-        MemoVO memoVO;
-
+        MemoDisplayVO memoDisplayVO;
         setConnection(RequestMethod.POST, RequestProperty.STREAM);
         conn.setRequestProperty("Request-Type", "Resolve-Image");
 
         try {
             flushInfo(os);
-
             resultJSONString = getJSONString();
-
             closeConn();
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
 
-        memoVO = JSONHandler.getMemoVO(resultJSONString);
+        memoDisplayVO = JSONHandler.getMemoDisplayVO(resultJSONString);
 
-        return memoVO;
+        return memoDisplayVO;
     }
 
     /**
@@ -77,11 +76,11 @@ public class HttpService {
      * @param userID 用户ID
      * @return
      */
-    public List<MemoVO> getMemoList(String userID) {
+    public ArrayList<MemoVO> getMemoList(String userID) {
         String resultJSONString;
-        List<MemoVO> memoVOList;
+        ArrayList<MemoVO> memoVOList = new ArrayList<MemoVO>();
 
-        setConnection(RequestMethod.POST, RequestProperty.PLAINTEXT);
+        setConnection(RequestMethod.POST, RequestProperty.JSON);
         conn.setRequestProperty("Request-Type", "Get-List");
 
         try {
@@ -218,6 +217,48 @@ public class HttpService {
         return logo;
     }
 
+    /**
+     * @param memoTransVO
+     * @return 是否保存成功
+     */
+    public String saveMemo(MemoTransVO memoTransVO) {
+        String result = null;
+        setConnection(RequestMethod.POST, RequestProperty.JSON);
+        conn.setRequestProperty("Request-Type", "Save-Memo");
+
+        try {
+            flushInfo(JSONHandler.getMemoTransJSON(memoTransVO));
+            result = getJSONString();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return JSONHandler.getMemoID(result);
+    }
+
+    /**
+     * 注册
+     *
+     * @param userName
+     * @param password
+     * @return 注册的userID
+     */
+    public String signUp(String userName, String password) {
+        String userIDJSON = null;
+        String userInfoJSON = JSONHandler.getSignInJSON(userName, password);
+        setConnection(RequestMethod.POST, RequestProperty.JSON);
+        conn.setRequestProperty("Request-Type", "Sign-Up");
+
+        try {
+            flushInfo(userInfoJSON);
+            userIDJSON = getJSONString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "signUp: "+userIDJSON);
+        return JSONHandler.getUserID(userIDJSON);
+    }
+
 
     /**
      * 网络连接基本设置
@@ -261,7 +302,6 @@ public class HttpService {
             }
 
         } catch (IOException e) {
-            Log.d("SnapMemo", "setConnection: 0");
             e.printStackTrace();
         }
     }
@@ -335,7 +375,6 @@ public class HttpService {
      */
     private void handleError() throws IOException {
         if (conn.getResponseCode() >= 300) {
-            Log.d("SnapMemo", "handleError: ");
             throw new IOException("HTTP Request is not success, Response code is " + conn.getResponseCode());
         }
     }

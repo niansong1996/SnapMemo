@@ -1,7 +1,9 @@
 package org.sensation.snapmemo.activity;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -12,23 +14,33 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import org.sensation.snapmemo.R;
+import org.sensation.snapmemo.VO.MemoDisplayVO;
+import org.sensation.snapmemo.VO.MemoTransVO;
 import org.sensation.snapmemo.VO.MemoVO;
 import org.sensation.snapmemo.VO.MemoVOLite;
 import org.sensation.snapmemo.httpservice.HttpService;
 import org.sensation.snapmemo.tool.ClientData;
+import org.sensation.snapmemo.tool.TimeTool;
+
+import java.util.Calendar;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class ContentActivity extends AppCompatActivity {
     final String TAG = "SnapMemo";
     ClientData clientData = ClientData.getInstance();
-    EditText topicContent, timeContent, contentContent;
+    TextView dateContent, timeContent;
+    EditText topicContent, contentContent;
     ProgressDialog progressDialog;
-    private String id, topic, date, day, content, originID, originTopic, originDate, originDay, originContent;
+    MemoVO newMemoVO;
+    private String id, topic, date, time, day, content, originTopic, originDate, originTime, originDay, originContent;
 
     /**
      * 自定义载入方式
@@ -53,6 +65,26 @@ public class ContentActivity extends AppCompatActivity {
         ((Activity) context).overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
     }
 
+    /**
+     * 自定义载入方式
+     *
+     * @param context       上下文内容
+     * @param memoDisplayVO 以String形式传到第二个活动中去的MemoDisplayVO
+     */
+    public static void actionStart(Context context, MemoDisplayVO memoDisplayVO) {
+        String topic = memoDisplayVO.getTopic(),
+                date = memoDisplayVO.getDate(),
+                day = memoDisplayVO.getDay(),
+                content = memoDisplayVO.getContent();
+        Intent intent = new Intent(context, ContentActivity.class);
+        intent.putExtra("topic", topic);
+        intent.putExtra("date", date);
+        intent.putExtra("day", day);
+        intent.putExtra("content", content);
+
+        context.startActivity(intent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,14 +93,15 @@ public class ContentActivity extends AppCompatActivity {
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
         topic = intent.getStringExtra("topic");
-        date = intent.getStringExtra("date");
+        date = intent.getStringExtra("date").split(" ")[0];
+        time = intent.getStringExtra("date").split(" ")[1];
         day = intent.getStringExtra("day");
         content = intent.getStringExtra("content");
 
         //复制原始值检测是否修改
-        originID = id;
         originTopic = topic;
         originDate = date;
+        originTime = time;
         originDay = day;
         originContent = content;
 
@@ -79,20 +112,61 @@ public class ContentActivity extends AppCompatActivity {
 
         initToolBar();
 
-        initButton();
-
         initEditView();
+
+        initButton();
     }
 
     private void initEditView() {
         topicContent = (EditText) findViewById(R.id.topic_content);
         topicContent.setText(topic);
 
-        timeContent = (EditText) findViewById(R.id.time_content);
-        timeContent.setText(date + " " + day);
+        dateContent = (TextView) findViewById(R.id.date_content);
+        dateContent.setText(date);
+        dateContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                datePick();
+            }
+        });
+
+        timeContent = (TextView) findViewById(R.id.time_content);
+        timeContent.setText(time + " " + day);
+        timeContent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                timePick();
+            }
+        });
 
         contentContent = (EditText) findViewById(R.id.content_content);
         contentContent.setText(content);
+    }
+
+    private void datePick() {
+        Calendar c = Calendar.getInstance();
+        DatePickerDialog datePickerDialog = new DatePickerDialog(ContentActivity.this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                date = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
+                day = TimeTool.getDay(date);
+                dateContent.setText(date);
+                timeContent.setText(time + " " + day);
+            }
+        }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.show();
+    }
+
+    private void timePick() {
+        Calendar c = Calendar.getInstance();
+        TimePickerDialog timePickerDialog = new TimePickerDialog(ContentActivity.this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                time = hourOfDay + ":" + TimeTool.amplify(minute);
+                timeContent.setText(time + " " + day);
+            }
+        }, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true);
+        timePickerDialog.show();
     }
 
     private void initToolBar() {
@@ -103,27 +177,32 @@ public class ContentActivity extends AppCompatActivity {
     }
 
     private void initButton() {
-        Button confirm = (Button) findViewById(R.id.confirm);
+        Button confirm = (Button) findViewById(R.id.modify);
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 topic = topicContent.getText().toString();
-                date = timeContent.getText().toString().split(" ")[0];
+                date = dateContent.getText().toString();
                 day = timeContent.getText().toString().split(" ")[1];
+                time = timeContent.getText().toString().split(" ")[0];
                 content = contentContent.getText().toString();
-                MemoVO newMemoVO = new MemoVO(id, topic, date, day, content);
-                clientData.setUpdateCondition(true);
-                clientData.setNewMemoVO(newMemoVO);
 
-                //如果用户修改了内容就发送修改请求
-                if (isModified()) {
-                    new ModifyTask().execute(newMemoVO.toMemoVOLite());
-                }else{
-                    Intent intent = new Intent(ContentActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                    overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
+                //如果是添加行为就进行保存，否则为可能的修改行为
+                if (clientData.isAdd()) {
+                    MemoTransVO memoTransVO = new MemoTransVO(clientData.getUserVO().getUserID(), topic, date, content);
+                    new SaveTask(memoTransVO).execute();
+                } else {
+                    if (isModified()) {//如果用户修改了内容就发送修改请求
+                        //对本地的memo进行修改
+                        newMemoVO = new MemoVO(id, topic, date + " " + time, day, content);
+                        new ModifyTask().execute(newMemoVO.toMemoVOLite());
+                    } else {
+                        Intent intent = new Intent(ContentActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                        overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
+                    }
                 }
             }
         });
@@ -147,7 +226,7 @@ public class ContentActivity extends AppCompatActivity {
      */
     private boolean isModified() {
         return !(topic.equals(originTopic) && date.equals(originDate)
-                && day.equals(originDay) && content.equals(originContent));
+                && day.equals(originDay) && time.equals(originTime) && content.equals(originContent));
     }
 
     @Override
@@ -180,6 +259,48 @@ public class ContentActivity extends AppCompatActivity {
         super.attachBaseContext(new CalligraphyContextWrapper(newBase));
     }
 
+    class SaveTask extends AsyncTask<Void, Void, String> {
+        MemoTransVO memoTransVO;
+
+        public SaveTask(MemoTransVO memoTransVO) {
+            this.memoTransVO = memoTransVO;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = new ProgressDialog(ContentActivity.this);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage("正在保存...");
+            progressDialog.show();
+            progressDialog.setCancelable(false);
+            progressDialog.setCanceledOnTouchOutside(false);
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            return new HttpService().saveMemo(memoTransVO);
+//            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String memoID) {
+            progressDialog.dismiss();
+            if (memoID != null) {
+                //设置界面更新
+                clientData.setNewMemoVO(new MemoVO(memoID, memoTransVO.getTopic(), memoTransVO.getTime(),
+                        TimeTool.getDay(memoTransVO.getTime()), memoTransVO.getContent()));
+
+                Intent intent = new Intent(ContentActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+                overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
+            } else {
+                Toast.makeText(ContentActivity.this, getString(R.string.internet_failure), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
     /**
      * 网络线程———修改任务
      */
@@ -189,21 +310,24 @@ public class ContentActivity extends AppCompatActivity {
         protected void onPreExecute() {
             progressDialog = new ProgressDialog(ContentActivity.this);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setMessage("正在添加...");
+            progressDialog.setMessage("正在保存...");
             progressDialog.show();
-            progressDialog.setCancelable(false);
             progressDialog.setCanceledOnTouchOutside(false);
         }
 
         @Override
         protected Boolean doInBackground(MemoVOLite... params) {
-            return new HttpService().modifyMemo(params[0]);
+            //修改memo
+//            return new HttpService().modifyMemo(params[0]);
+            return true;
         }
 
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             progressDialog.dismiss();
             if (aBoolean) {
+                //用于界面更新
+                clientData.setNewMemoVO(newMemoVO);
                 Intent intent = new Intent(ContentActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
@@ -230,7 +354,9 @@ public class ContentActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(String... params) {
+            //TODO 删除的网络请求stub
             return new HttpService().deleteMemo(params[0]);
+//            return true;
         }
 
         @Override

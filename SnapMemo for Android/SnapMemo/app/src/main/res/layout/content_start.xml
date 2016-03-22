@@ -11,10 +11,9 @@
         android:id="@+id/crop_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:src="@drawable/abc_btn_radio_to_on_mtrl_015"
+        android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_gravity="center" />
 
     <Button
         android:id="@+id/cancel"
