@@ -10,7 +10,9 @@ namespace SnapMemo.src.tool
     {
         public static string DeQuotes(string str)
         {
-            return str.Substring(1, str.Length - 2);
+            return str == null ? 
+                null :
+                str.Substring(1, str.Length - 2);
         }
     }
 }

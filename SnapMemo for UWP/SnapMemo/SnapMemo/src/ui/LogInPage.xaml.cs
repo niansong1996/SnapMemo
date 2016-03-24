@@ -42,17 +42,24 @@ namespace SnapMemo.src.ui
         {
             Debug.WriteLine("send Login : " + nameTB.Text + passwordTB.Password);
 
-            string userID = JsonString.DeQuotes(
+            try
+            {
+                string userID = JsonString.DeQuotes(
                 await NetHelper.Login(nameTB.Text, passwordTB.Password));
 
-            // debug
-            Debug.WriteLine("Log in successfully");
-            Debug.WriteLine("userID: " + userID);
+                // debug
+                Debug.WriteLine("Log in successfully");
+                Debug.WriteLine("userID: " + userID);
 
-            Preference.SetUserID(userID);
+                Preference.SetUserID(userID);
 
-            var frame = MainPage.Instance.ContentFrame;
-            frame.Navigate(typeof(AccountPage));
+                var frame = MainPage.Instance.ContentFrame;
+                frame.Navigate(typeof(AccountPage));
+            }
+            catch(NullReferenceException)
+            {
+                warnTB.Text = "Invalid name or password";
+            }
         }
 
         private void OnSignUp(object sender, RoutedEventArgs e)

@@ -122,11 +122,11 @@ namespace SnapMemo.src.ui
         {
             var memStream = await Capture();
 
-            //var memo = await NetHelper.ResolveImage(memStream);
-            await WriteToFile(memStream);
+            var memo = await NetHelper.ResolveImage(memStream);
+            //await WriteToFile(memStream);
 
-            //Frame root = Window.Current.Content as Frame;
-            //root.Navigate(typeof(MemoModifyPage), memo);
+            Frame root = Window.Current.Content as Frame;
+            root.Navigate(typeof(MemoModifyPage), memo);
         }
 
         private void OnCancel(object sender, RoutedEventArgs e)

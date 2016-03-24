@@ -3,7 +3,9 @@ using SnapMemo.src.tool;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Json;
@@ -19,9 +21,21 @@ namespace SnapMemo.src.logic
         static NetHelper()
         {
             //uri = new Uri("http://139.129.40.103:5678/SnapMemo");
-            uri = new Uri("http://172.25.183.163:5678/SnapMemo");
+            uri = new Uri("http://139.129.40.103:5678/SnapMemo/servlet/main");
         }
 
+        private static async Task<JsonObject> makeJson(HttpResponseMessage response)
+        {
+            var contentBuffer = await response.Content.ReadAsBufferAsync();
+            var bytes = WindowsRuntimeBufferExtensions.ToArray(contentBuffer);
+            var content = Encoding.UTF8.GetString(bytes);
+            Debug.WriteLine(content);
+
+            var rJson = new JsonObject();
+            JsonObject.TryParse(content, out rJson);
+
+            return rJson;
+        }
 
         /// <summary>
         /// package and send an http request in a specific format
@@ -43,14 +57,16 @@ namespace SnapMemo.src.logic
                 new Windows.Web.Http.Headers.HttpMediaTypeHeaderValue("application/json");
 
             var response = await httpClient.SendRequestAsync(request);
+            Debug.WriteLine("================got response==========");
+            Debug.WriteLine(response.ToString());
+
             httpClient.Dispose();
 
             if (response.IsSuccessStatusCode)
             {
-                var returnJson = new JsonObject();
-                JsonObject.TryParse(response.Content.ToString(), out returnJson);
+                var returnJson = await makeJson(response);
 
-                Debug.WriteLine("================got response==========");
+                Debug.WriteLine("==============converted to Json===========");
                 Debug.WriteLine(returnJson);
 
                 return returnJson;
@@ -76,14 +92,14 @@ namespace SnapMemo.src.logic
                 new Windows.Web.Http.Headers.HttpMediaTypeHeaderValue("application/octet-stream");
 
             var response = await httpClient.SendRequestAsync(request);
+
             Debug.WriteLine("================got response==========");
-            Debug.WriteLine(response.Content.ToString());
+            Debug.WriteLine(response.ToString());
 
             if (response.IsSuccessStatusCode)
             {
-                var rJson = new JsonObject();
-                JsonObject.TryParse(response.Content.ToString(), out rJson);
-                Debug.WriteLine("converted to Json");
+                var rJson = await makeJson(response);
+                Debug.WriteLine("==============converted to Json===========");
                 Debug.WriteLine(rJson);
 
                 return new Memo(rJson);
@@ -124,7 +140,7 @@ namespace SnapMemo.src.logic
 
             var returnJson = await sendInJson("Sign-In", requestJson);
 
-            return returnJson["userID"].ToString();
+            return requestJson == null ? null : returnJson["userID"].ToString();
         }
 
         /// <summary>
@@ -141,7 +157,7 @@ namespace SnapMemo.src.logic
 
             var returnJson = await sendInJson("Sign-Up", requestJson);
 
-            return returnJson["userID"].ToString();
+            return requestJson == null ? null : returnJson["userID"].ToString();
         }
 
         public static async Task<UserInfo> GetUserInfo(string userID)

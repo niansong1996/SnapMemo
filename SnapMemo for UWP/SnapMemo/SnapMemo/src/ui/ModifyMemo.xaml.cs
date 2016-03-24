@@ -34,7 +34,7 @@ namespace SnapMemo.src.ui
         private Memo modifyingMemo;
         private OperateType type;
 
-        private static readonly bool debugWithoutNet = true;
+        private static readonly bool debugWithoutNet = false;
 
         public MemoModifyPage()
         {
