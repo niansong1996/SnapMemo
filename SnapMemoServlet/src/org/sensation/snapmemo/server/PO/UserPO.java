@@ -15,13 +15,12 @@ public class UserPO {
 
 	public UserPO(){}
 	public UserPO(String userName, String password) {
-//		this.userID = Integer.parseInt(iD);
 		this.memos = new ArrayList<MemoPO>();
 		this.userName = userName;
 		this.password = password;
 		this.groupID = "no_group";
-//		this.logoLocation = "/home/SnapMemoData/userLogo/defaultLogo_"+((int)(Math.random()*5)+1)+".png";
-		this.logoLocation = "logo.jpg";
+		this.logoLocation = "/alidata/SnapMemoData/userLogo/defaultLogo_"+((int)(Math.random()*5)+1)+".png";
+//		this.logoLocation = "logo.jpg";
 		this.signature = "Take a SNAP and everything gets easier";
 	}
 	public Iterator<MemoPO> getMemos(){

@@ -5,6 +5,7 @@ import java.net.HttpURLConnection;
 
 import org.sensation.snapmemo.server.BusinessLogic.NLP.NLPModule;
 import org.sensation.snapmemo.server.BusinessLogic.OCR.OCRController;
+import org.sensation.snapmemo.server.PO.MemoPO;
 import org.sensation.snapmemo.server.Utility.IntStringWrapper;
 import org.sensation.snapmemo.server.Utility.ResponseCodeInterpreter;
 import org.sensation.snapmemo.server.Utility.UtilityTools;
@@ -30,7 +31,9 @@ public class MainExecutor {
 		if(result.getCode()!=200){
 			return new IntStringWrapper(result.getCode(),ResponseCodeInterpreter.getExplain(result.getCode()));
 		}
-		String info = nlp.PO2JSON(nlp.extractInfomation(result.getInfo()));
+		MemoPO memo = nlp.extractInfomation(result.getInfo());
+		if(memo==null) return new IntStringWrapper(HttpURLConnection.HTTP_INTERNAL_ERROR,ResponseCodeInterpreter.getExplain(HttpURLConnection.HTTP_INTERNAL_ERROR));
+		String info = nlp.PO2JSON(memo);
 		return new IntStringWrapper(HttpURLConnection.HTTP_OK,info);
 	}
 }

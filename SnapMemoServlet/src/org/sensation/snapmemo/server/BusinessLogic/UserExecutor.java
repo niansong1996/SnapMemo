@@ -31,6 +31,7 @@ public class UserExecutor {
 	public IntStringWrapper GetLogo(InputStream is){
 		String source = UtilityTools.Stream2String(is);
 		UserPO user = this.getUser(source);
+		if(user==null) return new IntStringWrapper(HttpURLConnection.HTTP_NOT_FOUND,"your user is not found");
 		byte[] logo = UtilityTools.location2Img(user.getLogoLocation());
 		return new IntStringWrapper(HttpURLConnection.HTTP_OK,logo.toString());
 	}

@@ -13,20 +13,23 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 public class httpClient {
-	public static void main(String[] args) 
-	{
+
+	public static void main(String[] args) {
+		test2();
+	}
+	public static void test1(){
 		CloseableHttpClient httpclient = HttpClients.createDefault();  
 		try
 		{
-			URIBuilder builder = new URIBuilder("http://127.0.0.1:5678/SnapMemo");
+			URIBuilder builder = new URIBuilder("http://127.0.0.1:5678/SnapMemo/servlet/main");
 			URI uri = builder.build();
 			HttpPost request = new HttpPost(uri);
-//			HttpPost request = new HttpPost(uri);
 			// Request body
 			System.out.println("sending the request");
 			request.setHeader("Request-Type", "Resolve-Image");
@@ -47,7 +50,36 @@ public class httpClient {
 		{
 			System.out.println(e.getMessage());
 		}
-	}   
+	} 
+	public static void test2(){
+		CloseableHttpClient httpclient = HttpClients.createDefault();  
+		try
+		{
+			URIBuilder builder = new URIBuilder("http://139.129.40.103:5678/SnapMemo/servlet/main");
+			URI uri = builder.build();
+			HttpPost request = new HttpPost(uri);
+			// Request body
+			System.out.println("sending the request");
+			request.setHeader("Request-Type", "Resolve-Image");
+			request.setHeader("Request-Type", "Get-Logo");
+			StringEntity entity1 = new StringEntity("{\"userID\":\"000001\"}");
+			request.setEntity(entity1);
+			HttpResponse response = httpclient.execute(request);
+			System.out.println("response code is "+response.getStatusLine().getStatusCode());
+			HttpEntity entity = response.getEntity();
+			String result = "";
+			if (entity != null) 
+			{
+				result = EntityUtils.toString(entity,"UTF-8");
+			}
+			System.out.println(result);
+
+		}
+		catch (Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+	}
 	static byte[] getImageBinary(){    
 		File f = new File("D:\\2.jpg");           
 		BufferedImage bi;    
@@ -57,7 +89,7 @@ public class httpClient {
 			ImageIO.write(bi, "jpg", baos);    
 			byte[] bytes = baos.toByteArray();   
 			return bytes;
-//			return encoder.encodeBuffer(bytes).trim();    
+			//			return encoder.encodeBuffer(bytes).trim();    
 		} catch (IOException e) {    
 			e.printStackTrace();    
 		}    
