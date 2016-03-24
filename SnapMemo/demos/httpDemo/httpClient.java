@@ -21,13 +21,13 @@ import org.apache.http.util.EntityUtils;
 public class httpClient {
 
 	public static void main(String[] args) {
-		test2();
+		test3();
 	}
 	public static void test1(){
 		CloseableHttpClient httpclient = HttpClients.createDefault();  
 		try
 		{
-			URIBuilder builder = new URIBuilder("http://127.0.0.1:5678/SnapMemo/servlet/main");
+			URIBuilder builder = new URIBuilder("http://139.129.40.103:5678/SnapMemo/servlet/main");
 			URI uri = builder.build();
 			HttpPost request = new HttpPost(uri);
 			// Request body
@@ -60,8 +60,35 @@ public class httpClient {
 			HttpPost request = new HttpPost(uri);
 			// Request body
 			System.out.println("sending the request");
-			request.setHeader("Request-Type", "Resolve-Image");
 			request.setHeader("Request-Type", "Get-Logo");
+			StringEntity entity1 = new StringEntity("{\"userID\":\"000001\"}");
+			request.setEntity(entity1);
+			HttpResponse response = httpclient.execute(request);
+			System.out.println("response code is "+response.getStatusLine().getStatusCode());
+			HttpEntity entity = response.getEntity();
+			String result = "";
+			if (entity != null) 
+			{
+				result = EntityUtils.toString(entity,"UTF-8");
+			}
+			System.out.println(result);
+
+		}
+		catch (Exception e)
+		{
+			System.out.println(e.getMessage());
+		}
+	}
+	public static void test3(){
+		CloseableHttpClient httpclient = HttpClients.createDefault();  
+		try
+		{
+			URIBuilder builder = new URIBuilder("http://139.129.40.103:5678/SnapMemo/servlet/main");
+			URI uri = builder.build();
+			HttpPost request = new HttpPost(uri);
+			// Request body
+			System.out.println("sending the request");
+			request.setHeader("Request-Type", "Get-Memo-List");
 			StringEntity entity1 = new StringEntity("{\"userID\":\"000001\"}");
 			request.setEntity(entity1);
 			HttpResponse response = httpclient.execute(request);

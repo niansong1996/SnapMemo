@@ -7,6 +7,7 @@ import org.sensation.snapmemo.server.Data.UserData;
 import org.sensation.snapmemo.server.PO.UserPO;
 import org.sensation.snapmemo.server.Utility.Request;
 import org.sensation.snapmemo.server.Utility.Response;
+import org.sensation.snapmemo.server.Utility.ResponseCodeInterpreter;
 import org.sensation.snapmemo.server.Utility.ResponseQueue;
 import org.sensation.snapmemo.server.Utility.UtilityTools;
 
@@ -32,6 +33,7 @@ public class UserExecutor {
 	}
 	public void GetLogo(Request request){
 		UserPO user = this.getUser(request);
+		if(user==null) ResponseQueue.put(new Response(request.exchange,"your user doesn't exits",HttpURLConnection.HTTP_BAD_REQUEST));
 		byte[] logo = UtilityTools.location2Img(user.getLogoLocation());
 		ResponseQueue.put(new Response(request.exchange,HttpURLConnection.HTTP_OK,logo));
 	}

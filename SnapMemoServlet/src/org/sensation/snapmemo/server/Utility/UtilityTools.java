@@ -15,6 +15,8 @@ import java.util.Date;
 
 import javax.imageio.ImageIO;
 
+import org.sensation.snapmemo.server.PO.MemoPO;
+
 public class UtilityTools {
 	public static String Cal2String(Object cal){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -68,5 +70,13 @@ public class UtilityTools {
 			responseString = "It is an image";
 		}
 		return responseString;
+	}
+	public static String PO2JSON(MemoPO po){
+		String time= UtilityTools.Cal2String(po.getTime());
+		return "{\"topic\":\""+
+		po.getTopic()+"\",\"time\":\""+time+"\",\"content\":\""+po.getContent()+"\"}";
+	}
+	public static void main(String[] args){
+		System.out.println(location2Img("D:\\Desktop\\defaultLogo_1.jpg").length);
 	}
 }

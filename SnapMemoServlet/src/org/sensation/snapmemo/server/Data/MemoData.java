@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.sensation.snapmemo.server.PO.MemoPO;
 import org.sensation.snapmemo.server.Utility.ResultMessage;
@@ -62,7 +63,7 @@ public class MemoData{
 	public Iterator<MemoPO> getMemoList(String userID){
 		session.beginTransaction();
 		Criteria cri = session.createCriteria(MemoPO.class);
-		cri.add(Restrictions.eq("userID", userID));
+		cri.add(Restrictions.ilike("memoID", userID,MatchMode.START));
 		return (Iterator<MemoPO>)cri.list().iterator();
 	}
 }

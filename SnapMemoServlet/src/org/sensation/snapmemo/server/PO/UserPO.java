@@ -19,7 +19,7 @@ public class UserPO {
 		this.userName = userName;
 		this.password = password;
 		this.groupID = "no_group";
-		this.logoLocation = "/alidata/SnapMemoData/userLogo/defaultLogo_"+((int)(Math.random()*5)+1)+".png";
+		this.logoLocation = "/alidata/SnapMemoData/userLogo/defaultLogo_"+((int)(Math.random()*5)+1)+".jpg";
 //		this.logoLocation = "logo.jpg";
 		this.signature = "Take a SNAP and everything gets easier";
 	}

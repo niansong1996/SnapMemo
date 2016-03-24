@@ -23,9 +23,9 @@ public class MemoExecutor {
 		String source = UtilityTools.Stream2String(is);
 		String userID = this.getUserID(source);
 		JSONObject result = new JSONObject();
-		ArrayList<MemoPO> list = new ArrayList<MemoPO>();
+		ArrayList<String> list = new ArrayList<String>();
 		Iterator<MemoPO> it = data.getMemoList(userID);
-		while(it.hasNext()) list.add(it.next());
+		while(it.hasNext()) list.add(UtilityTools.PO2JSON(it.next()));
 		result.accumulate("memo", list);
 		return new IntStringWrapper(HttpURLConnection.HTTP_OK,result.toString());
 	}
