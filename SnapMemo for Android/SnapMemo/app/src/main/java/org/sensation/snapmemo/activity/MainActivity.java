@@ -37,7 +37,6 @@ import org.sensation.snapmemo.httpservice.HttpService;
 import org.sensation.snapmemo.service.SnapListenerService;
 import org.sensation.snapmemo.tool.ClientData;
 import org.sensation.snapmemo.tool.IOTool;
-import org.sensation.snapmemo.tool.Resource_stub;
 import org.sensation.snapmemo.widget.ListViewAdapter;
 import org.sensation.snapmemo.widget.RoundImageView;
 import org.sensation.snapmemo.widget.SwipeDismissListView;
@@ -456,8 +455,8 @@ public class MainActivity extends RxAppCompatActivity
             if (userID != null) {
                 UserVOLite userVOLite = new HttpService().getUserInfo(userID);
                 Bitmap userLogo = new HttpService().getUserLogo(userID);
-//                memoList = new HttpService().getMemoList(userID);
-                memoList = new Resource_stub().getMemoVOs();
+                memoList = new HttpService().getMemoList(userID);
+//                memoList = new Resource_stub().getMemoVOs();
                 return new UserVO(userID, oldUserVO.getUserName(), userVOLite.getSignature(), userLogo);
             } else {
                 return null;

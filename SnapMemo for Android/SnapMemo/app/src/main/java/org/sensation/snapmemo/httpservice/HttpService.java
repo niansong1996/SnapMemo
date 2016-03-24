@@ -81,12 +81,14 @@ public class HttpService {
         ArrayList<MemoVO> memoVOList = new ArrayList<MemoVO>();
 
         setConnection(RequestMethod.POST, RequestProperty.JSON);
-        conn.setRequestProperty("Request-Type", "Get-List");
+        conn.setRequestProperty("Request-Type", "Get-Memo-List");
 
         try {
-            flushInfo(userID);
+            Log.d(TAG, "getMemoList: " + JSONHandler.getUserIDJSON(userID));
+            flushInfo(JSONHandler.getUserIDJSON(userID));
 
             resultJSONString = getJSONString();
+            Log.d(TAG, "getMemoList: " + resultJSONString);
 
             closeConn();
 
@@ -255,7 +257,7 @@ public class HttpService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Log.d(TAG, "signUp: "+userIDJSON);
+        Log.d(TAG, "signUp: " + userIDJSON);
         return JSONHandler.getUserID(userIDJSON);
     }
 
