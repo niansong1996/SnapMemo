@@ -52,6 +52,7 @@ namespace SnapMemo.src.ui
                 Debug.WriteLine("userID: " + userID);
 
                 Preference.SetUserID(userID);
+                Preference.SetUserName(nameTB.Text);
 
                 var frame = MainPage.Instance.ContentFrame;
                 frame.Navigate(typeof(AccountPage));

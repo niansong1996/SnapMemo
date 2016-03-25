@@ -70,7 +70,7 @@ namespace SnapMemo.src.ui
     /// </summary>
     public sealed partial class MemoListPage : Page
     {
-        private static bool debugWithoutNet = true;
+        private static bool debugWithoutNet = false;
 
         public MemoListPage()
         {
@@ -90,9 +90,13 @@ namespace SnapMemo.src.ui
             MainPage.Instance.Title = "Memos";
         }
 
-        private void LoadMemos()
+        private async void LoadMemos()
         {
-            List<Memo> memos = DBHelper.GetAllMemo();
+            // from Local DB
+            // List<Memo> memos = DBHelper.GetAllMemo();
+
+            // from server-end
+            ICollection<Memo> memos = await NetHelper.GetAllMemos(Preference.GetUserID());
             foreach (var memo in memos)
             {
                 var memoBlock = new MemoBlock(memo);

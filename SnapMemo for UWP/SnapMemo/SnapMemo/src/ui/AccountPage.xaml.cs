@@ -27,12 +27,14 @@ namespace SnapMemo.src.ui
         {
             this.InitializeComponent();
 
-            userNameTB.Text = Preference.GetUserID();
+            userIDTB.Text = Preference.GetUserID();
+            userNameTB.Text = Preference.GetUserName();
             signatureTB.Text = Preference.GetSignature();
         }
 
         private void OnLogout(object sender, RoutedEventArgs e)
         {
+            Preference.SetUserName(Preference.DefaultName);
             Preference.SetUserID(Preference.DefaultID);
             Preference.SetSignature(Preference.DefaultSignature);
 

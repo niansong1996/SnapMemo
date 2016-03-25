@@ -115,14 +115,22 @@ namespace SnapMemo.src.logic
         /// </summary>
         /// <param name="id">userID, user can't see this, only developers care about this.</param>
         /// <returns>A list of the memos of the user in the server-end</returns>
-        public static async Task<List<Memo>> GetAllMemos(string id)
+        public static async Task<ICollection<Memo>> GetAllMemos(string id)
         {
             var requestJson = new JsonObject();
             requestJson["userID"] = JsonValue.CreateStringValue(id);
 
             var returnJson = await sendInJson("Get-Memo-List", requestJson);
+            var list = returnJson["memo"].GetArray();
 
-            return null;
+            // add in result list
+            var resultList = new LinkedList<Memo>();
+            foreach(var one in list)
+            {
+                resultList.AddFirst(new Memo(one.GetObject()));
+            }
+
+            return resultList;
         }
 
         

@@ -28,6 +28,7 @@ namespace SnapMemo.src.ui
         private enum OperateType
         {
             MODIFY,
+            SNAP,
             ADD
         }
 
@@ -45,14 +46,23 @@ namespace SnapMemo.src.ui
         {
             base.OnNavigatedTo(e);
 
-            type = e.Parameter == null ? OperateType.ADD : OperateType.MODIFY;
-            modifyingMemo = e.Parameter == null ? new Memo(DateTime.Now) : e.Parameter as Memo;
-            if(type == OperateType.MODIFY)
+            if(e.Parameter == null)
             {
+                type = OperateType.ADD;
+                modifyingMemo = new Memo(DateTime.Now);
+            }
+            else
+            {
+                modifyingMemo = e.Parameter as Memo;
+
+                // fill the blanks
                 titleTB.Text = modifyingMemo.Title;
                 contentTB.Text = modifyingMemo.Content;
                 timeDP.Date = modifyingMemo.Time;
                 timeTP.Time = modifyingMemo.Time.TimeOfDay;
+
+                // if no memoID, that is from snap
+                type = modifyingMemo.MemoID == null ? OperateType.SNAP : OperateType.MODIFY;
             }
         }
 
@@ -65,7 +75,7 @@ namespace SnapMemo.src.ui
             modifyingMemo.Content = contentTB.Text;
 
             Frame rootFrame = Window.Current.Content as Frame;
-            if(type == OperateType.ADD)
+            if(type == OperateType.ADD || type == OperateType.SNAP)
             {
                 // sync in server-end
                 if (!debugWithoutNet)
