@@ -368,6 +368,14 @@ public class MainActivity extends RxAppCompatActivity
             UserInfoDao.saveUserInfo(userVO);
         }
 
+        //通过注册第一次登录
+        if (clientData.isFirstSigned()) {
+            new UserLoginTask(clientData.getFirstSignedUserID(), clientData.getFirstSignedPassword()).execute();
+            clientData.setFirstSignedPassword(null);
+            clientData.setFirstSignedUserID(null);
+            clientData.setFirstSigned(false);
+        }
+
         //利用clientData中newMemoList判断是否加载了memoList，如果有就加载新列表（清空缓存的newMemoVOList）
         ArrayList<MemoVO> newMemoList = clientData.getNewMemoVOList();
         if (newMemoList != null) {
@@ -456,14 +464,10 @@ public class MainActivity extends RxAppCompatActivity
                 UserVOLite userVOLite = new HttpService().getUserInfo(userID);
                 Bitmap userLogo = new HttpService().getUserLogo(userID);
                 memoList = new HttpService().getMemoList(userID);
-//                memoList = new Resource_stub().getMemoVOs();
                 return new UserVO(userID, oldUserVO.getUserName(), userVOLite.getSignature(), userLogo);
             } else {
                 return null;
             }
-
-            //TODO 登录的stub
-//            return null;
         }
 
         @Override

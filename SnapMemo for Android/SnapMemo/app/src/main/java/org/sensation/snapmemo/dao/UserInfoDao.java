@@ -60,6 +60,7 @@ public class UserInfoDao {
 
             try {
                 out = MyApplication.getContext().openFileOutput(IOTool.USER_LOGO, Context.MODE_PRIVATE);
+                //TODO 图片格式问题
                 userLogo.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
                 in = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
                 byte[] b = new byte[10 * 1024];

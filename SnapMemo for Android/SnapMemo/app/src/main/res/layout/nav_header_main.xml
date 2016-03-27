@@ -45,6 +45,7 @@
         android:maxLines="1"
         android:paddingBottom="10dp"
         android:paddingLeft="25dp"
+        android:paddingRight="10dp"
         android:text="In love with Grace."
         android:textColor="@color/white"
         android:textSize="17sp" />

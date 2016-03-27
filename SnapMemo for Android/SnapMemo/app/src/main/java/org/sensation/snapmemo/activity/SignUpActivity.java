@@ -163,6 +163,11 @@ public class SignUpActivity extends AppCompatActivity {
                 ClientData.getInstance().setUserInfoChanged(true);
                 //标识已登录
                 ClientData.getInstance().setOnline(true);
+                //标识注册成功，返回时自动登录
+                ClientData.getInstance().setFirstSigned(true);
+                //设置成功注册的用户名和密码
+                ClientData.getInstance().setFirstSignedUserID(userName);
+                ClientData.getInstance().setFirstSignedPassword(password);
 
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);

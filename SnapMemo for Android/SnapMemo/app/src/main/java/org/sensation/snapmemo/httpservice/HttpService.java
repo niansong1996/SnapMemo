@@ -84,7 +84,6 @@ public class HttpService {
         conn.setRequestProperty("Request-Type", "Get-Memo-List");
 
         try {
-            Log.d(TAG, "getMemoList: " + JSONHandler.getUserIDJSON(userID));
             flushInfo(JSONHandler.getUserIDJSON(userID));
 
             resultJSONString = getJSONString();
