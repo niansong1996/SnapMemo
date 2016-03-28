@@ -8,7 +8,7 @@
     mc:Ignorable="d">
 
     <RelativePanel Background="White">
-        <Image Name="imageView" Width="100" Height="100" Source="/Assets/StoreLogo.png"
+        <Image Name="imageView" Width="140" Height="140"
                RelativePanel.AlignHorizontalCenterWithPanel="True" Margin="0,60,0,60"/>
         <Grid RelativePanel.Below="imageView" RelativePanel.AlignHorizontalCenterWithPanel="True">
             <Grid.RowDefinitions>

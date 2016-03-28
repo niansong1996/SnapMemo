@@ -30,10 +30,13 @@ namespace SnapMemo.src.ui
         public MemoView(Memo memo)
         {
             this.InitializeComponent();
-
-            // TODO presentation part
             this.Memo = memo;
             this.Tapped += ClickToModify;
+
+            // presentation
+            this.titleTB.Text = memo.Title;
+            this.timeTB.Text = memo.Time.ToString();
+            this.contentTB.Text = memo.Content;
         }
 
         public void ClickToModify(object sender, RoutedEventArgs e)

@@ -110,6 +110,7 @@
     <Compile Include="src\model\Memo.cs" />
     <Compile Include="src\model\UserInfo.cs" />
     <Compile Include="src\tool\JsonString.cs" />
+    <Compile Include="src\tool\PictureConvert.cs" />
     <Compile Include="src\tool\StringEncode.cs" />
     <Compile Include="src\ui\AccountPage.xaml.cs">
       <DependentUpon>AccountPage.xaml</DependentUpon>

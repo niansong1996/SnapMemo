@@ -98,18 +98,13 @@ namespace SnapMemo.src.ui
             // List<Memo> memos = DBHelper.GetAllMemo();
 
             // from server-end
-            //ICollection<Memo> memos = await NetHelper.GetAllMemos(Preference.GetUserID());
-            //foreach (var memo in memos)
-            //{
-            //    var memoBlock = new MemoBlock(memo);
-            //    memoBlock.Holding += OnChoose;
-            //    memoBlock.RightTapped += OnChoose;
-            //    memoList.Children.Add(memoBlock);
-            //}
-
-            for (int i = 0; i < 3; i++)
+            ICollection<Memo> memos = await NetHelper.GetAllMemos(Preference.GetUserID());
+            foreach (var memo in memos)
             {
-                memoList.Children.Add(new MemoView(null));
+                var memoBlock = new MemoView(memo);
+                memoBlock.Holding += OnChoose;
+                memoBlock.RightTapped += OnChoose;
+                memoList.Children.Add(memoBlock);
             }
         }
 

@@ -31,28 +31,11 @@ namespace SnapMemo.src.ui
     /// </summary>
     public sealed partial class AccountPage : Page
     {
-        private async Task WriteToFile(IRandomAccessStream memStream)
-        {
-            var myPictures = await StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures);
-            var wFile = await myPictures.Folders[0]
-                .CreateFileAsync("SnapMemoProfile.jpg", CreationCollisionOption.ReplaceExisting);
-
-            var wStream = await wFile.OpenAsync(FileAccessMode.ReadWrite);
-            using (var outputStream = wStream.GetOutputStreamAt(0))
-            {
-                memStream.Seek(0);
-                await RandomAccessStream.CopyAsync(memStream, outputStream);
-            }
-            wStream.Dispose();
-        }
-
         private async void loadProfilePicture()
         {
             // I don't know why the stream api is so confusing...
             using(var picStream = await NetHelper.GetProfilePicture(userIDTB.Text))
             {
-                await WriteToFile(picStream);
-
                 imageView.Source = await PictureConvert.FromStream(picStream);
             }
         }

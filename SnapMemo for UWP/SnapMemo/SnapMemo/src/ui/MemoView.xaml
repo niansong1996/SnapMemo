@@ -25,7 +25,7 @@
         <RelativePanel  Name="contentP" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.Below="timeP" RelativePanel.AlignBottomWithPanel="True" >
             <Rectangle Fill="Silver" RelativePanel.AlignBottomWithPanel="True" Height="140"
                        RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"/>
-            <TextBlock Foreground="White" Margin="14,14,14,14" TextWrapping="Wrap" FontSize="36">Contentfiwoeioirjwoiejfowiejorwiejr</TextBlock>
+            <TextBlock Name="contentTB" Foreground="White" Margin="14,14,14,14" TextWrapping="Wrap" FontSize="36">Contentfiwoeioirjwoiejfowiejorwiejr</TextBlock>
         </RelativePanel>
     </RelativePanel>
 </UserControl>
