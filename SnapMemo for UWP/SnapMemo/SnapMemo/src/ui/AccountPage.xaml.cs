@@ -1,4 +1,5 @@
 ﻿using SnapMemo.src.logic;
+using SnapMemo.src.tool;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -34,7 +35,7 @@ namespace SnapMemo.src.ui
         {
             var myPictures = await StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures);
             var wFile = await myPictures.Folders[0]
-                .CreateFileAsync("testYao.jpg", CreationCollisionOption.ReplaceExisting);
+                .CreateFileAsync("SnapMemoProfile.jpg", CreationCollisionOption.ReplaceExisting);
 
             var wStream = await wFile.OpenAsync(FileAccessMode.ReadWrite);
             using (var outputStream = wStream.GetOutputStreamAt(0))
@@ -52,10 +53,7 @@ namespace SnapMemo.src.ui
             {
                 await WriteToFile(picStream);
 
-                BitmapImage bitmap = new BitmapImage();
-                bitmap.SetSource(picStream);
-
-                imageView.Source = bitmap;
+                imageView.Source = await PictureConvert.FromStream(picStream);
             }
         }
 

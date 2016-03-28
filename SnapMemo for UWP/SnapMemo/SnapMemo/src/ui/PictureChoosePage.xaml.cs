@@ -1,4 +1,5 @@
 ﻿using SnapMemo.src.logic;
+using SnapMemo.src.tool;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -101,20 +102,8 @@ namespace SnapMemo.src.ui
             {
                 Debug.WriteLine("wrong type convert");
             }
-            
 
-            // Create the decoder from the stream
-            decoder = await BitmapDecoder.CreateAsync(stream);
-
-            // Get the SoftwareBitmap representation of the file
-            SoftwareBitmap picture = await decoder.GetSoftwareBitmapAsync();
-
-            SoftwareBitmap bitmapBGRA8 = SoftwareBitmap.Convert(picture, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
-
-            var source = new SoftwareBitmapSource();
-            await source.SetBitmapAsync(bitmapBGRA8);
-
-            imgView.Source = source;
+            imgView.Source = await PictureConvert.FromStream(stream);
 
             Debug.WriteLine("already finish");
         }
