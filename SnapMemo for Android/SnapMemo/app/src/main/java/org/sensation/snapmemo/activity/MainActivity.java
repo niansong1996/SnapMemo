@@ -232,7 +232,6 @@ public class MainActivity extends RxAppCompatActivity
                     } else {//用户没有登录过，也就是本地用户，只要保存数据至本地，不需要进行网络删除操作
                         listViewAdapter.remove(listViewAdapter.getItem(dismissPosition));
                         MemoListDao.saveLocalMemoList(memoVOList, userVO.getUserName());
-
                     }
                 }
             }
@@ -252,6 +251,7 @@ public class MainActivity extends RxAppCompatActivity
                 ContentActivity.actionStart(MainActivity.this, clickedMemoVO);
             }
         });
+        listViewAdapter.notifyDataSetChanged();
         clientData.setPosition(memoVOList.size());
     }
 
@@ -433,6 +433,7 @@ public class MainActivity extends RxAppCompatActivity
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+        Toast.makeText(MainActivity.this, "You're clicking on " + id + ", it's a useless item.", Toast.LENGTH_SHORT).show();
         return true;
     }
 
@@ -464,7 +465,7 @@ public class MainActivity extends RxAppCompatActivity
                 UserVOLite userVOLite = new HttpService().getUserInfo(userID);
                 Bitmap userLogo = new HttpService().getUserLogo(userID);
                 memoList = new HttpService().getMemoList(userID);
-                return new UserVO(userID, oldUserVO.getUserName(), userVOLite.getSignature(), userLogo);
+                return new UserVO(userID, mUserName, userVOLite.getSignature(), userLogo);
             } else {
                 return null;
             }

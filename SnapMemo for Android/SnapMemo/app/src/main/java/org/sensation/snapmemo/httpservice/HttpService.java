@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -209,7 +210,8 @@ public class HttpService {
             flushInfo(JSONHandler.getUserIDJSON(userID));
             result = isResponseSucceed();
             if (result) {
-                logo = BitmapFactory.decodeStream(conn.getInputStream());
+                InputStream input = conn.getInputStream();
+                logo = BitmapFactory.decodeStream(input);
             }
 
         } catch (IOException e) {
