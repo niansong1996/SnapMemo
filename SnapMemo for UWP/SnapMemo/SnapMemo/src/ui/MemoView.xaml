@@ -1,0 +1,31 @@
+﻿<UserControl
+    x:Class="SnapMemo.src.ui.MemoView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SnapMemo.src.ui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="491.304">
+
+    <RelativePanel Margin="20,15,20,15" >
+        <RelativePanel Name="titleP" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+            <Rectangle Fill="Orange" Height="80" 
+                       RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"/>
+            <TextBlock Name="titleLB" Foreground="White" Margin="14,0,14,0" RelativePanel.AlignVerticalCenterWithPanel="True" FontSize="36" FontWeight="Bold">主题</TextBlock>
+            <TextBlock Name="titleTB" Foreground="White" Margin="0,0,14,0" RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.RightOf="titleLB" FontSize="36">swimming</TextBlock>
+        </RelativePanel>
+        <RelativePanel Name="timeP" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.Below="titleP">
+            <Rectangle Fill="LightPink" Height="80" 
+                       RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"/>
+            <TextBlock Name="timeLB" Foreground="White" Margin="14,0,14,0" RelativePanel.AlignVerticalCenterWithPanel="True" FontSize="36" FontWeight="Bold">时间</TextBlock>
+            <TextBlock Name="timeTB" Foreground="White" Margin="0,0,14,0" RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.RightOf="timeLB" FontSize="36">2016-03-29 16:30</TextBlock>
+        </RelativePanel>
+        <RelativePanel  Name="contentP" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.Below="timeP" RelativePanel.AlignBottomWithPanel="True" >
+            <Rectangle Fill="Silver" RelativePanel.AlignBottomWithPanel="True" Height="140"
+                       RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"/>
+            <TextBlock Foreground="White" Margin="14,14,14,14" TextWrapping="Wrap" FontSize="36">Contentfiwoeioirjwoiejfowiejorwiejr</TextBlock>
+        </RelativePanel>
+    </RelativePanel>
+</UserControl>

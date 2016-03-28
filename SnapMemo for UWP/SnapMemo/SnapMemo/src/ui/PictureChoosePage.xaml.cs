@@ -64,6 +64,7 @@ namespace SnapMemo.src.ui
 
             encoder.BitmapTransform.Bounds = bounds;
 
+            // flush content in bounds into memStream
             await encoder.FlushAsync();
 
             return memStream;

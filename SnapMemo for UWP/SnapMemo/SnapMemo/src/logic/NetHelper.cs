@@ -37,13 +37,7 @@ namespace SnapMemo.src.logic
             return rJson;
         }
 
-        /// <summary>
-        /// package and send an http request in a specific format
-        /// </summary>
-        /// <param name="requestType">the header "Request-Type"</param>
-        /// <param name="requestJson">the content</param>
-        /// <returns>a result as json object</returns>
-        private static async Task<JsonObject> sendInJson(string requestType, JsonObject requestJson)
+        private static async Task<HttpResponseMessage> sendInJson(string requestType, JsonObject requestJson)
         {
             var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Add("Accept-Charset", "utf-8");
@@ -61,6 +55,19 @@ namespace SnapMemo.src.logic
             Debug.WriteLine(response.ToString());
 
             httpClient.Dispose();
+
+            return response;
+        }
+
+        /// <summary>
+        /// package and send an http request in a specific format
+        /// </summary>
+        /// <param name="requestType">the header "Request-Type"</param>
+        /// <param name="requestJson">the content</param>
+        /// <returns>a result as json object</returns>
+        private static async Task<JsonObject> sendAndGetInJson(string requestType, JsonObject requestJson)
+        {
+            var response = await sendInJson(requestType, requestJson);
 
             if (response.IsSuccessStatusCode)
             {
@@ -120,7 +127,7 @@ namespace SnapMemo.src.logic
             var requestJson = new JsonObject();
             requestJson["userID"] = JsonValue.CreateStringValue(id);
 
-            var returnJson = await sendInJson("Get-Memo-List", requestJson);
+            var returnJson = await sendAndGetInJson("Get-Memo-List", requestJson);
             var list = returnJson["memo"].GetArray();
 
             // add in result list
@@ -146,7 +153,7 @@ namespace SnapMemo.src.logic
             requestJson["userName"] = JsonValue.CreateStringValue(name);
             requestJson["password"] = JsonValue.CreateStringValue(password);
 
-            var returnJson = await sendInJson("Sign-In", requestJson);
+            var returnJson = await sendAndGetInJson("Sign-In", requestJson);
 
             return requestJson == null ? null : returnJson["userID"].ToString();
         }
@@ -163,7 +170,7 @@ namespace SnapMemo.src.logic
             requestJson["userName"] = JsonValue.CreateStringValue(userName);
             requestJson["password"] = JsonValue.CreateStringValue(password);
 
-            var returnJson = await sendInJson("Sign-Up", requestJson);
+            var returnJson = await sendAndGetInJson("Sign-Up", requestJson);
 
             return requestJson == null ? null : returnJson["userID"].ToString();
         }
@@ -173,7 +180,7 @@ namespace SnapMemo.src.logic
             var requestJson = new JsonObject();
             requestJson["userID"] = JsonValue.CreateStringValue(userID);
 
-            var returnJson = await sendInJson("Get-User-Info", requestJson);
+            var returnJson = await sendAndGetInJson("Get-User-Info", requestJson);
 
             return new UserInfo(returnJson);
         }
@@ -183,7 +190,7 @@ namespace SnapMemo.src.logic
             var requestJson = memo.ToJsonObject();
             requestJson["userID"] = JsonValue.CreateStringValue(userID);
 
-            var returnJson = await sendInJson("Save-Memo", requestJson);
+            var returnJson = await sendAndGetInJson("Save-Memo", requestJson);
 
             return JsonString.DeQuotes(returnJson["memoID"].ToString());
          }
@@ -194,7 +201,7 @@ namespace SnapMemo.src.logic
             var requestJson = memo.ToJsonObject();
             requestJson["memoID"] = JsonValue.CreateStringValue(memo.MemoID);
 
-            var returnJson = await sendInJson("Modify-Memo", requestJson);
+            var returnJson = await sendAndGetInJson("Modify-Memo", requestJson);
 
             return true;
         }
@@ -204,9 +211,26 @@ namespace SnapMemo.src.logic
             var requestJson = new JsonObject();
             requestJson["memoID"] = JsonValue.CreateStringValue(memoID);
 
-            var returnJson = await sendInJson("Delete-Memo", requestJson);
+            var returnJson = await sendAndGetInJson("Delete-Memo", requestJson);
 
             return true;
+        }
+
+        public static async Task<IRandomAccessStream> GetProfilePicture(string userID)
+        {
+            var requestJson = new JsonObject();
+            requestJson["userID"] = JsonValue.CreateStringValue(userID);
+
+            var response = await sendInJson("Get-Logo", requestJson);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var stream = new InMemoryRandomAccessStream();
+                await response.Content.WriteToStreamAsync(stream);
+                return stream;
+            }
+
+            return null;
         }
     }
 }

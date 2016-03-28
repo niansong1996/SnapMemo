@@ -8,8 +8,8 @@
     mc:Ignorable="d">
 
     <RelativePanel Background="White">
-        <Image Name="imageView" Width="100" Height="100" Source="Assets/StoreLogo.png"
-               RelativePanel.AlignHorizontalCenterWithPanel="True" Margin="0,130,0,0"/>
+        <Image Name="imageView" Width="100" Height="100" Source="/Assets/StoreLogo.png"
+               RelativePanel.AlignHorizontalCenterWithPanel="True" Margin="0,60,0,60"/>
         <Grid RelativePanel.Below="imageView" RelativePanel.AlignHorizontalCenterWithPanel="True">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
@@ -21,18 +21,18 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Row="1" Grid.Column="0" FontSize="20" Margin="10,16,10,0">userName</TextBlock>
-            <TextBlock Grid.Row="2" Grid.Column="0" FontSize="20" Margin="10,16,10,0">signature</TextBlock>
-            <TextBlock Grid.Row="0" Grid.Column="0" FontSize="20" Margin="10,0,10,0">userID</TextBlock>
+            <TextBlock Grid.Row="1" Grid.Column="0" FontSize="20" Margin="10,16,10,0">用户名</TextBlock>
+            <TextBlock Grid.Row="2" Grid.Column="0" FontSize="20" Margin="10,16,10,0">签名</TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="0" FontSize="20" Margin="10,0,10,0">用户ID</TextBlock>
             <TextBlock Grid.Row="0" Grid.Column="1" FontSize="20" Name="userIDTB" Margin="10,0,10,0">000000</TextBlock>
             <TextBlock Grid.Row="1" Grid.Column="1" FontSize="20" Name="userNameTB" Margin="10,16,10,0">czy</TextBlock>
-            <TextBlock Grid.Row="2" Grid.Column="1" FontSize="20" Name="signatureTB" Margin="10,16,10,0" TextWrapping="Wrap">where is Liu Jia?</TextBlock>
+            <TextBox Grid.Row="2" Grid.Column="1" FontSize="20" Name="signatureTB" Margin="10,16,10,0" TextWrapping="Wrap" Text="where is Liu Jia?" TextChanged="OnTextChanged"></TextBox>
             
         </Grid>
 
         <StackPanel RelativePanel.AlignBottomWithPanel="True" HorizontalAlignment="Center" RelativePanel.AlignHorizontalCenterWithPanel="True" Margin="-84,0,-84,26" Width="270">
-            <Button FontSize="24" Margin="0, 0, 0, 20" Foreground="White" HorizontalAlignment="Stretch">Edit</Button>
-            <Button FontSize="24" Foreground="White" Background="Red" Click="OnLogout" HorizontalAlignment="Stretch">Log out</Button>
+            <Button Name="editButton" FontSize="24" Margin="0, 0, 0, 20" Background="Gray" Foreground="White" HorizontalAlignment="Stretch" Click="OnEdit" IsEnabled="False" IsEnabledChanged="OnEnabledChanged">修改</Button>
+            <Button FontSize="24" Foreground="White" Background="Red" Click="OnLogout" HorizontalAlignment="Stretch">注销</Button>
         </StackPanel>
     </RelativePanel>
 </Page>

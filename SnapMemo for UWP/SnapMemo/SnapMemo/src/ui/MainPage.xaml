@@ -23,7 +23,7 @@
             <Button Name="cancelButton" Background="LightGreen" Visibility="Collapsed" FontFamily="Segoe MDL2 Assets" FontSize="36" Foreground="White">&#xE112;</Button>
         </RelativePanel>
 
-        <SplitView Name="mySplitView" Grid.Row="1" OpenPaneLength="160" DisplayMode="Inline">
+        <SplitView Name="mySplitView" Grid.Row="1" OpenPaneLength="160" DisplayMode="Overlay">
             <SplitView.Pane>
                 <ListBox Name="pagesListBox" SelectionChanged="pagesListBox_SelectionChanged">
                     <ListBoxItem Name="accountBoxItem">
@@ -32,14 +32,14 @@
                         		<Run Text="&#xE13D;"/>
                             </TextBlock>
                             <TextBlock FontSize="24" Margin="24,0,0,0">
-                        		<Run Text="Account"/>
+                        		<Run Text="账户"/>
                             </TextBlock>
                         </StackPanel>
                     </ListBoxItem>
                     <ListBoxItem Name="memoListBoxItem">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="24">&#xE133;</TextBlock>
-                            <TextBlock FontSize="24" Margin="24,0,0,0">Memos</TextBlock>
+                            <TextBlock FontSize="24" Margin="24,0,0,0">备忘录</TextBlock>
                         </StackPanel>
                     </ListBoxItem>
                 </ListBox>

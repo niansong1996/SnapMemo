@@ -22,48 +22,50 @@ using Windows.UI.Xaml.Navigation;
 
 namespace SnapMemo.src.ui
 {
-    class MemoBlock : Button
-    {
-        public Memo Memo
-        {
-            get; private set;
-        }
-        public bool Selected { get; set; }
+    //class MemoBlock : Button
+    //{
+    //    public Memo Memo
+    //    {
+    //        get; private set;
+    //    }
+    //    public bool Selected { get; set; }
 
-        public MemoBlock(Memo memo)
-        {
-            // TODO presentation part
-            this.Margin = new Thickness(10, 10, 10, 10);
-            this.Background = new SolidColorBrush(Colors.Gray);
+    //    public MemoBlock(Memo memo)
+    //    {
+    //        // TODO presentation part
+    //        this.Margin = new Thickness(10, 10, 10, 10);
+    //        this.Background = new SolidColorBrush(Colors.Gray);
 
-            this.Memo = memo;
-            this.Content = memo.ToString();
-            this.Click += ClickToModify;
-        }
+    //        this.Memo = memo;
+    //        //this.Content = memo.ToString();
+    //        var memoView = new MemoView();
+    //        this.Content = memoView;
+    //        this.Click += ClickToModify;
+    //    }
 
-        public void ClickToModify(object sender, RoutedEventArgs e)
-        {
-            Frame frame = Window.Current.Content as Frame;
-            frame.Navigate(typeof(MemoModifyPage), Memo);
-        }
+    //    public void ClickToModify(object sender, RoutedEventArgs e)
+    //    {
+    //        Frame frame = Window.Current.Content as Frame;
+    //        frame.Navigate(typeof(MemoModifyPage), Memo);
+    //    }
 
-        public void ClickToSelect(object sender, RoutedEventArgs e)
-        {
-            var gray = new SolidColorBrush(Colors.Gray);
-            var blue = new SolidColorBrush(Colors.CornflowerBlue);
+    //    public void ClickToSelect(object sender, RoutedEventArgs e)
+    //    {
+    //        var gray = new SolidColorBrush(Colors.Gray);
+    //        var blue = new SolidColorBrush(Colors.CornflowerBlue);
 
-            if (Selected)
-            {
-                Selected = false;
-                Background = gray;
-            }
-            else
-            {
-                Selected = true;
-                Background = blue;
-            }
-        }
-    }
+    //        if (Selected)
+    //        {
+    //            Selected = false;
+    //            Background = gray;
+    //        }
+    //        else
+    //        {
+    //            Selected = true;
+    //            Background = blue;
+    //        }
+    //    }
+    //}
 
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -96,13 +98,18 @@ namespace SnapMemo.src.ui
             // List<Memo> memos = DBHelper.GetAllMemo();
 
             // from server-end
-            ICollection<Memo> memos = await NetHelper.GetAllMemos(Preference.GetUserID());
-            foreach (var memo in memos)
+            //ICollection<Memo> memos = await NetHelper.GetAllMemos(Preference.GetUserID());
+            //foreach (var memo in memos)
+            //{
+            //    var memoBlock = new MemoBlock(memo);
+            //    memoBlock.Holding += OnChoose;
+            //    memoBlock.RightTapped += OnChoose;
+            //    memoList.Children.Add(memoBlock);
+            //}
+
+            for (int i = 0; i < 3; i++)
             {
-                var memoBlock = new MemoBlock(memo);
-                memoBlock.Holding += OnChoose;
-                memoBlock.RightTapped += OnChoose;
-                memoList.Children.Add(memoBlock);
+                memoList.Children.Add(new MemoView(null));
             }
         }
 
@@ -119,18 +126,18 @@ namespace SnapMemo.src.ui
             var memos = memoList.Children.ToList();
             foreach (var one in memos)
             {
-                MemoBlock memoBlock = one as MemoBlock;
+                MemoView memoBlock = one as MemoView;
 
                 memoBlock.Background = gray;
                 memoBlock.Selected = false;
-                memoBlock.Click -= memoBlock.ClickToModify;
-                memoBlock.Click += memoBlock.ClickToSelect;
+                memoBlock.Tapped -= memoBlock.ClickToModify;
+                memoBlock.Tapped += memoBlock.ClickToSelect;
                 memoBlock.Holding -= OnChoose;
                 memoBlock.RightTapped -= OnChoose;
             }
 
             // change the state of the first selected one
-            var firstMemo = sender as MemoBlock;
+            var firstMemo = sender as MemoView;
             firstMemo.Background = blue;
             firstMemo.Selected = true;
 
@@ -152,12 +159,12 @@ namespace SnapMemo.src.ui
             var memos = memoList.Children.ToList();
             foreach (var one in memos)
             {
-                MemoBlock memoBlock = one as MemoBlock;
+                MemoView memoBlock = one as MemoView;
 
                 memoBlock.Background = gray;
                 memoBlock.Selected = false;
-                memoBlock.Click += memoBlock.ClickToModify;
-                memoBlock.Click -= memoBlock.ClickToSelect;
+                memoBlock.Tapped += memoBlock.ClickToModify;
+                memoBlock.Tapped -= memoBlock.ClickToSelect;
                 memoBlock.Holding += OnChoose;
                 memoBlock.RightTapped += OnChoose;
             }
@@ -179,7 +186,7 @@ namespace SnapMemo.src.ui
             memoList.Children.Clear();
             foreach (var one in memos)
             {
-                MemoBlock memoBlock = one as MemoBlock;
+                MemoView memoBlock = one as MemoView;
                 if (!memoBlock.Selected)
                 {
                     memoList.Children.Add(memoBlock);

@@ -12,7 +12,7 @@ using Windows.Storage;
 
 namespace SnapMemo.src.model
 {
-    class Memo
+    public class Memo
     {
         private static IPropertySet localValues;
         private static uint idCount;
@@ -72,6 +72,7 @@ namespace SnapMemo.src.model
         {
             Title = JsonString.DeQuotes(jsonObject["topic"].ToString());
             Content = JsonString.DeQuotes(jsonObject["content"].ToString());
+            MemoID = JsonString.DeQuotes(jsonObject["memoID"].ToString());
 
             // time format : 2016-02-07 15:32
             var dateTimeStr = JsonString.DeQuotes(jsonObject["time"].ToString());
