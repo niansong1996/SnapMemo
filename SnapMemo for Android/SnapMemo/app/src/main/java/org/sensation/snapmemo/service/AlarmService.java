@@ -55,6 +55,7 @@ public class AlarmService extends Service {
             PendingIntent pendingRemindingIntent = PendingIntent.getBroadcast(this, memoID, remindingIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pendingRemindingIntent);
+            Toast.makeText(AlarmService.this, "提醒设置成功", Toast.LENGTH_SHORT).show();
         } else {
             //不设置闹钟
             Toast.makeText(AlarmService.this, getString(R.string.reminder_fail), Toast.LENGTH_SHORT).show();

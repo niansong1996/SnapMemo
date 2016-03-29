@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -26,6 +27,7 @@ import org.sensation.snapmemo.VO.MemoTransVO;
 import org.sensation.snapmemo.VO.MemoVO;
 import org.sensation.snapmemo.VO.MemoVOLite;
 import org.sensation.snapmemo.httpservice.HttpService;
+import org.sensation.snapmemo.service.AlarmService;
 import org.sensation.snapmemo.tool.ClientData;
 import org.sensation.snapmemo.tool.TimeTool;
 
@@ -40,6 +42,8 @@ public class ContentActivity extends AppCompatActivity {
     EditText topicContent, contentContent;
     ProgressDialog progressDialog;
     MemoVO newMemoVO;
+    RadioButton reminder;
+    boolean reminderChecked = false;
     private String id, topic, date, time, day, content, originTopic, originDate, originTime, originDay, originContent;
 
     /**
@@ -115,6 +119,8 @@ public class ContentActivity extends AppCompatActivity {
         initEditView();
 
         initButton();
+
+        initReminder();
     }
 
     private void initEditView() {
@@ -204,6 +210,24 @@ public class ContentActivity extends AppCompatActivity {
                         overridePendingTransition(R.anim.in_from_left, R.anim.out_to_right);
                     }
                 }
+                if (reminder.isChecked()) {
+                    Calendar presentCalendar = Calendar.getInstance();
+                    presentCalendar.setTimeInMillis(System.currentTimeMillis());
+                    presentCalendar.set(Calendar.MONTH, presentCalendar.get(Calendar.MONTH) + 1);
+
+                    int year = Integer.parseInt(date.split("-")[0]),
+                            month = Integer.parseInt(date.split("-")[1]),
+                            dayOfMonth = Integer.parseInt(date.split("-")[2]);
+                    Calendar remindingCalendar = Calendar.getInstance();
+                    remindingCalendar.set(year, month, dayOfMonth);
+
+                    int dayBetween = TimeTool.getDaysBetween(presentCalendar, remindingCalendar);
+
+                    String startTime = presentCalendar.get(Calendar.HOUR_OF_DAY) + ":" + presentCalendar.get(Calendar.MINUTE);
+                    int timeBetween = TimeTool.getSecondsBetween(startTime, time);
+
+                    AlarmService.actionStart(ContentActivity.this, (int) System.currentTimeMillis(), topic, (dayBetween * TimeTool.DAY_SECONDS + timeBetween) * 1000);
+                }
             }
         });
 
@@ -219,6 +243,26 @@ public class ContentActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    /**
+     * 初始化提醒
+     */
+    private void initReminder() {
+        reminder = (RadioButton) findViewById(R.id.reminder);
+        reminder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!reminderChecked) {
+                    reminder.setChecked(true);
+                    reminderChecked = true;
+                } else {
+                    reminder.setChecked(false);
+                    reminderChecked = false;
+                }
+            }
+        });
+
     }
 
     /**
@@ -279,7 +323,6 @@ public class ContentActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... params) {
             return new HttpService().saveMemo(memoTransVO);
-//            return null;
         }
 
         @Override
@@ -287,7 +330,7 @@ public class ContentActivity extends AppCompatActivity {
             progressDialog.dismiss();
             if (memoID != null) {
                 //设置界面更新
-                clientData.setNewMemoVO(new MemoVO(memoID, memoTransVO.getTopic(), memoTransVO.getTime(),
+                clientData.setNewMemoVO(new MemoVO(memoID, memoTransVO.getTopic(), memoTransVO.getTime() + " " + time,
                         TimeTool.getDay(memoTransVO.getTime()), memoTransVO.getContent()));
 
                 Intent intent = new Intent(ContentActivity.this, MainActivity.class);
@@ -318,8 +361,8 @@ public class ContentActivity extends AppCompatActivity {
         @Override
         protected Boolean doInBackground(MemoVOLite... params) {
             //修改memo
-//            return new HttpService().modifyMemo(params[0]);
-            return true;
+            return new HttpService().modifyMemo(params[0]);
+//            return true;
         }
 
         @Override

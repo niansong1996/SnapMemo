@@ -145,5 +145,13 @@
         android:layout_marginTop="20dp"
         android:src="#d6d5d5" />
 
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="提醒"
+        android:id="@+id/reminder"
+        android:layout_alignTop="@+id/time_content"
+        android:layout_toEndOf="@+id/time_content" />
+
 
 </RelativeLayout>
