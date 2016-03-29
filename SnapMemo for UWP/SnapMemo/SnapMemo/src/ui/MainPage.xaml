@@ -23,23 +23,29 @@
             <Button Name="cancelButton" Background="LightGreen" Visibility="Collapsed" FontFamily="Segoe MDL2 Assets" FontSize="36" Foreground="White">&#xE112;</Button>
         </RelativePanel>
 
-        <SplitView Name="mySplitView" Grid.Row="1" OpenPaneLength="160" DisplayMode="Overlay">
+        <SplitView Name="mySplitView" Grid.Row="1" OpenPaneLength="180" DisplayMode="Overlay">
             <SplitView.Pane>
-                <ListBox Name="pagesListBox" SelectionChanged="pagesListBox_SelectionChanged">
+                <ListBox Name="pagesListBox" SelectionChanged="pagesListBox_SelectionChanged" Background="Black">
                     <ListBoxItem Name="accountBoxItem">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="24" >
+                            <TextBlock VerticalAlignment="Center" FontFamily="Segoe MDL2 Assets" Foreground="White" FontSize="24" >
                         		<Run Text="&#xE13D;"/>
                             </TextBlock>
-                            <TextBlock FontSize="24" Margin="24,0,0,0">
+                            <TextBlock VerticalAlignment="Center" FontSize="24" Foreground="White" Margin="24,0,0,0">
                         		<Run Text="账户"/>
                             </TextBlock>
                         </StackPanel>
                     </ListBoxItem>
                     <ListBoxItem Name="memoListBoxItem">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock FontFamily="Segoe MDL2 Assets" FontSize="24">&#xE133;</TextBlock>
-                            <TextBlock FontSize="24" Margin="24,0,0,0">备忘录</TextBlock>
+                            <TextBlock VerticalAlignment="Center" FontFamily="Segoe MDL2 Assets" Foreground="White" FontSize="24">&#xE133;</TextBlock>
+                            <TextBlock VerticalAlignment="Center" FontSize="24" Foreground="White" Margin="24,0,0,0">备忘录</TextBlock>
+                        </StackPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Name="teamBoxItem">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock VerticalAlignment="Center" FontFamily="Segoe MDL2 Assets" Foreground="White" FontSize="24">&#xE946;</TextBlock>
+                            <TextBlock VerticalAlignment="Center" FontSize="24" Foreground="White" Margin="24,0,0,0">开发团队</TextBlock>
                         </StackPanel>
                     </ListBoxItem>
                 </ListBox>

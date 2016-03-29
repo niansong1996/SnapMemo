@@ -1,0 +1,37 @@
+﻿<Page
+    x:Class="SnapMemo.src.ui.AboutUsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:SnapMemo.src.ui"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <RelativePanel Background="White">
+        <Image Name="imageView" Width="140" Height="140" Source="\Assets\StoreLogo.png"
+               RelativePanel.AlignHorizontalCenterWithPanel="True" Margin="0,60,0,60"/>
+        <StackPanel Name="teamTitle" RelativePanel.Below="imageView" RelativePanel.AlignHorizontalCenterWithPanel="True">
+            <TextBlock Foreground="Green" FontSize="44" HorizontalAlignment="Center">Sensation</TextBlock>
+            <TextBlock Foreground="Green" FontSize="30" HorizontalAlignment="Center">团队成员</TextBlock>
+        </StackPanel>
+        <Grid RelativePanel.Below="teamTitle" RelativePanel.AlignHorizontalCenterWithPanel="True" Margin="0,20,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock HorizontalAlignment="Center" Foreground="Green" Grid.Row="1" Grid.Column="0" FontSize="20" Margin="10,16,10,0">Alan</TextBlock>
+            <TextBlock HorizontalAlignment="Center" Foreground="Green" Grid.Row="2" Grid.Column="0" FontSize="20" Margin="10,16,10,0">Sissel</TextBlock>
+            <TextBlock HorizontalAlignment="Center" Foreground="Green" Grid.Row="0" Grid.Column="0" FontSize="20" Margin="10,0,10,0">Anthony</TextBlock>
+            <TextBlock HorizontalAlignment="Center" Foreground="Green" Grid.Row="0" Grid.Column="1" FontSize="20" Name="userIDTB" Margin="10,0,10,0">倪安松</TextBlock>
+            <TextBlock HorizontalAlignment="Center" Foreground="Green" Grid.Row="1" Grid.Column="1" FontSize="20" Name="userNameTB" Margin="10,16,10,0">徐朱峰</TextBlock>
+            <TextBlock HorizontalAlignment="Center" Foreground="Green" Grid.Row="2" Grid.Column="1" FontSize="20" Name="signatureTB" Margin="10,16,10,0">吴嘉荣</TextBlock>
+
+        </Grid>
+    </RelativePanel>
+</Page>

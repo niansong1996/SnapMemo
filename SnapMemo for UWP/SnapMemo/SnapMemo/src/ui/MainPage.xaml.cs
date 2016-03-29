@@ -120,6 +120,11 @@ namespace SnapMemo
                 
                 mySplitView.IsPaneOpen = false;
             }
+            else if (teamBoxItem.IsSelected)
+            {
+                myFrame.Navigate(typeof(AboutUsPage));
+                mySplitView.IsPaneOpen = false;
+            }
         }
 
         private void plusTB_Tapped(object sender, TappedRoutedEventArgs e)
