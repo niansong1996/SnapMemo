@@ -22,51 +22,6 @@ using Windows.UI.Xaml.Navigation;
 
 namespace SnapMemo.src.ui
 {
-    //class MemoBlock : Button
-    //{
-    //    public Memo Memo
-    //    {
-    //        get; private set;
-    //    }
-    //    public bool Selected { get; set; }
-
-    //    public MemoBlock(Memo memo)
-    //    {
-    //        // TODO presentation part
-    //        this.Margin = new Thickness(10, 10, 10, 10);
-    //        this.Background = new SolidColorBrush(Colors.Gray);
-
-    //        this.Memo = memo;
-    //        //this.Content = memo.ToString();
-    //        var memoView = new MemoView();
-    //        this.Content = memoView;
-    //        this.Click += ClickToModify;
-    //    }
-
-    //    public void ClickToModify(object sender, RoutedEventArgs e)
-    //    {
-    //        Frame frame = Window.Current.Content as Frame;
-    //        frame.Navigate(typeof(MemoModifyPage), Memo);
-    //    }
-
-    //    public void ClickToSelect(object sender, RoutedEventArgs e)
-    //    {
-    //        var gray = new SolidColorBrush(Colors.Gray);
-    //        var blue = new SolidColorBrush(Colors.CornflowerBlue);
-
-    //        if (Selected)
-    //        {
-    //            Selected = false;
-    //            Background = gray;
-    //        }
-    //        else
-    //        {
-    //            Selected = true;
-    //            Background = blue;
-    //        }
-    //    }
-    //}
-
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
@@ -116,14 +71,11 @@ namespace SnapMemo.src.ui
 
         private void OnChoose(object sender, RoutedEventArgs e)
         {
-            var gray = new SolidColorBrush(Colors.Gray);
-            var blue = new SolidColorBrush(Colors.CornflowerBlue);
             var memos = memoList.Children.ToList();
             foreach (var one in memos)
             {
                 MemoView memoBlock = one as MemoView;
 
-                memoBlock.Background = gray;
                 memoBlock.Selected = false;
                 memoBlock.Tapped -= memoBlock.ClickToModify;
                 memoBlock.Tapped += memoBlock.ClickToSelect;
@@ -133,8 +85,7 @@ namespace SnapMemo.src.ui
 
             // change the state of the first selected one
             var firstMemo = sender as MemoView;
-            firstMemo.Background = blue;
-            firstMemo.Selected = true;
+            firstMemo.ClickToSelect(firstMemo, e);
 
             // change view of cancel Button
             var cancelBtn = MainPage.Instance.CancelButton;
@@ -150,13 +101,11 @@ namespace SnapMemo.src.ui
         private void OnCancelChoose(object sender, RoutedEventArgs e)
         {
             // change states of memoBlocks
-            var gray = new SolidColorBrush(Colors.Gray);
             var memos = memoList.Children.ToList();
             foreach (var one in memos)
             {
                 MemoView memoBlock = one as MemoView;
 
-                memoBlock.Background = gray;
                 memoBlock.Selected = false;
                 memoBlock.Tapped += memoBlock.ClickToModify;
                 memoBlock.Tapped -= memoBlock.ClickToSelect;

@@ -1,4 +1,5 @@
 ﻿using SnapMemo.src.model;
+using SnapMemo.src.tool;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -35,8 +36,9 @@ namespace SnapMemo.src.ui
 
             // presentation
             this.titleTB.Text = memo.Title;
-            this.timeTB.Text = memo.Time.ToString();
             this.contentTB.Text = memo.Content;
+
+            this.timeTB.Text = Time2String.Time2Str(memo.Time);
         }
 
         public void ClickToModify(object sender, RoutedEventArgs e)
@@ -47,18 +49,18 @@ namespace SnapMemo.src.ui
 
         public void ClickToSelect(object sender, RoutedEventArgs e)
         {
-            var gray = new SolidColorBrush(Colors.Gray);
-            var blue = new SolidColorBrush(Colors.CornflowerBlue);
+            var white = new SolidColorBrush(Colors.White);
+            var blue = new SolidColorBrush(Colors.Blue);
 
             if (Selected)
             {
                 Selected = false;
-                Background = gray;
+                border.BorderBrush = white;
             }
             else
             {
                 Selected = true;
-                Background = blue;
+                border.BorderBrush = blue;
             }
         }
     }

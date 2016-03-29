@@ -126,5 +126,20 @@ namespace SnapMemo
         {
 
         }
+
+        private void relativePanel_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
+        {
+            
+        }
+
+        private void relativePanel_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+
+        }
+
+        private void relativePanel_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        {
+
+        }
     }
 }
