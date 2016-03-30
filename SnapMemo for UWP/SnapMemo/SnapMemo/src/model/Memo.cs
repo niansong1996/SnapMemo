@@ -72,7 +72,15 @@ namespace SnapMemo.src.model
         {
             Title = JsonString.DeQuotes(jsonObject["topic"].ToString());
             Content = JsonString.DeQuotes(jsonObject["content"].ToString());
-            MemoID = JsonString.DeQuotes(jsonObject["memoID"].ToString());
+            try
+            {
+                MemoID = JsonString.DeQuotes(jsonObject["memoID"].ToString());
+            }
+            catch (Exception e)
+            {
+                Debug.Write("Memo(JsonObject jsonObject)");
+                Debug.WriteLine(e.Message);
+            }
 
             // time format : 2016-02-07 15:32
             var dateTimeStr = JsonString.DeQuotes(jsonObject["time"].ToString());

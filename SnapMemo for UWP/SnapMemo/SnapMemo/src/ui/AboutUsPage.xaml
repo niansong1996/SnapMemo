@@ -9,7 +9,7 @@
 
     <RelativePanel Background="White">
         <Image Name="imageView" Width="140" Height="140" Source="/Assets/Square150x150Logo.scale-200.png"
-               RelativePanel.AlignHorizontalCenterWithPanel="True" Margin="0,60,0,60"/>
+               RelativePanel.AlignHorizontalCenterWithPanel="True" Margin="0,40,0,40"/>
         <StackPanel Name="teamTitle" RelativePanel.Below="imageView" RelativePanel.AlignHorizontalCenterWithPanel="True">
             <TextBlock Foreground="#44c690" FontSize="44" HorizontalAlignment="Center">Sensation</TextBlock>
             <TextBlock Foreground="#44c690" FontSize="30" HorizontalAlignment="Center">团队成员</TextBlock>

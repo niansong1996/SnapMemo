@@ -166,17 +166,23 @@ namespace SnapMemo.src.ui
             fileOpenPicker.FileTypeFilter.Add(".png");
             fileOpenPicker.ViewMode = PickerViewMode.Thumbnail;
 
-            var inputFile = await fileOpenPicker.PickSingleFileAsync();
-
-            if (inputFile == null)
+            try
             {
-                // The user cancelled the picking operation
-                return;
+                var inputFile = await fileOpenPicker.PickSingleFileAsync();
+                if (inputFile == null)
+                {
+                    // The user cancelled the picking operation
+                    return;
+                }
+                else
+                {
+                    Frame frame = Window.Current.Content as Frame;
+                    frame.Navigate(typeof(PictureChoosePage), await inputFile.OpenAsync(FileAccessMode.Read));
+                }
             }
-            else
+            catch (UnauthorizedAccessException)
             {
-                Frame frame = Window.Current.Content as Frame;
-                frame.Navigate(typeof(PictureChoosePage), await inputFile.OpenAsync(FileAccessMode.Read));
+                return;
             }
         }
     }
