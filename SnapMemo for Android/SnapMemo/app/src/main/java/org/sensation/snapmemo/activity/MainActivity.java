@@ -382,7 +382,8 @@ public class MainActivity extends RxAppCompatActivity
         ArrayList<MemoVO> newMemoList = clientData.getNewMemoVOList();
         if (newMemoList != null) {
             memoVOList = newMemoList;
-            listViewAdapter.notifyDataSetChanged();
+            listViewAdapter = new ListViewAdapter(this, R.layout.listview_item, memoVOList);
+            listView.setAdapter(listViewAdapter);
             clientData.setNewMemoVOList(null);
         }
 
