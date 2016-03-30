@@ -11,8 +11,8 @@
         <Image Name="imageView" Width="140" Height="140" Source="/Assets/Square150x150Logo.scale-200.png"
                RelativePanel.AlignHorizontalCenterWithPanel="True" Margin="0,60,0,60"/>
         <StackPanel Name="teamTitle" RelativePanel.Below="imageView" RelativePanel.AlignHorizontalCenterWithPanel="True">
-            <TextBlock Foreground="Green" FontSize="44" HorizontalAlignment="Center">Sensation</TextBlock>
-            <TextBlock Foreground="Green" FontSize="30" HorizontalAlignment="Center">团队成员</TextBlock>
+            <TextBlock Foreground="#44c690" FontSize="44" HorizontalAlignment="Center">Sensation</TextBlock>
+            <TextBlock Foreground="#44c690" FontSize="30" HorizontalAlignment="Center">团队成员</TextBlock>
         </StackPanel>
         <Grid RelativePanel.Below="teamTitle" RelativePanel.AlignHorizontalCenterWithPanel="True" Margin="0,20,0,0">
             <Grid.RowDefinitions>
@@ -25,12 +25,12 @@
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock HorizontalAlignment="Center" Foreground="Green" Grid.Row="1" Grid.Column="0" FontSize="20" Margin="10,16,10,0">Alan</TextBlock>
-            <TextBlock HorizontalAlignment="Center" Foreground="Green" Grid.Row="2" Grid.Column="0" FontSize="20" Margin="10,16,10,0">Sissel</TextBlock>
-            <TextBlock HorizontalAlignment="Center" Foreground="Green" Grid.Row="0" Grid.Column="0" FontSize="20" Margin="10,0,10,0">Anthony</TextBlock>
-            <TextBlock HorizontalAlignment="Center" Foreground="Green" Grid.Row="0" Grid.Column="1" FontSize="20" Name="userIDTB" Margin="10,0,10,0">倪安松</TextBlock>
-            <TextBlock HorizontalAlignment="Center" Foreground="Green" Grid.Row="1" Grid.Column="1" FontSize="20" Name="userNameTB" Margin="10,16,10,0">徐朱峰</TextBlock>
-            <TextBlock HorizontalAlignment="Center" Foreground="Green" Grid.Row="2" Grid.Column="1" FontSize="20" Name="signatureTB" Margin="10,16,10,0">吴嘉荣</TextBlock>
+            <TextBlock HorizontalAlignment="Center" Foreground="#44c690" Grid.Row="1" Grid.Column="0" FontSize="20" Margin="10,16,10,0">Alan</TextBlock>
+            <TextBlock HorizontalAlignment="Center" Foreground="#44c690" Grid.Row="2" Grid.Column="0" FontSize="20" Margin="10,16,10,0">Sissel</TextBlock>
+            <TextBlock HorizontalAlignment="Center" Foreground="#44c690" Grid.Row="0" Grid.Column="0" FontSize="20" Margin="10,0,10,0">Anthony</TextBlock>
+            <TextBlock HorizontalAlignment="Center" Foreground="#44c690" Grid.Row="0" Grid.Column="1" FontSize="20" Name="userIDTB" Margin="10,0,10,0">倪安松</TextBlock>
+            <TextBlock HorizontalAlignment="Center" Foreground="#44c690" Grid.Row="1" Grid.Column="1" FontSize="20" Name="userNameTB" Margin="10,16,10,0">徐朱峰</TextBlock>
+            <TextBlock HorizontalAlignment="Center" Foreground="#44c690" Grid.Row="2" Grid.Column="1" FontSize="20" Name="signatureTB" Margin="10,16,10,0">吴嘉荣</TextBlock>
 
         </Grid>
     </RelativePanel>

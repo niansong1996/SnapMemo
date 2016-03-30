@@ -126,7 +126,12 @@ namespace SnapMemo.src.ui
             Debug.WriteLine("enable change");
             if (editButton.IsEnabled)
             {
-                var green = new SolidColorBrush(Colors.LightGreen);
+                var greenRGB = new Color();
+                greenRGB.R = 0x44;
+                greenRGB.G = 0xc6;
+                greenRGB.B = 0x90;
+                greenRGB.A = 255;
+                var green = new SolidColorBrush(greenRGB);
                 editButton.Background = green;
             }
             else

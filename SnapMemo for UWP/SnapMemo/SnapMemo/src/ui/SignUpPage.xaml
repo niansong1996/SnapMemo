@@ -33,7 +33,7 @@
             <TextBox Name="nameTB" Grid.Column="1" Grid.Row="1" FontSize="22" Margin="8,0"/>
             <PasswordBox Name="passwordTB" Grid.Column="1" Grid.Row="2" FontSize="22" Margin="8,16,8,0"/>
             <PasswordBox Name="confirmTB" Grid.Column="1" Grid.Row="3" FontSize="22" Margin="8,16,8,0"/>
-            <Button Grid.Row="4" Grid.Column="1" Background="LightGreen" Foreground="White" HorizontalAlignment="Right" FontSize="22" Margin="0,16,8,0" Click="OnSignUp">注册新账号</Button>
+            <Button Grid.Row="4" Grid.Column="1" Background="#44c690" Foreground="White" HorizontalAlignment="Right" FontSize="22" Margin="0,16,8,0" Click="OnSignUp">注册新账号</Button>
 
             <TextBlock Name="warnTB" Text="" Grid.ColumnSpan="2" Grid.Row="5" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Red" FontSize="22" Margin="8,16,0,0"/>
         </Grid>

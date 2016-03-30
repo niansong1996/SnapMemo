@@ -104,7 +104,14 @@ namespace SnapMemo.src.ui
             else if(type == OperateType.MODIFY)
             {
                 // sync in server-end
-                UnsyncQueue.Instance.Enqueue(new ModifyMemoOperation(modifyingMemo));
+                try
+                {
+                    await NetHelper.ModifyMemo(modifyingMemo);
+                }
+                catch (COMException)
+                {
+                    UnsyncQueue.Instance.Enqueue(new ModifyMemoOperation(modifyingMemo));
+                }
 
                 // save in local DB
                 DBHelper.UpdateMemo(modifyingMemo);
