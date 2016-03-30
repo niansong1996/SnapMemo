@@ -31,6 +31,32 @@ public class UtilityTools {
 		} catch (ParseException e) {System.out.println("parse failed!!!");}
 		return cal;
 	}
+	public static Calendar Luis2Cal(String date,String time){
+		Calendar currentCal = Calendar.getInstance();
+		if(date.contains("XXXX-WXX-")){
+			int day = Integer.parseInt(date.substring(date.length()-1));
+			while((currentCal.get(Calendar.DAY_OF_WEEK)+5)%7+1!=day){
+		        currentCal.set(Calendar.DATE, currentCal.get(Calendar.DATE)+1);    
+			}
+			date = Cal2String(currentCal).split(" ")[0];
+		}
+		String currentStr = Cal2String(currentCal).split(" ")[0];
+		if(date.contains("XXXX-")){
+			String tmp = currentStr.substring(0, 5);
+			date = date.replace("XXXX-", tmp);
+		}
+		if(date.contains("-XX-"))
+			date = date.replace("-XX-",currentStr.substring(4,8));
+		if(date.contains("-XX"))
+			date = date.replace("-XX", currentStr.substring(7,10));
+		System.out.println(date);
+		
+		time = time.replace("T", "");
+		if(time.length()<=2) time+=":00";
+		String result = date+" "+time;
+		System.out.println(result);
+		return String2Cal(result);
+	}
 	public static String getCurrentTime(){
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSSS");
 		return sdf.format(new Date());
@@ -73,10 +99,10 @@ public class UtilityTools {
 	}
 	public static String PO2JSON(MemoPO po){
 		String time= UtilityTools.Cal2String(po.getTime());
-		return "{\"topic\":\""+
+		return "{\"memoID\":\""+po.getMemoID()+"\",\"topic\":\""+
 		po.getTopic()+"\",\"time\":\""+time+"\",\"content\":\""+po.getContent()+"\"}";
 	}
 	public static void main(String[] args){
-		System.out.println(location2Img("D:\\Desktop\\defaultLogo_1.jpg").length);
+		Luis2Cal("XXXX-WXX-1","T03:30");
 	}
 }

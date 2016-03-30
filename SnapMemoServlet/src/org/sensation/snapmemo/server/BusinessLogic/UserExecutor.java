@@ -1,6 +1,7 @@
 package org.sensation.snapmemo.server.BusinessLogic;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 
 import org.sensation.snapmemo.server.Data.UserData;
@@ -33,7 +34,7 @@ public class UserExecutor {
 		UserPO user = this.getUser(source);
 		if(user==null) return new IntStringWrapper(HttpURLConnection.HTTP_NOT_FOUND,"your user is not found");
 		byte[] logo = UtilityTools.location2Img(user.getLogoLocation());
-		return new IntStringWrapper(HttpURLConnection.HTTP_OK,logo.toString());
+		return new IntStringWrapper(HttpURLConnection.HTTP_OK,logo);
 	}
 	public IntStringWrapper GetUserInfo(InputStream is){
 		String source = UtilityTools.Stream2String(is);

@@ -63,7 +63,7 @@ public class NLPModule implements NLPModuleService{
 	}
 	public static void main(String[] args){
 		NLPModule nlp = new NLPModule();
-		nlp.extractInfomation("我们明天9点去吃饭");
+		nlp.extractInfomation("这个星期天下午三点去打球");
 	}
 	
 }

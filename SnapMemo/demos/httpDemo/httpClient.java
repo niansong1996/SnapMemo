@@ -3,6 +3,8 @@ package httpDemo;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 
@@ -21,7 +23,7 @@ import org.apache.http.util.EntityUtils;
 public class httpClient {
 
 	public static void main(String[] args) {
-		test3();
+		test2();
 	}
 	public static void test1(){
 		CloseableHttpClient httpclient = HttpClients.createDefault();  
@@ -69,7 +71,7 @@ public class httpClient {
 			String result = "";
 			if (entity != null) 
 			{
-				result = EntityUtils.toString(entity,"UTF-8");
+				writeImage(EntityUtils.toByteArray(entity));
 			}
 			System.out.println(result);
 
@@ -122,4 +124,19 @@ public class httpClient {
 		}    
 		return null;    
 	}   
+	static void writeImage(byte[] src) throws IOException{
+		byte[] b = src;//传来的图片信息byte数组
+
+		String URL="D:\\3.jpg";
+
+		File file=new File(URL);
+
+		FileOutputStream fos=new FileOutputStream(file);
+
+		fos.write(b,0,b.length);
+
+		fos.flush();
+
+		fos.close();
+	}
 }

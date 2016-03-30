@@ -2,7 +2,6 @@ package org.sensation.snapmemo.servlet;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -74,8 +73,11 @@ public class ServletDemo extends HttpServlet {
 		BLExecutor exe = new BLExecutor();
 		IntStringWrapper result = exe.execute(requestType, request);
 		response.setStatus(result.getCode());
-		OutputStream os = response.getOutputStream();   
-		os.write(result.getInfo().getBytes("UTF-8"));     
+		OutputStream os = response.getOutputStream(); 
+		if(result.getImg()!=null)
+			os.write(result.getImg());
+		else
+			os.write(result.getInfo().getBytes("UTF-8"));     
 		os.close();  
 	}
 

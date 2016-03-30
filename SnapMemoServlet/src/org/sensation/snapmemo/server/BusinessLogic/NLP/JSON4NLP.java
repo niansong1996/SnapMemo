@@ -20,20 +20,21 @@ public class JSON4NLP {
 		JSONArray intentJA = jo.getJSONArray("intents");
 		JSONArray entityJA = jo.getJSONArray("entities");
 		String content = jo.getString("query");
-		String time = UtilityTools.Cal2String(Calendar.getInstance());
+		String[] tmp = UtilityTools.Cal2String(Calendar.getInstance()).split(" ");
+		String time = tmp[0];
+		String date = tmp[1];
 		String topic = intentJA.getJSONObject(0).getString("intent").toString()+":";
 		for(int i=0;i<entityJA.size();i++){
 			JSONObject temp = entityJA.getJSONObject(i);
 			switch(temp.getString("type")){
 			case "event": topic += temp.getString("entity");break;
-			case "builtin.datetime.date": time=temp.getJSONObject("resolution").getString("date");break;
-			//TODO
-			case "builtin.datetime.time": time+=" 12:00";break;
+			case "builtin.datetime.date": date = temp.getJSONObject("resolution").getString("date");break;
+			case "builtin.datetime.time": time = temp.getJSONObject("resolution").getString("time");break;
 			default: break;
 			}
 		}
 		memo.setContent(content);
-		memo.setTime(UtilityTools.String2Cal(time));
+		memo.setTime(UtilityTools.Luis2Cal(date,time));
 		memo.setTopic(topic);
 		return memo;
 	}
