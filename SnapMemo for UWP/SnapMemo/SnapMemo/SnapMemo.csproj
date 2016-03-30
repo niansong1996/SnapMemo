@@ -107,9 +107,15 @@
     <Compile Include="src\logic\PictureHelper.cs" />
     <Compile Include="src\logic\DBHelper.cs" />
     <Compile Include="src\logic\Preference.cs" />
+    <Compile Include="src\logic\UnsyncQueue.cs" />
     <Compile Include="src\model\Memo.cs" />
+    <Compile Include="src\model\Operation\DeleteMemo.cs" />
+    <Compile Include="src\model\Operation\IUploadable.cs" />
+    <Compile Include="src\model\Operation\AddMemo.cs" />
+    <Compile Include="src\model\Operation\ModifyMemo.cs" />
     <Compile Include="src\model\UserInfo.cs" />
     <Compile Include="src\tool\JsonString.cs" />
+    <Compile Include="src\tool\MemoIDGenerator.cs" />
     <Compile Include="src\tool\PictureConvert.cs" />
     <Compile Include="src\tool\StringEncode.cs" />
     <Compile Include="src\tool\Time2String.cs" />

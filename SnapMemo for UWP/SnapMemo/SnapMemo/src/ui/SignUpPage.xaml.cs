@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -32,25 +33,41 @@ namespace SnapMemo.src.ui
 
         private async void OnSignUp(object sender, RoutedEventArgs e)
         {
-            if(passwordTB.Password != confirmTB.Password)
+            if(passwordTB.Password.Length < 4)
             {
-                Debug.WriteLine("password differs!");
-                warnTB.Text = "password differs!";
+                Debug.WriteLine("密码长度过短，至少4位");
+                warnTB.Text = "密码长度过短，至少4位";
                 return;
             }
 
-            Debug.WriteLine("send Sign up : " + nameTB.Text + passwordTB.Password);
+            if(passwordTB.Password != confirmTB.Password)
+            {
+                Debug.WriteLine("两次输入密码不一致!");
+                warnTB.Text = "两次输入密码不一致!";
+                return;
+            }
 
-            string userID = JsonString.DeQuotes(
-                await NetHelper.SignUp(nameTB.Text, passwordTB.Password));
+            try
+            {
+                Debug.WriteLine("send Sign up : " + nameTB.Text + passwordTB.Password);
 
-            Debug.WriteLine("Sign up successfully");
-            Debug.WriteLine("userID: " + userID);
+                string userID = JsonString.DeQuotes(
+                    await NetHelper.SignUp(nameTB.Text, passwordTB.Password));
 
-            Preference.SetUserID(userID);
+                Debug.WriteLine("Sign up successfully");
+                Debug.WriteLine("userID: " + userID);
 
-            var frame = MainPage.Instance.ContentFrame;
-            frame.Navigate(typeof(AccountPage));
+                Preference.SetUserID(userID);
+                Preference.SetUserName(nameTB.Text);
+
+                var frame = MainPage.Instance.ContentFrame;
+                frame.Navigate(typeof(AccountPage));
+            }
+            catch (COMException)
+            {
+                Debug.WriteLine("网络错误");
+                warnTB.Text = "网络错误";
+            }
         }
 
         private void OnLogin(object sender, RoutedEventArgs e)

@@ -139,7 +139,6 @@ namespace SnapMemo.src.logic
 
             return resultList;
         }
-
         
         /// <summary>
         /// 

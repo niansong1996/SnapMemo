@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
@@ -31,12 +32,59 @@ namespace SnapMemo.src.ui
     /// </summary>
     public sealed partial class AccountPage : Page
     {
+        private static readonly string cacheFileName = "SnapMemoProfile.txt";
+
+        private async Task WriteToFile(IRandomAccessStream memStream)
+        {
+            var myPictures = await StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures);
+            var wFile = await myPictures.Folders[0]
+                .CreateFileAsync(cacheFileName, CreationCollisionOption.ReplaceExisting);
+
+            var wStream = await wFile.OpenAsync(FileAccessMode.ReadWrite);
+            using (var outputStream = wStream.GetOutputStreamAt(0))
+            {
+                memStream.Seek(0);
+                await RandomAccessStream.CopyAsync(memStream, outputStream);
+            }
+            wStream.Dispose();
+        }
+
+        private async Task<IRandomAccessStream> ReadFromFile()
+        {
+            var myPictures = await StorageLibrary.GetLibraryAsync(KnownLibraryId.Pictures);
+            var rFile = await myPictures.Folders[0].GetFileAsync(cacheFileName);
+
+            var stream = await rFile.OpenAsync(FileAccessMode.Read);
+            return stream;
+        }
+
         private async void loadProfilePicture()
         {
-            // I don't know why the stream api is so confusing...
-            using(var picStream = await NetHelper.GetProfilePicture(userIDTB.Text))
+            try
             {
-                imageView.Source = await PictureConvert.FromStream(picStream);
+                using (var picStream = await NetHelper.GetProfilePicture(userIDTB.Text))
+                {
+                    await this.WriteToFile(picStream);
+                    imageView.Source = await PictureConvert.FromStream(picStream);
+                }
+            }
+            catch (COMException)
+            {
+                try
+                {
+                    using (var picStream = await ReadFromFile())
+                    {
+                        imageView.Source = await PictureConvert.FromStream(picStream);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e.Message);
+                    StorageFolder appInstalledFolder = Windows.ApplicationModel.Package.Current.InstalledLocation;
+                    StorageFolder assets = await appInstalledFolder.GetFolderAsync("Assets");
+                    var file = await assets.GetFileAsync("Square150x150Logo.scale-200.png");
+                    imageView.Source = await PictureConvert.FromStream(await file.OpenAsync(FileAccessMode.Read));
+                }
             }
         }
 

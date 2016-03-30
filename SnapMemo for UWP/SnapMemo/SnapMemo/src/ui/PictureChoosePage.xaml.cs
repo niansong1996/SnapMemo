@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
@@ -12,6 +13,7 @@ using Windows.Foundation.Collections;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -103,6 +105,7 @@ namespace SnapMemo.src.ui
                 Debug.WriteLine("wrong type convert");
             }
 
+            decoder = await BitmapDecoder.CreateAsync(stream);
             imgView.Source = await PictureConvert.FromStream(stream);
 
             Debug.WriteLine("already finish");
@@ -112,11 +115,23 @@ namespace SnapMemo.src.ui
         {
             var memStream = await Capture();
 
-            var memo = await NetHelper.ResolveImage(memStream);
-            //await WriteToFile(memStream);
-
             Frame root = Window.Current.Content as Frame;
-            root.Navigate(typeof(MemoModifyPage), memo);
+
+            try
+            {
+                var memo = await NetHelper.ResolveImage(memStream);
+
+                root.Navigate(typeof(MemoModifyPage), memo);
+            }
+            catch (COMException)
+            {
+                var msgDialog = new MessageDialog("网络错误，确定返回主界面") { Title = "网络错误" };
+                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定", uiCommand => {
+                    root.Navigate(typeof(MainPage));
+                }));
+                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("取消", uiCommand => { }));
+                await msgDialog.ShowAsync();
+            }
         }
 
         private void OnCancel(object sender, RoutedEventArgs e)

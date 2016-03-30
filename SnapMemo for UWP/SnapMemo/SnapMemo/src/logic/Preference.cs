@@ -15,7 +15,7 @@ namespace SnapMemo.src.logic
 
         public readonly static string DefaultID = "000000";
         public readonly static string DefaultName = "SnapMemo";
-        public readonly static string DefaultSignature = "Life is short, you need python";
+        public readonly static string DefaultSignature = "Take a snap and everything gets easier";
 
         public static string GetUserID()
         {

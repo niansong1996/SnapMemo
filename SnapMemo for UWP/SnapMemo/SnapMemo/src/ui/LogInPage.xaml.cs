@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -57,9 +58,13 @@ namespace SnapMemo.src.ui
                 var frame = MainPage.Instance.ContentFrame;
                 frame.Navigate(typeof(AccountPage));
             }
+            catch (COMException)
+            {
+                warnTB.Text = "网络异常";
+            }
             catch(NullReferenceException)
             {
-                warnTB.Text = "Invalid name or password";
+                warnTB.Text = "无效的用户名或密码";
             }
         }
 

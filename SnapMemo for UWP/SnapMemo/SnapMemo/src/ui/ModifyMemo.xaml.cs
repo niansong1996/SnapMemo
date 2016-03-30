@@ -1,10 +1,13 @@
 ﻿using SnapMemo.src.logic;
 using SnapMemo.src.model;
+using SnapMemo.src.model.Operation;
+using SnapMemo.src.tool;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -78,10 +81,15 @@ namespace SnapMemo.src.ui
             if(type == OperateType.ADD || type == OperateType.SNAP)
             {
                 // sync in server-end
-                if (!debugWithoutNet)
+                try
                 {
                     var memoID = await NetHelper.AddMemo(Preference.GetUserID(), modifyingMemo);
                     modifyingMemo.MemoID = memoID;
+                }
+                catch (COMException)
+                {
+                    UnsyncQueue.Instance.Enqueue(new AddMemoOperation(Preference.GetUserID(), modifyingMemo));
+                    modifyingMemo.MemoID = MemoIDGenerator.Generate(Preference.GetUserID());
                 }
                 
                 // save in local DB
@@ -96,10 +104,7 @@ namespace SnapMemo.src.ui
             else if(type == OperateType.MODIFY)
             {
                 // sync in server-end
-                if (!debugWithoutNet)
-                {
-                    var isSuccess = await NetHelper.ModifyMemo(modifyingMemo);
-                }
+                UnsyncQueue.Instance.Enqueue(new ModifyMemoOperation(modifyingMemo));
 
                 // save in local DB
                 DBHelper.UpdateMemo(modifyingMemo);

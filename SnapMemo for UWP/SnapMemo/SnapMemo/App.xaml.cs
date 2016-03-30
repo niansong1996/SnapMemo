@@ -1,4 +1,5 @@
-﻿using SnapMemo.src.ui;
+﻿using SnapMemo.src.logic;
+using SnapMemo.src.ui;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -83,6 +84,9 @@ namespace SnapMemo
             }
             // Ensure the current window is active
             Window.Current.Activate();
+
+            //////////////////////////  my code /////////////////////////////
+            UnsyncQueue.Instance.StartSync();
         }
 
         /// <summary>

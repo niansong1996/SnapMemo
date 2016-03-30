@@ -1,9 +1,12 @@
 ﻿using SnapMemo.src.logic;
 using SnapMemo.src.model;
+using SnapMemo.src.model.Operation;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -49,11 +52,20 @@ namespace SnapMemo.src.ui
 
         private async void LoadMemos()
         {
-            // from Local DB
-            // List<Memo> memos = DBHelper.GetAllMemo();
+            ICollection<Memo> memos = new LinkedList<Memo>();
 
-            // from server-end
-            ICollection<Memo> memos = await NetHelper.GetAllMemos(Preference.GetUserID());
+            try
+            {
+                // from server-end
+                memos = await NetHelper.GetAllMemos(Preference.GetUserID());
+            }
+            catch(Exception e)
+            {
+                Debug.WriteLine(e.Message);
+                // from local DB
+                memos = DBHelper.GetAllMemo();
+            }
+
             foreach (var memo in memos)
             {
                 var memoBlock = new MemoView(memo);
@@ -137,10 +149,7 @@ namespace SnapMemo.src.ui
                 }
                 else
                 {
-                    if (!debugWithoutNet)
-                    {
-                        await NetHelper.DeleteMemo(memoBlock.Memo.MemoID);
-                    }
+                    UnsyncQueue.Instance.Enqueue(new DeleteMemoOperation(memoBlock.Memo.MemoID));
                     DBHelper.DeleteMemo(memoBlock.Memo);
                     NotificationHelper.RemoveToastFromSchedule(memoBlock.Memo);
                 }

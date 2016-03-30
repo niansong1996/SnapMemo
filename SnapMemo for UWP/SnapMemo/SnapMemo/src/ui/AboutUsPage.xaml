@@ -8,7 +8,7 @@
     mc:Ignorable="d">
 
     <RelativePanel Background="White">
-        <Image Name="imageView" Width="140" Height="140" Source="\Assets\StoreLogo.png"
+        <Image Name="imageView" Width="140" Height="140" Source="/Assets/Square150x150Logo.scale-200.png"
                RelativePanel.AlignHorizontalCenterWithPanel="True" Margin="0,60,0,60"/>
         <StackPanel Name="teamTitle" RelativePanel.Below="imageView" RelativePanel.AlignHorizontalCenterWithPanel="True">
             <TextBlock Foreground="Green" FontSize="44" HorizontalAlignment="Center">Sensation</TextBlock>
