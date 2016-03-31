@@ -196,7 +196,7 @@ public class ContentActivity extends AppCompatActivity {
 
                 //如果是添加行为就进行保存，否则为可能的修改行为
                 if (clientData.isAdd()) {
-                    MemoTransVO memoTransVO = new MemoTransVO(clientData.getUserVO().getUserID(), topic, date, content);
+                    MemoTransVO memoTransVO = new MemoTransVO(clientData.getUserVO().getUserID(), topic, date + " " + time, content);
                     new SaveTask(memoTransVO).execute();
                 } else {
                     if (isModified()) {//如果用户修改了内容就发送修改请求
@@ -362,7 +362,6 @@ public class ContentActivity extends AppCompatActivity {
         protected Boolean doInBackground(MemoVOLite... params) {
             //修改memo
             return new HttpService().modifyMemo(params[0]);
-//            return true;
         }
 
         @Override
@@ -399,7 +398,6 @@ public class ContentActivity extends AppCompatActivity {
         protected Boolean doInBackground(String... params) {
             //TODO 删除的网络请求stub
             return new HttpService().deleteMemo(params[0]);
-//            return true;
         }
 
         @Override
