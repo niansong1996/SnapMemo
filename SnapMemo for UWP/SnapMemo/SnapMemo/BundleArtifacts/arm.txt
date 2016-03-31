@@ -1,2 +1,2 @@
-MainPackage=G:\Repository\SnapMemo\SnapMemo for UWP\SnapMemo\SnapMemo\bin\ARM\Debug\SnapMemo_1.0.0.0_ARM_Debug.appx
-SymbolPackage=G:\Repository\SnapMemo\SnapMemo for UWP\SnapMemo\SnapMemo\AppPackages\SnapMemo_1.0.0.0_Debug_Test\SnapMemo_1.0.0.0_ARM_Debug.appxsym
+MainPackage=G:\Repository\SnapMemo\SnapMemo for UWP\SnapMemo\SnapMemo\bin\ARM\Release\SnapMemo_1.3.4.0_ARM.appx
+SymbolPackage=G:\Repository\SnapMemo\SnapMemo for UWP\SnapMemo\SnapMemo\AppPackages\SnapMemo_1.3.4.0_Test\SnapMemo_1.3.4.0_ARM.appxsym
