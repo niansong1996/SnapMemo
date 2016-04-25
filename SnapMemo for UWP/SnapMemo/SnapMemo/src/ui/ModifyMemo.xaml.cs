@@ -53,6 +53,8 @@ namespace SnapMemo.src.ui
             {
                 type = OperateType.ADD;
                 modifyingMemo = new Memo(DateTime.Now);
+                timeDP.Date = DateTime.Now.AddMinutes(5);
+                timeTP.Time = DateTime.Now.AddMinutes(5).TimeOfDay;
             }
             else
             {
@@ -97,7 +99,6 @@ namespace SnapMemo.src.ui
 
                 // add notification
                 NotificationHelper.AddToastToSchedule(modifyingMemo);
-                NotificationHelper.AddTileNotification();
 
                 rootFrame.Navigate(typeof(MainPage));
             }

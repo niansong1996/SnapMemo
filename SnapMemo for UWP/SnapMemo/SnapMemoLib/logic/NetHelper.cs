@@ -14,7 +14,7 @@ using Windows.Web.Http;
 
 namespace SnapMemo.src.logic
 {
-    static class NetHelper
+    public static class NetHelper
     {
         private static Uri uri;
 

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SnapMemo.src.logic
 {
-    class UnsyncQueue
+    public class UnsyncQueue
     {
         private string userID;
         private volatile Queue<IUploadable> queue;

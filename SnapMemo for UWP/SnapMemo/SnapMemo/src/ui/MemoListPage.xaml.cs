@@ -1,6 +1,7 @@
 ﻿using SnapMemo.src.logic;
 using SnapMemo.src.model;
 using SnapMemo.src.model.Operation;
+using SnapMemo.src.tool;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,6 +14,7 @@ using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -30,8 +32,6 @@ namespace SnapMemo.src.ui
     /// </summary>
     public sealed partial class MemoListPage : Page
     {
-        private static bool debugWithoutNet = false;
-
         public MemoListPage()
         {
             this.InitializeComponent();
@@ -52,18 +52,20 @@ namespace SnapMemo.src.ui
 
         private async void LoadMemos()
         {
-            ICollection<Memo> memos = new LinkedList<Memo>();
+            IList<Memo> memos = new List<Memo>();
 
             try
             {
                 // from server-end
-                memos = await NetHelper.GetAllMemos(Preference.GetUserID());
+                var temp = await NetHelper.GetAllMemos(Preference.GetUserID());
+                memos = MemoSort.SortByTime(temp);
             }
             catch(Exception e)
             {
                 Debug.WriteLine(e.Message);
                 // from local DB
-                memos = DBHelper.GetAllMemo();
+                var temp = DBHelper.GetAllMemo();
+                memos = MemoSort.SortByTime(temp);
             }
 
             foreach (var memo in memos)
@@ -118,7 +120,10 @@ namespace SnapMemo.src.ui
             {
                 MemoView memoBlock = one as MemoView;
 
-                memoBlock.Selected = false;
+                if (memoBlock.Selected)
+                {
+                    memoBlock.ClickToSelect(memoBlock, e);
+                }
                 memoBlock.Tapped += memoBlock.ClickToModify;
                 memoBlock.Tapped -= memoBlock.ClickToSelect;
                 memoBlock.Holding += OnChoose;
@@ -136,7 +141,7 @@ namespace SnapMemo.src.ui
             MainPage.Instance.DeleteButton.Visibility = Visibility.Collapsed; 
         }
 
-        private async void OnDelete(object sender, RoutedEventArgs e)
+        private void OnDelete(object sender, RoutedEventArgs e)
         {
             var memos = memoList.Children.ToList();
             memoList.Children.Clear();
@@ -149,9 +154,10 @@ namespace SnapMemo.src.ui
                 }
                 else
                 {
-                    UnsyncQueue.Instance.Enqueue(new DeleteMemoOperation(memoBlock.Memo.MemoID));
                     DBHelper.DeleteMemo(memoBlock.Memo);
                     NotificationHelper.RemoveToastFromSchedule(memoBlock.Memo);
+                    NotificationHelper.RemoveTileNotifications();
+                    UnsyncQueue.Instance.Enqueue(new DeleteMemoOperation(memoBlock.Memo.MemoID));
                 }
             }
 
@@ -160,14 +166,14 @@ namespace SnapMemo.src.ui
 
         private async void OnSnap(object sender, RoutedEventArgs e)
         {
-            FileOpenPicker fileOpenPicker = new FileOpenPicker();
-            fileOpenPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            fileOpenPicker.FileTypeFilter.Add(".jpg");
-            fileOpenPicker.FileTypeFilter.Add(".png");
-            fileOpenPicker.ViewMode = PickerViewMode.Thumbnail;
-
             try
             {
+                FileOpenPicker fileOpenPicker = new FileOpenPicker();
+                fileOpenPicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+                fileOpenPicker.FileTypeFilter.Add(".jpg");
+                fileOpenPicker.FileTypeFilter.Add(".png");
+                fileOpenPicker.ViewMode = PickerViewMode.Thumbnail;
+            
                 var inputFile = await fileOpenPicker.PickSingleFileAsync();
                 if (inputFile == null)
                 {
@@ -176,12 +182,23 @@ namespace SnapMemo.src.ui
                 }
                 else
                 {
+                    Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.Add(inputFile);
                     Frame frame = Window.Current.Content as Frame;
                     frame.Navigate(typeof(PictureChoosePage), await inputFile.OpenAsync(FileAccessMode.Read));
                 }
             }
-            catch (UnauthorizedAccessException)
+            catch (Exception exception)
             {
+                Debug.WriteLine(exception.Message);
+
+                var msgDialog = new MessageDialog(exception.Message) { Title = "Unkown Error" };
+                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("OK", uiCommand => {
+                    Frame frame = Window.Current.Content as Frame;
+                    frame.Navigate(typeof(MainPage));
+                }));
+                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("Cancel", uiCommand => { }));
+                await msgDialog.ShowAsync();
+
                 return;
             }
         }

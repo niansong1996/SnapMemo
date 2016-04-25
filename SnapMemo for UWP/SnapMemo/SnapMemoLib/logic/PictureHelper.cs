@@ -9,7 +9,7 @@ using Windows.Storage;
 
 namespace SnapMemo.src.logic
 {
-    class PictureHelper
+    public class PictureHelper
     {
         public static async void check()
         {

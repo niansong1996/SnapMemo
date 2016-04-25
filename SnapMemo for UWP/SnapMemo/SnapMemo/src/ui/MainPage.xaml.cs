@@ -1,12 +1,14 @@
 ﻿using SnapMemo.src.logic;
 using SnapMemo.src.model;
 using SnapMemo.src.ui;
+using SnapMemoLib.logic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel.Background;
 using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -30,6 +32,8 @@ namespace SnapMemo
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private static string tileBackgroundTaskName = "SnapMemoTileBackground";
+
         public static MainPage Instance {
             get; private set;
         }
@@ -83,7 +87,7 @@ namespace SnapMemo
             myFrame.Navigate(typeof(MemoListPage));
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
@@ -93,6 +97,13 @@ namespace SnapMemo
             }
 
             var pType = e.Parameter.GetType();
+
+            // register tile background
+            await BackgroundRegisterHelper.RegisterBackgroundTask(
+                typeof(BackgroundComponent.TileRefresher),
+                tileBackgroundTaskName,
+                new SystemTrigger(SystemTriggerType.UserPresent, false),
+                null);
         }
 
         private void hamburgerButton_Click(object sender, RoutedEventArgs e)

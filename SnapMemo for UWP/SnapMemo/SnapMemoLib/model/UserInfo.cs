@@ -10,7 +10,7 @@ using Windows.Storage;
 
 namespace SnapMemo.src.model
 {
-    struct UserInfo
+    public struct UserInfo
     {
         private static IPropertySet localValues;
 

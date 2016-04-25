@@ -60,10 +60,12 @@ namespace SnapMemo.src.ui
             }
             catch (COMException)
             {
+                warnTB.Visibility = Visibility.Visible;
                 warnTB.Text = "网络异常";
             }
             catch(NullReferenceException)
             {
+                warnTB.Visibility = Visibility.Visible;
                 warnTB.Text = "无效的用户名或密码";
             }
         }

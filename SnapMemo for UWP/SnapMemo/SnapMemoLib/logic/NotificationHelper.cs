@@ -1,17 +1,18 @@
 ﻿using SnapMemo.src.model;
+using SnapMemo.src.tool;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml;
+using Windows.Data.Xml.Dom;
 using Windows.Storage;
 using Windows.UI.Notifications;
 
 namespace SnapMemo.src.logic
 {
-    class NotificationHelper
+    public class NotificationHelper
     {
         private static readonly string toastIdPrefix = "SnapM";
         private static readonly string tileXmlFileName = @"MyTile.xml";
@@ -52,33 +53,69 @@ namespace SnapMemo.src.logic
             }
         }
 
-        public async static void AddTileNotification()
-        {
-            var tileXml = new Windows.Data.Xml.Dom.XmlDocument();                        
-            
-            // load xml
+        public async static void AddTileNotification(Memo memo)
+        {   
+            // load xml template
             var installLocation = Windows.ApplicationModel.Package.Current.InstalledLocation;
             var assetsFolder = await installLocation.GetFolderAsync("Assets");
             var tileXmlFile = await assetsFolder.GetFileAsync(tileXmlFileName);
             var xmlText = await FileIO.ReadTextAsync(tileXmlFile);
 
             // set title and caption
-            tileXml.LoadXml(string.Format(xmlText, "title", "caption"));
+            var tileXml = new XmlDocument();
+            tileXml.LoadXml(string.Format(xmlText, memo.Title, Time2String.Time2Str(memo.Time) + "\n" + memo.Content));
 
-            //var tileTextAttributes = tileXml.GetElementsByTagName("text");
-            //tileTextAttributes[0].AppendChild(tileXml.CreateTextNode("This notification will expire at "));
             var tileNotification = new TileNotification(tileXml);
+            tileNotification.Tag = memo.MemoID.Substring(6, 10);
 
             // set expiration time
-            var dueTime = DateTime.Now;
-            dueTime.AddMinutes(20);
-            tileNotification.ExpirationTime = dueTime;
+            tileNotification.ExpirationTime = memo.Time.AddMinutes(1);
 
-            // set enable
+            // set TileUpdater
             var tileUpdater = TileUpdateManager.CreateTileUpdaterForApplication();
-            tileUpdater.EnableNotificationQueueForWide310x150(true);
+            tileUpdater.EnableNotificationQueue(true);
 
             tileUpdater.Update(tileNotification);
+        }
+
+        public async static void RefreshNotification(IList<Memo> memos)
+        {
+            // load xml template
+            var installLocation = Windows.ApplicationModel.Package.Current.InstalledLocation;
+            var assetsFolder = await installLocation.GetFolderAsync("Assets");
+            var tileXmlFile = await assetsFolder.GetFileAsync(tileXmlFileName);
+            var xmlText = await FileIO.ReadTextAsync(tileXmlFile);
+
+            // set TileUpdater
+            var tileUpdater = TileUpdateManager.CreateTileUpdaterForApplication();
+            tileUpdater.EnableNotificationQueue(true);
+
+            // start time
+            var startTime = DateTime.Now.AddSeconds(10);
+
+            tileUpdater.Clear();
+            for (int i = 0; i < 5 && i < memos.Count; i++)
+            {
+                Memo memo = memos[i];
+
+                // set title and caption
+                var tileXml = new XmlDocument();
+                tileXml.LoadXml(string.Format(xmlText, memo.Title, Time2String.Time2Str(memo.Time) + "\n" + memo.Content));
+
+                var tileNotification = new ScheduledTileNotification(tileXml, startTime.AddSeconds(i * 10));
+                tileNotification.Tag = memo.MemoID.Substring(6, 10);
+
+                // set expiration time
+                tileNotification.ExpirationTime = memo.Time.AddMinutes(1);
+
+                tileUpdater.AddToSchedule(tileNotification);
+            }
+        }
+
+        public static void RemoveTileNotifications()
+        {
+            var tileUpdater = TileUpdateManager.CreateTileUpdaterForApplication();
+            tileUpdater.Clear();
         }
     }
 }

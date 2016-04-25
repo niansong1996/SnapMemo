@@ -1,25 +1,24 @@
 ﻿using SnapMemo.src.logic;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SnapMemo.src.model.Operation
 {
-    class DeleteMemoOperation : IUploadable
+    public class ModifyMemoOperation : IUploadable
     {
-        string memoID;
+        private Memo memo;
 
-        public DeleteMemoOperation(string memoID)
+        public ModifyMemoOperation(Memo memo)
         {
-            this.memoID = memoID;
+            this.memo = memo;
         }
 
         public async Task Upload()
         {
-            await NetHelper.DeleteMemo(memoID);
+            await NetHelper.ModifyMemo(memo);
         }
     }
 }

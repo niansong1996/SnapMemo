@@ -7,7 +7,7 @@ using Windows.Data.Json;
 
 namespace SnapMemo.src.model.Operation
 {
-    interface IUploadable
+    public interface IUploadable
     {
         Task Upload();
     }

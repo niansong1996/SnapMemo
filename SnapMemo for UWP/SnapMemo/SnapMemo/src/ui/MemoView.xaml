@@ -11,21 +11,21 @@
 
     <RelativePanel Name="border" Margin="20,15,20,15" BorderBrush="White" BorderThickness="3" >
         <RelativePanel Name="titleP" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignRightWithPanel="True">
-            <Rectangle Fill="#ffa889" Height="70" 
+            <Rectangle Fill="#ffa889" Height="47" 
                        RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"/>
-            <TextBlock Name="titleLB" Foreground="White" Margin="14,0,14,0" RelativePanel.AlignVerticalCenterWithPanel="True" FontSize="24" FontWeight="Bold">主题</TextBlock>
-            <TextBlock Name="titleTB" Foreground="White" Margin="0,0,14,0" RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.RightOf="titleLB" FontSize="24">swimming</TextBlock>
+            <TextBlock Name="titleLB" Foreground="White" Margin="14,0,14,0" RelativePanel.AlignVerticalCenterWithPanel="True" FontSize="21.333" FontWeight="Bold">主题</TextBlock>
+            <TextBlock Name="titleTB" Foreground="White" Margin="0,0,14,0" RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.RightOf="titleLB" FontSize="21.333">swimming</TextBlock>
         </RelativePanel>
         <RelativePanel Name="timeP" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.Below="titleP">
-            <Rectangle Fill="#f2c5b5" Height="70" 
+            <Rectangle Fill="#f2c5b5" Height="47" 
                        RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"/>
-            <TextBlock Name="timeLB" Foreground="White" Margin="14,0,14,0" RelativePanel.AlignVerticalCenterWithPanel="True" FontSize="24" FontWeight="Bold">时间</TextBlock>
-            <TextBlock Name="timeTB" Foreground="White" Margin="0,0,14,0" RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.RightOf="timeLB" FontSize="24">2016-03-29 16:30</TextBlock>
+            <TextBlock Name="timeLB" Foreground="White" Margin="14,0,14,0" RelativePanel.AlignVerticalCenterWithPanel="True" FontSize="21.333" FontWeight="Bold">时间</TextBlock>
+            <TextBlock Name="timeTB" Foreground="White" Margin="0,0,14,0" RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.RightOf="timeLB" FontSize="21.333">2016-03-29 16:30</TextBlock>
         </RelativePanel>
         <RelativePanel  Name="contentP" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" RelativePanel.Below="timeP" RelativePanel.AlignBottomWithPanel="True" >
-            <Rectangle Fill="#f2f2f2" RelativePanel.AlignBottomWithPanel="True" Height="130"
+            <Rectangle Fill="#f2f2f2" RelativePanel.AlignBottomWithPanel="True" Height="155"
                        RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"/>
-            <TextBlock Name="contentTB" Foreground="Black" Margin="14,14,14,14" TextWrapping="Wrap" FontSize="24">Contentfiwoeioirjwoiejfowiejorwiejr</TextBlock>
+            <TextBlock Name="contentTB" Foreground="Black" Margin="14,14,14,14" TextWrapping="Wrap" FontSize="21.333">Contentfiwoeioirjwoiejfowiejorwiejr</TextBlock>
         </RelativePanel>
     </RelativePanel>
 </UserControl>

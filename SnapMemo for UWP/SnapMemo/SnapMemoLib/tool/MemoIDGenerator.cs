@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SnapMemo.src.tool
 {
-    class MemoIDGenerator
+    public class MemoIDGenerator
     {
         public static string Generate(string userID)
         {

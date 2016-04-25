@@ -9,7 +9,7 @@ using Windows.UI.Xaml;
 
 namespace SnapMemo.src.logic
 {
-    static class Preference
+    public static class Preference
     {
         private static IPropertySet localValues = ApplicationData.Current.LocalSettings.Values;
 

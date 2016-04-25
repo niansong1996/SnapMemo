@@ -1,22 +1,19 @@
 <tile>
   <visual displayName="SnapMemo">
 
-    <binding template="TileSmall">
-      
-    </binding>
-
-    <binding template="TileMedium">
-      
+    <binding template="TileMedium" branding="logo">
+      <text hint-style="subtitle">{0}</text>
+      <text hint-style="captionSubtle" hint-wrap="true">{1}</text>
     </binding>
 
     <binding template="TileWide" branding="nameAndLogo">
-    <text hint-style="subtitle">{0}</text>
-    <text hint-style="captionSubtle" hint-wrap="true">{1}</text>
+      <text hint-style="subtitle">{0}</text>
+      <text hint-style="captionSubtle" hint-wrap="true">{1}</text>
     </binding>
 
     <binding template="TileLarge" branding="nameAndLogo">
       <text hint-style="subtitle">{0}</text>
-    <text hint-style="captionSubtle" hint-wrap="true">{1}</text>
+      <text hint-style="captionSubtle" hint-wrap="true">{1}</text>
     </binding>
 
   </visual>

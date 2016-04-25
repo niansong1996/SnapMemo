@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SnapMemo.src.tool
 {
-    class JsonString
+    public class JsonString
     {
         public static string DeQuotes(string str)
         {

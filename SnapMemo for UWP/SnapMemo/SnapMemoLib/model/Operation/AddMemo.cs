@@ -9,7 +9,7 @@ using Windows.Data.Json;
 
 namespace SnapMemo.src.model.Operation
 {
-    class AddMemoOperation : IUploadable
+    public class AddMemoOperation : IUploadable
     {
         private string userID;
         private Memo memo;

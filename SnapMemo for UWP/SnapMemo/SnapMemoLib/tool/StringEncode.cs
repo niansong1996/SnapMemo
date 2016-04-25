@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SnapMemo.src.tool
 {
-    class StringEncode
+    public class StringEncode
     {
         public static string FromUTF8(string origin)
         {

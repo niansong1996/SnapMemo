@@ -13,14 +13,15 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <RelativePanel Name="relativePanel" Background="#44c690" ManipulationMode="TranslateX" ManipulationStarted="relativePanel_ManipulationStarted" ManipulationDelta="relativePanel_ManipulationDelta" ManipulationCompleted="relativePanel_ManipulationCompleted">
-            <Button Name="hamburgerButton" FontFamily="Segoe MDL2 Assets" Background="#44c690" FontSize="36" Foreground="White" Click="hamburgerButton_Click">&#xE700;</Button>
-            <TextBlock Name="titleTB" RelativePanel.RightOf="hamburgerButton" FontSize="36" Foreground="White" Margin="20,0,0,0">Memos</TextBlock>
-            <Button Name="plusButton" RelativePanel.AlignRightWithPanel="True" Background="#44c690" FontFamily="Segoe MDL2 Assets" FontSize="36" Foreground="White" Tapped="plusTB_Tapped">&#xE109;</Button>
-            <Button Name="cameraButton" RelativePanel.LeftOf="plusButton" Background="#44c690" FontFamily="Segoe MDL2 Assets" FontSize="36" Foreground="White" Tapped="plusTB_Tapped">&#xE114;</Button>
+        <RelativePanel Name="relativePanel" Background="#44c690" ManipulationMode="TranslateX" ManipulationStarted="relativePanel_ManipulationStarted" ManipulationDelta="relativePanel_ManipulationDelta" ManipulationCompleted="relativePanel_ManipulationCompleted" Height="46">
+            <Button Name="hamburgerButton" FontFamily="Segoe MDL2 Assets" Background="#44c690" FontSize="24" Foreground="White" Click="hamburgerButton_Click" Height="46" Margin="0,0,-10,-10" Width="50">&#xE700;</Button>
+            <TextBlock Name="titleTB" RelativePanel.RightOf="hamburgerButton" FontSize="24" Foreground="White" Margin="15,7,9.333,-28" HorizontalAlignment="Center" VerticalAlignment="Center">Memos</TextBlock>
+            <Button Name="plusButton" RelativePanel.AlignRightWithPanel="True" Background="#44c690" FontFamily="Segoe MDL2 Assets" FontSize="22.667" Foreground="White" Tapped="plusTB_Tapped" Height="46" Margin="0,0,0,-10">&#xE109;</Button>
+            <Button Name="cameraButton" RelativePanel.LeftOf="plusButton" Background="#44c690" FontFamily="Segoe MDL2 Assets" FontSize="24" Foreground="White" Tapped="plusTB_Tapped" Height="46" Margin="0,0,0,-10" HorizontalAlignment="Center" RenderTransformOrigin="0.5,0.5" BorderThickness="2">&#xE114;
+            </Button>
 
-            <Button Name="deleteButton" RelativePanel.AlignRightWithPanel="True" Background="#44c690" Visibility="Collapsed" FontFamily="Segoe MDL2 Assets" FontSize="36" Foreground="White">&#xE107;</Button>
-            <Button Name="cancelButton" Background="#44c690" Visibility="Collapsed" FontFamily="Segoe MDL2 Assets" FontSize="36" Foreground="White">&#xE112;</Button>
+            <Button Name="deleteButton" RelativePanel.AlignRightWithPanel="True" Background="#44c690" Visibility="Collapsed" FontFamily="Segoe MDL2 Assets" FontSize="24" Foreground="White" Height="46" Margin="0,0,0,-10">&#xE107;</Button>
+            <Button Name="cancelButton" Background="#44c690" Visibility="Collapsed" FontFamily="Segoe MDL2 Assets" FontSize="24" Foreground="White" Height="46" Margin="0,0,0,-10">&#xE112;</Button>
         </RelativePanel>
 
         <SplitView Name="mySplitView" Grid.Row="1" OpenPaneLength="180" DisplayMode="Overlay">
@@ -28,24 +29,24 @@
                 <ListBox Name="pagesListBox" SelectionChanged="pagesListBox_SelectionChanged" Background="Black">
                     <ListBoxItem Name="accountBoxItem">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock VerticalAlignment="Center" FontFamily="Segoe MDL2 Assets" Foreground="White" FontSize="24" >
+                            <TextBlock VerticalAlignment="Center" FontFamily="Segoe MDL2 Assets" Foreground="White" FontSize="20" >
                         		<Run Text="&#xE13D;"/>
                             </TextBlock>
-                            <TextBlock VerticalAlignment="Center" FontSize="24" Foreground="White" Margin="24,0,0,0">
+                            <TextBlock VerticalAlignment="Center" FontSize="20" Foreground="White" Margin="24,0,0,0">
                         		<Run Text="账户"/>
                             </TextBlock>
                         </StackPanel>
                     </ListBoxItem>
                     <ListBoxItem Name="memoListBoxItem">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock VerticalAlignment="Center" FontFamily="Segoe MDL2 Assets" Foreground="White" FontSize="24">&#xE133;</TextBlock>
-                            <TextBlock VerticalAlignment="Center" FontSize="24" Foreground="White" Margin="24,0,0,0">备忘录</TextBlock>
+                            <TextBlock VerticalAlignment="Center" FontFamily="Segoe MDL2 Assets" Foreground="White" FontSize="20">&#xE133;</TextBlock>
+                            <TextBlock VerticalAlignment="Center" FontSize="20" Foreground="White" Margin="24,0,0,0">备忘录</TextBlock>
                         </StackPanel>
                     </ListBoxItem>
                     <ListBoxItem Name="teamBoxItem">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock VerticalAlignment="Center" FontFamily="Segoe MDL2 Assets" Foreground="White" FontSize="24">&#xE946;</TextBlock>
-                            <TextBlock VerticalAlignment="Center" FontSize="24" Foreground="White" Margin="24,0,0,0">开发团队</TextBlock>
+                            <TextBlock VerticalAlignment="Center" FontFamily="Segoe MDL2 Assets" Foreground="White" FontSize="20">&#xE946;</TextBlock>
+                            <TextBlock VerticalAlignment="Center" FontSize="20" Foreground="White" Margin="24,0,0,0">开发团队</TextBlock>
                         </StackPanel>
                     </ListBoxItem>
                 </ListBox>

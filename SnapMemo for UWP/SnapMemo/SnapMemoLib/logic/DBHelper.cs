@@ -12,7 +12,7 @@ using Windows.Storage;
 
 namespace SnapMemo.src.logic
 {
-    class DBHelper
+    public class DBHelper
     {
         // Definition
         private static readonly string path = Path.Combine
@@ -43,7 +43,7 @@ namespace SnapMemo.src.logic
             }
         }
 
-        public static List<Memo> GetAllMemo()
+        public static IList<Memo> GetAllMemo()
         {
             using(var db = DBConnection)
             {
