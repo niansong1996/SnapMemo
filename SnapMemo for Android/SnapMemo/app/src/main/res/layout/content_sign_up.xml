@@ -27,26 +27,25 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
         android:text="@string/password"
-        android:textSize="20sp"
-        android:layout_below="@+id/inputUserName"
-        android:layout_alignParentStart="true" />
+        android:textSize="20sp" />
 
     <EditText
         android:id="@+id/inputUserName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/userName"
-        android:layout_alignStart="@+id/inputPassword" />
+        android:layout_alignTop="@+id/userName"
+        android:layout_toEndOf="@+id/userName" />
 
     <EditText
         android:id="@+id/inputPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:inputType="textPassword"
-        android:layout_below="@+id/textView4"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignStart="@+id/inputUserName"
+        android:layout_alignTop="@+id/textView4"
+        android:inputType="textPassword" />
 
     <Button
         android:id="@+id/signUp"

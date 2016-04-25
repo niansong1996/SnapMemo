@@ -1,8 +1,8 @@
 package org.sensation.snapmemo.dao;
 
-import org.sensation.snapmemo.VO.MemoVO;
 import org.sensation.snapmemo.tool.IOTool;
 import org.sensation.snapmemo.tool.JSONHandler;
+import org.sensation.snapmemo.VO.MemoVO;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -37,12 +37,10 @@ public class MemoListDao {
         try {
             out = new FileOutputStream(localMemoFile);
             writer = new BufferedWriter(new OutputStreamWriter(out));
-            if (newLocalMemoList != null) {
-                for (MemoVO newLocalMemo : newLocalMemoList) {
-                    String tempMemoString = JSONHandler.getMemoJSON(newLocalMemo.toMemoVOLite());
-                    writer.write(tempMemoString);
-                    writer.newLine();
-                }
+            for (MemoVO newLocalMemo : newLocalMemoList) {
+                String tempMemoString = JSONHandler.getMemoJSON(newLocalMemo.toMemoVOLite());
+                writer.write(tempMemoString);
+                writer.newLine();
             }
         } catch (IOException e) {
             e.printStackTrace();

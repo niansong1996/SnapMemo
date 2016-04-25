@@ -22,13 +22,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import org.sensation.snapmemo.R;
-import org.sensation.snapmemo.VO.MemoVO;
-import org.sensation.snapmemo.VO.UserVO;
-import org.sensation.snapmemo.VO.UserVOLite;
 import org.sensation.snapmemo.dao.MemoListDao;
 import org.sensation.snapmemo.dao.UserInfoDao;
 import org.sensation.snapmemo.httpservice.HttpService;
 import org.sensation.snapmemo.tool.ClientData;
+import org.sensation.snapmemo.tool.Resource_stub;
+import org.sensation.snapmemo.VO.MemoVO;
+import org.sensation.snapmemo.VO.UserVO;
+import org.sensation.snapmemo.VO.UserVOLite;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -220,11 +221,18 @@ public class SigninActivity extends AppCompatActivity {
             if (userID != null) {
                 UserVOLite userVOLite = new HttpService().getUserInfo(userID);
                 Bitmap userLogo = new HttpService().getUserLogo(userID);
-                memoList = new HttpService().getMemoList(userID);
-                return new UserVO(userID, mUserName, userVOLite.getSignature(), userLogo);
+//                memoList = new HttpService().getMemoList(userID);
+                memoList = new Resource_stub().getMemoVOs();
+                return new UserVO(userID, oldUserVO.getUserName(), userVOLite.getSignature(), userLogo);
             } else {
                 return null;
             }
+           /* if (mUserName.equals("alandelip") && mPassword.equals("xzfahmy")) {
+                memoList = new Resource_stub().getMemoVOs();
+                return new Resource_stub().getUserVO();
+            } else {
+                return null;
+            }*/
         }
 
         @Override

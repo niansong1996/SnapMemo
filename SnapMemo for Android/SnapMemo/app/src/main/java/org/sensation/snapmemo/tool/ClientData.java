@@ -64,14 +64,6 @@ public class ClientData {
     boolean isOnline = false;
 
     /**
-     * 是否是刚刚通过注册的第一次登录
-     */
-    boolean isFirstSigned = false;
-
-    String firstSignedUserID;
-    String firstSignedPassword;
-
-    /**
      * 新的列表内容，登录界面登录后会设置，会在重启主界面时检测到并更新
      */
     ArrayList<MemoVO> newMemoVOList;
@@ -364,29 +356,5 @@ public class ClientData {
 
     public void setUserID(String userID) {
         userVO.setUserID(userID);
-    }
-
-    public boolean isFirstSigned() {
-        return isFirstSigned;
-    }
-
-    public void setFirstSigned(boolean isFirstSigned) {
-        this.isFirstSigned = isFirstSigned;
-    }
-
-    public String getFirstSignedUserID() {
-        return firstSignedUserID;
-    }
-
-    public void setFirstSignedUserID(String userID) {
-        firstSignedUserID = userID;
-    }
-
-    public String getFirstSignedPassword() {
-        return firstSignedPassword;
-    }
-
-    public void setFirstSignedPassword(String password) {
-        firstSignedPassword = password;
     }
 }

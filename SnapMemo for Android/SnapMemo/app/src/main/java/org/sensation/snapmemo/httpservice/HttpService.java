@@ -16,7 +16,6 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -82,13 +81,12 @@ public class HttpService {
         ArrayList<MemoVO> memoVOList = new ArrayList<MemoVO>();
 
         setConnection(RequestMethod.POST, RequestProperty.JSON);
-        conn.setRequestProperty("Request-Type", "Get-Memo-List");
+        conn.setRequestProperty("Request-Type", "Get-List");
 
         try {
-            flushInfo(JSONHandler.getUserIDJSON(userID));
+            flushInfo(userID);
 
             resultJSONString = getJSONString();
-            Log.d(TAG, "getMemoList: " + resultJSONString);
 
             closeConn();
 
@@ -210,8 +208,7 @@ public class HttpService {
             flushInfo(JSONHandler.getUserIDJSON(userID));
             result = isResponseSucceed();
             if (result) {
-                InputStream input = conn.getInputStream();
-                logo = BitmapFactory.decodeStream(input);
+                logo = BitmapFactory.decodeStream(conn.getInputStream());
             }
 
         } catch (IOException e) {
@@ -258,7 +255,7 @@ public class HttpService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Log.d(TAG, "signUp: " + userIDJSON);
+        Log.d(TAG, "signUp: "+userIDJSON);
         return JSONHandler.getUserID(userIDJSON);
     }
 

@@ -1,6 +1,5 @@
 package org.sensation.snapmemo.activity;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -18,13 +17,10 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,6 +37,7 @@ import org.sensation.snapmemo.httpservice.HttpService;
 import org.sensation.snapmemo.service.SnapListenerService;
 import org.sensation.snapmemo.tool.ClientData;
 import org.sensation.snapmemo.tool.IOTool;
+import org.sensation.snapmemo.tool.Resource_stub;
 import org.sensation.snapmemo.widget.ListViewAdapter;
 import org.sensation.snapmemo.widget.RoundImageView;
 import org.sensation.snapmemo.widget.SwipeDismissListView;
@@ -53,7 +50,6 @@ public class MainActivity extends RxAppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     final String TAG = "SnapMemo";
-    private final int SELECT_PHOTO = 2;
 
     /**
      * 工具栏
@@ -107,6 +103,9 @@ public class MainActivity extends RxAppCompatActivity
         //启动后台服务对截屏时间进行监听
         Intent snapIntent = new Intent(this, SnapListenerService.class);
         startService(snapIntent);
+
+//        AlarmService.actionStart(this, 301123456, "3月1日的测试", 10 * 1000);
+//        AlarmService.actionStart(this, 302123456, "3月2日的测试", 20 * 1000);
 
         handleServiceResult();
 
@@ -234,6 +233,7 @@ public class MainActivity extends RxAppCompatActivity
                     } else {//用户没有登录过，也就是本地用户，只要保存数据至本地，不需要进行网络删除操作
                         listViewAdapter.remove(listViewAdapter.getItem(dismissPosition));
                         MemoListDao.saveLocalMemoList(memoVOList, userVO.getUserName());
+
                     }
                 }
             }
@@ -253,7 +253,6 @@ public class MainActivity extends RxAppCompatActivity
                 ContentActivity.actionStart(MainActivity.this, clickedMemoVO);
             }
         });
-        listViewAdapter.notifyDataSetChanged();
         clientData.setPosition(memoVOList.size());
     }
 
@@ -370,20 +369,11 @@ public class MainActivity extends RxAppCompatActivity
             UserInfoDao.saveUserInfo(userVO);
         }
 
-        //通过注册第一次登录
-        if (clientData.isFirstSigned()) {
-            new UserLoginTask(clientData.getFirstSignedUserID(), clientData.getFirstSignedPassword()).execute();
-            clientData.setFirstSignedPassword(null);
-            clientData.setFirstSignedUserID(null);
-            clientData.setFirstSigned(false);
-        }
-
         //利用clientData中newMemoList判断是否加载了memoList，如果有就加载新列表（清空缓存的newMemoVOList）
         ArrayList<MemoVO> newMemoList = clientData.getNewMemoVOList();
         if (newMemoList != null) {
             memoVOList = newMemoList;
-            listViewAdapter = new ListViewAdapter(this, R.layout.listview_item, memoVOList);
-            listView.setAdapter(listViewAdapter);
+            listViewAdapter.notifyDataSetChanged();
             clientData.setNewMemoVOList(null);
         }
 
@@ -424,7 +414,7 @@ public class MainActivity extends RxAppCompatActivity
 
         if (id == R.id.action_settings) {
             //TODO 主界面设置Stub
-            Toast.makeText(MainActivity.this, getString(R.string.todo), Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "Settings", Toast.LENGTH_SHORT).show();
         }
 
         return true;
@@ -433,43 +423,10 @@ public class MainActivity extends RxAppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
+
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-
-        if (id == R.id.nav_group) {
-            //弹出团队信息
-            final Dialog dialog = new Dialog(MainActivity.this);
-            LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-            View contentView = inflater.inflate(R.layout.software_info_dialog, null);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setContentView(contentView);
-            Button button = (Button) contentView.findViewById(R.id.okButton);
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                }
-            });
-            dialog.show();
-        } else if (id == R.id.nav_import) {
-            Intent intent = new Intent("android.intent.action.GET_CONTENT");
-            intent.setType("image/*");
-            intent.putExtra("crop", "true");
-            startActivityForResult(intent, SELECT_PHOTO);
-        } else {
-            Toast.makeText(MainActivity.this, getString(R.string.todo), Toast.LENGTH_SHORT).show();
-        }
-
         return true;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == SELECT_PHOTO) {
-            if (resultCode == RESULT_OK) {
-                StartActivity.actionStart(this, data.getData());
-            }
-        }
     }
 
     class UserLoginTask extends AsyncTask<Void, Void, UserVO> {
@@ -499,11 +456,15 @@ public class MainActivity extends RxAppCompatActivity
             if (userID != null) {
                 UserVOLite userVOLite = new HttpService().getUserInfo(userID);
                 Bitmap userLogo = new HttpService().getUserLogo(userID);
-                memoList = new HttpService().getMemoList(userID);
-                return new UserVO(userID, mUserName, userVOLite.getSignature(), userLogo);
+//                memoList = new HttpService().getMemoList(userID);
+                memoList = new Resource_stub().getMemoVOs();
+                return new UserVO(userID, oldUserVO.getUserName(), userVOLite.getSignature(), userLogo);
             } else {
                 return null;
             }
+
+            //TODO 登录的stub
+//            return null;
         }
 
         @Override

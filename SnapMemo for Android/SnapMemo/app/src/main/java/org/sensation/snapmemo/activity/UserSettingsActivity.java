@@ -18,10 +18,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.sensation.snapmemo.R;
-import org.sensation.snapmemo.VO.UserVO;
 import org.sensation.snapmemo.dao.UserInfoDao;
 import org.sensation.snapmemo.tool.ClientData;
 import org.sensation.snapmemo.tool.IOTool;
+import org.sensation.snapmemo.VO.UserVO;
 
 import java.io.File;
 import java.io.FileNotFoundException;
