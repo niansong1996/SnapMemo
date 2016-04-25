@@ -100,6 +100,9 @@ namespace SnapMemo.src.ui
                 // add notification
                 NotificationHelper.AddToastToSchedule(modifyingMemo);
 
+                // update tiles
+                NotificationHelper.RefreshTiles(MemoSort.SortByTime(DBHelper.GetAllMemo()));
+
                 rootFrame.Navigate(typeof(MainPage));
             }
             else if(type == OperateType.MODIFY)
@@ -120,6 +123,9 @@ namespace SnapMemo.src.ui
                 // add notification
                 NotificationHelper.RemoveToastFromSchedule(modifyingMemo);
                 NotificationHelper.AddToastToSchedule(modifyingMemo);
+
+                // update tiles
+                NotificationHelper.RefreshTiles(MemoSort.SortByTime(DBHelper.GetAllMemo()));
 
                 rootFrame.Navigate(typeof(MainPage));
             }

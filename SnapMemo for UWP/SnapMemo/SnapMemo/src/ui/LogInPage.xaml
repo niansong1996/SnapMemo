@@ -36,8 +36,8 @@
             <TextBlock Name="warnTB" Text="" Grid.Column="1" Grid.Row="4" Foreground="Red" FontSize="22" Height="46" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"></TextBlock>
         </Grid>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Background="LightBlue" Foreground="White" FontSize="22" Click="OnSignUp" RenderTransformOrigin="-0.329,0.419" Content="注册新账号>>>" Width="360" HorizontalAlignment="Right" VerticalAlignment="Center" HorizontalContentAlignment="Right" FontWeight="Bold"/>
-        </StackPanel>
+        <RelativePanel Grid.Row="1" HorizontalAlignment="Stretch">
+            <Button Background="LightBlue" Foreground="White" FontSize="22" Click="OnSignUp" Content="注册新账号>>>" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" HorizontalAlignment="Stretch" HorizontalContentAlignment="Right" FontWeight="Bold"/>
+        </RelativePanel>
     </Grid>
 </Page>

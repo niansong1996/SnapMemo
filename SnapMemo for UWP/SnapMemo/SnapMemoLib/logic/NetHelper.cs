@@ -20,8 +20,8 @@ namespace SnapMemo.src.logic
 
         static NetHelper()
         {
-            //uri = new Uri("http://139.129.40.103:5678/SnapMemo");
-            uri = new Uri("http://139.129.40.103:5678/SnapMemo/servlet/main");
+            //uri = new Uri(@"http://www.snapmemo.chinacloudapp.cn:5678/SnapMemo/servlet/main");
+            uri = new Uri(@"http://42.159.241.135:5678/SnapMemo/servlet/main");
         }
 
         private static async Task<JsonObject> makeJson(HttpResponseMessage response)
@@ -82,17 +82,8 @@ namespace SnapMemo.src.logic
             return null;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="memStream">the stream form of the picture</param>
-        /// <returns>A memo generated from the picture</returns>
-        public static async Task<Memo> ResolveImage(IRandomAccessStream memStream)
+        private static async Task<Memo> sendImage(IRandomAccessStream memStream, HttpClient httpClient)
         {
-            var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Add("Accept-Charset", "utf-8");
-            httpClient.DefaultRequestHeaders.Add("Request-Type", "Resolve-Image");
-
             var request = new HttpRequestMessage(HttpMethod.Post, uri);
             request.Content = new HttpStreamContent(memStream);
             request.Content.Headers.ContentType =
@@ -114,6 +105,37 @@ namespace SnapMemo.src.logic
             httpClient.Dispose();
 
             return null;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="memStream">the stream form of the picture</param>
+        /// <returns>A memo generated from the picture</returns>
+        public static async Task<Memo> ResolveImage(IRandomAccessStream memStream)
+        {
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Add("Accept-Charset", "utf-8");
+            httpClient.DefaultRequestHeaders.Add("Request-Type", "Resolve-Image");
+
+            return await sendImage(memStream, httpClient);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="memStream">the stream form of the picture</param>
+        /// <param name="x">the touch-position.x</param>
+        /// <param name="y">the touch-position.y</param>
+        /// <returns>A memo generated from the picture</returns>
+        public static async Task<Memo> ResolveImage(IRandomAccessStream memStream, double x, double y)
+        {
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Add("Accept-Charset", "utf-8");
+            httpClient.DefaultRequestHeaders.Add("Request-Type", "Resolve-Image");
+            httpClient.DefaultRequestHeaders.Add("Touch-Location", Convert.ToInt32(x) + "," + Convert.ToInt32(y));
+
+            return await sendImage(memStream, httpClient);
         }
 
 

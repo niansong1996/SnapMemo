@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Name="gridView" Background="White">
+    <Grid Name="outmostGridView" Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="auto"/>
@@ -15,7 +15,7 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="0">
             <Grid Name="containerGrid">
                 <Image Name="imgView" 
-                       
+                       Holding="imgView_Holding"
                        ManipulationMode="TranslateX,TranslateY" ManipulationStarted="imgView_ManipulationStarted" ManipulationDelta="manipulationDelta" ManipulationCompleted="manipulationCompleted"/>
                 <Rectangle Name="border" Width="0" Height="0" Fill="Black" HorizontalAlignment="Left" VerticalAlignment="Top"
                            StrokeThickness="3" Opacity="0.46" Visibility="Visible" Stroke="Blue"

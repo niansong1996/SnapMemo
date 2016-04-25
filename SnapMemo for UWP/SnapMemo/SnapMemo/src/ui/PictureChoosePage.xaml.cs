@@ -1,4 +1,5 @@
 ﻿using SnapMemo.src.logic;
+using SnapMemo.src.model;
 using SnapMemo.src.tool;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,9 @@ namespace SnapMemo.src.ui
     {
         // the picture handling with
         BitmapDecoder decoder;
+
+        private bool recognizing = false;
+        private double backgroundOpacity = 0.32;
 
         public PictureChoosePage()
         {
@@ -92,8 +96,6 @@ namespace SnapMemo.src.ui
         {
             base.OnNavigatedTo(e);
 
-            Debug.WriteLine("navigate finish");
-
             IRandomAccessStream stream = null;
 
             try
@@ -107,30 +109,51 @@ namespace SnapMemo.src.ui
 
             decoder = await BitmapDecoder.CreateAsync(stream);
             imgView.Source = await PictureConvert.FromStream(stream);
+        }
 
-            Debug.WriteLine("already finish");
+        private async Task handleNetException(Frame frame)
+        {
+            var msgDialog = new MessageDialog("网络错误，确定返回主界面") { Title = "网络错误" };
+            msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定", uiCommand => {
+                frame.Navigate(typeof(MainPage));
+            }));
+            msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("取消", uiCommand => { }));
+            await msgDialog.ShowAsync();
         }
 
         private async void OnOK(object sender, RoutedEventArgs e)
         {
+            if (recognizing)
+            {
+                return;
+            }
+            else
+            {
+                recognizing = true;
+            }
+
             var memStream = await Capture();
 
             Frame root = Window.Current.Content as Frame;
 
+            RecognizingPopup popUp = new RecognizingPopup();
             try
             {
+                // animation
+                outmostGridView.Opacity = backgroundOpacity;
+                popUp.Show();
+
                 var memo = await NetHelper.ResolveImage(memStream);
+
+                // finish animation
+                popUp.Dispose();
 
                 root.Navigate(typeof(MemoModifyPage), memo);
             }
             catch (COMException)
             {
-                var msgDialog = new MessageDialog("网络错误，确定返回主界面") { Title = "网络错误" };
-                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("确定", uiCommand => {
-                    root.Navigate(typeof(MainPage));
-                }));
-                msgDialog.Commands.Add(new Windows.UI.Popups.UICommand("取消", uiCommand => { }));
-                await msgDialog.ShowAsync();
+                popUp.Dispose();
+                await handleNetException(root);
             }
         }
 
@@ -263,20 +286,22 @@ namespace SnapMemo.src.ui
             var deviationW = (containerGrid.RenderSize.Width - imgViewW) / 2;
             var deviationH = (containerGrid.RenderSize.Height - imgViewH) / 2;
 
-            if(deviationW > 0)
-            {
-                currentPos.X += deviationW;
-            }
-
-            if(deviationH > 0)
-            {
-                currentPos.Y += deviationH;
-            }
-
             if (sender.GetType() == typeof(Rectangle))
             {
                 currentPos.X += border.Margin.Left;
                 currentPos.Y += border.Margin.Top;
+            }
+            else
+            {
+                if (deviationW > 0)
+                {
+                    currentPos.X += deviationW;
+                }
+
+                if (deviationH > 0)
+                {
+                    currentPos.Y += deviationH;
+                }
             }
 
             return currentPos;
@@ -284,6 +309,12 @@ namespace SnapMemo.src.ui
 
         private void manipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
+            var imgViewW = imgView.RenderSize.Width;
+            var imgViewH = imgView.RenderSize.Height;
+
+            var deviationW = (containerGrid.RenderSize.Width - imgViewW) / 2;
+            var deviationH = (containerGrid.RenderSize.Height - imgViewH) / 2;
+
             var currentPos = calPointRelativeToContainerGrid(e.Position, sender);
 
             if (mode == EventMode.DRAW)
@@ -320,6 +351,12 @@ namespace SnapMemo.src.ui
 
         private void border_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
         {
+            var imgViewW = imgView.RenderSize.Width;
+            var imgViewH = imgView.RenderSize.Height;
+
+            var deviationW = (containerGrid.RenderSize.Width - imgViewW) / 2;
+            var deviationH = (containerGrid.RenderSize.Height - imgViewH) / 2;
+
             // the side value relative to the container
             double leftSide = border.Margin.Left;
             double rightSide = leftSide + border.Width;
@@ -359,6 +396,52 @@ namespace SnapMemo.src.ui
                 mode = EventMode.MOVE;
                 initTappedPos = currentPos;
                 initRectPos = new Point(leftSide, topSide);
+            }
+        }
+
+        private async void imgView_Holding(object sender, HoldingRoutedEventArgs e)
+        {
+            if (recognizing)
+            {
+                return;
+            }
+            else
+            {
+                recognizing = true;
+            }
+
+            var position = e.GetPosition(imgView);
+
+            var memStream = new InMemoryRandomAccessStream();
+            var encoder = await BitmapEncoder.CreateForTranscodingAsync(memStream, decoder);
+
+            // flush content in bounds into memStream
+            await encoder.FlushAsync();
+
+            Frame root = Window.Current.Content as Frame;
+
+            RecognizingPopup popUp = new RecognizingPopup();
+            try
+            {
+                var realX = (position.X / imgView.RenderSize.Width) * decoder.PixelWidth;
+                var realY = (position.Y / imgView.RenderSize.Height) * decoder.PixelHeight;
+
+                Debug.WriteLine("holding: " + realX + ", " + realY);
+
+                // animation
+                outmostGridView.Opacity = backgroundOpacity;
+                popUp.Show();
+                var memo = await NetHelper.ResolveImage(memStream, realX, realY);
+
+                // finish animation
+                popUp.Dispose();
+
+                root.Navigate(typeof(MemoModifyPage), memo);
+            }
+            catch (COMException ex)
+            {
+                popUp.Dispose();
+                await handleNetException(root);
             }
         }
     }

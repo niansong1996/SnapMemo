@@ -73,12 +73,10 @@ namespace SnapMemo.src.logic
 
             // set TileUpdater
             var tileUpdater = TileUpdateManager.CreateTileUpdaterForApplication();
-            tileUpdater.EnableNotificationQueue(true);
-
             tileUpdater.Update(tileNotification);
         }
 
-        public async static void RefreshNotification(IList<Memo> memos)
+        public async static void RefreshTiles(IList<Memo> allMemos)
         {
             // load xml template
             var installLocation = Windows.ApplicationModel.Package.Current.InstalledLocation;
@@ -93,10 +91,25 @@ namespace SnapMemo.src.logic
             // start time
             var startTime = DateTime.Now.AddSeconds(10);
 
+            // temp list to add tiles, then reverse it according to the emgergency
             tileUpdater.Clear();
-            for (int i = 0; i < 5 && i < memos.Count; i++)
+            var now = DateTime.Now;
+            List<Memo> tempList = new List<Memo>();
+            for(int i = 0, addCount = 0; i < allMemos.Count && addCount < 5; ++i)
             {
-                Memo memo = memos[i];
+                Memo memo = allMemos[i];
+
+                if (now.CompareTo(memo.Time) <= 0)
+                {
+                    ++addCount;
+                    tempList.Add(memo);
+                }
+            }
+
+            // reverse and add to schedule
+            for (int i = 0; i < tempList.Count; ++i)
+            {
+                Memo memo = tempList[tempList.Count - 1 - i];
 
                 // set title and caption
                 var tileXml = new XmlDocument();

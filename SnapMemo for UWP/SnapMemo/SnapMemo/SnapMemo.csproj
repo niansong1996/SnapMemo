@@ -127,6 +127,9 @@
     <Compile Include="src\ui\PictureChoosePage.xaml.cs">
       <DependentUpon>PictureChoosePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="src\ui\RecognizingPopup.xaml.cs">
+      <DependentUpon>RecognizingPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="src\ui\SignUpPage.xaml.cs">
       <DependentUpon>SignUpPage.xaml</DependentUpon>
     </Compile>
@@ -181,6 +184,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="src\ui\PictureChoosePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="src\ui\RecognizingPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

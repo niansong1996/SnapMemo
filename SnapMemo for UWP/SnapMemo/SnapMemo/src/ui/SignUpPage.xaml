@@ -38,8 +38,8 @@
             <TextBlock Name="warnTB" Text="" Grid.ColumnSpan="2" Grid.Row="5" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Red" FontSize="22" Margin="8,16,0,0"/>
         </Grid>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Background="LightBlue">
-            <Button Background="Transparent"  FontSize="22" Margin="0,0,0,0" Click="OnLogin" Content="已有账号?" Foreground="White" FontWeight="Bold"></Button>
-        </StackPanel>
+        <RelativePanel Grid.Row="1" HorizontalAlignment="Stretch">
+            <Button Background="LightBlue" Foreground="White" FontSize="22" Click="OnLogin" Content="已有账号?" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" FontWeight="Bold"/>
+        </RelativePanel>
     </Grid>
 </Page>

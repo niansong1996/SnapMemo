@@ -20,7 +20,7 @@ namespace BackgroundComponent
 
             var memos = MemoSort.SortByTime(allMemos);
 
-            NotificationHelper.RefreshNotification(memos);
+            NotificationHelper.RefreshTiles(memos);
 
             Debug.WriteLine("==============fire TileRefresher.");
 
