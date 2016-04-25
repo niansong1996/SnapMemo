@@ -21,8 +21,8 @@ public class JSON4NLP {
 		JSONArray entityJA = jo.getJSONArray("entities");
 		String content = jo.getString("query");
 		String[] tmp = UtilityTools.Cal2String(Calendar.getInstance()).split(" ");
-		String time = tmp[0];
-		String date = tmp[1];
+		String date = tmp[0];
+		String time = tmp[1];
 		String topic = intentJA.getJSONObject(0).getString("intent").toString()+":";
 		for(int i=0;i<entityJA.size();i++){
 			JSONObject temp = entityJA.getJSONObject(i);

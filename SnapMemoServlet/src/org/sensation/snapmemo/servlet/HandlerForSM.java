@@ -20,7 +20,7 @@ public class HandlerForSM implements HttpHandler{
 		String type = map.get("Request-Type").get(0);
 		RequestType requestType = RequestType.valueOf(type.replace("-", ""));
 		BLExecutor exe = new BLExecutor();
-		IntStringWrapper result = exe.execute2(requestType,exchange.getRequestBody());
+		IntStringWrapper result = exe.execute2(requestType,exchange);
 		exchange.sendResponseHeaders(result.getCode(), result.getInfo().getBytes().length);
 		OutputStream os = exchange.getResponseBody();     
 		os.write(result.getInfo().getBytes());     

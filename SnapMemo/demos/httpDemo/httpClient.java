@@ -3,7 +3,6 @@ package httpDemo;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -23,18 +22,22 @@ import org.apache.http.util.EntityUtils;
 public class httpClient {
 
 	public static void main(String[] args) {
-		test2();
+		test1();
 	}
 	public static void test1(){
 		CloseableHttpClient httpclient = HttpClients.createDefault();  
 		try
 		{
-			URIBuilder builder = new URIBuilder("http://139.129.40.103:5678/SnapMemo/servlet/main");
+			URIBuilder builder = new URIBuilder("http://snapmemo.chinacloudapp.cn:5678/SnapMemo/servlet/main");
+//			builder.addParameter("Touch-X","60");
+//			builder.addParameter("Touch-Y", "235");
 			URI uri = builder.build();
+			System.out.println(uri.toURL().toString());
 			HttpPost request = new HttpPost(uri);
 			// Request body
 			System.out.println("sending the request");
 			request.setHeader("Request-Type", "Resolve-Image");
+			request.setHeader("Touch-Location","80,235");
 			ByteArrayEntity entity1 = new ByteArrayEntity(getImageBinary());
 			request.setEntity(entity1);
 			HttpResponse response = httpclient.execute(request);
@@ -57,7 +60,7 @@ public class httpClient {
 		CloseableHttpClient httpclient = HttpClients.createDefault();  
 		try
 		{
-			URIBuilder builder = new URIBuilder("http://139.129.40.103:5678/SnapMemo/servlet/main");
+			URIBuilder builder = new URIBuilder("http://snapmemo.chinacloudapp.cn:5678/SnapMemo/servlet/main");
 			URI uri = builder.build();
 			HttpPost request = new HttpPost(uri);
 			// Request body
@@ -85,7 +88,7 @@ public class httpClient {
 		CloseableHttpClient httpclient = HttpClients.createDefault();  
 		try
 		{
-			URIBuilder builder = new URIBuilder("http://139.129.40.103:5678/SnapMemo/servlet/main");
+			URIBuilder builder = new URIBuilder("http://snapmemo.chinacloudapp.cn/SnapMemo/servlet/main");
 			URI uri = builder.build();
 			HttpPost request = new HttpPost(uri);
 			// Request body

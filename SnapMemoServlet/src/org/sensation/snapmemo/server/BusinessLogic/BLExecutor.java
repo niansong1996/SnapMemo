@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.sensation.snapmemo.server.Utility.IntStringWrapper;
 import org.sensation.snapmemo.server.Utility.RequestType;
 
+import com.sun.net.httpserver.HttpExchange;
+
 public class BLExecutor{
 
 	MainExecutor main;
@@ -19,10 +21,22 @@ public class BLExecutor{
 		this.memo = new MemoExecutor();
 	}
 	public IntStringWrapper execute(RequestType type, HttpServletRequest request) throws IOException{
+
 		InputStream is = request.getInputStream();
 		IntStringWrapper result = null;
 		switch(type){
-		case ResolveImage:result = main.resolveImage(is);break;
+		case ResolveImage:
+			String key = request.getHeader("Touch-Location");
+			System.out.println("key is :"+key);
+			if(key!=null){
+				String[] locs = key.split(",");
+				int touchX = Integer.parseInt(locs[0]);
+				int touchY = Integer.parseInt(locs[1]);
+				result = main.resolveImage(is,touchX,touchY);
+			}else{
+				result = main.resolveImage(is,-1,-1);
+			}
+			break;
 		case GetMemoList:result = memo.GetMemoList(is);break;
 		case DeleteMemo:result = memo.DeleteMemo(is);break;
 		case ModifyMemo:result = memo.ModifyMemo(is);break;
@@ -34,10 +48,11 @@ public class BLExecutor{
 		}
 		return result;
 	}
-	public IntStringWrapper execute2(RequestType type, InputStream is) throws IOException{
+	public IntStringWrapper execute2(RequestType type, HttpExchange exchange) throws IOException{
+		InputStream is = exchange.getRequestBody();
 		IntStringWrapper result = null;
 		switch(type){
-		case ResolveImage:result = main.resolveImage(is);break;
+		case ResolveImage:result = main.resolveImage(is,-1,-1);break;
 		case GetMemoList:result = memo.GetMemoList(is);break;
 		case DeleteMemo:result = memo.DeleteMemo(is);break;
 		case ModifyMemo:result = memo.ModifyMemo(is);break;

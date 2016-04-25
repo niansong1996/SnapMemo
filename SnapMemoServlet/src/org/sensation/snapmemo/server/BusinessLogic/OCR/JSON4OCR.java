@@ -13,7 +13,8 @@ public class JSON4OCR {
 			return new IntStringWrapper(308,"Character not detected");
 		}
 		switch(wrapper.getCode()){
-		case 200: return new IntStringWrapper(wrapper.getCode(),getSuccessResult(sourceJObject));
+		case 200: return new IntStringWrapper(wrapper.getCode(),source);
+		//case 200: return new IntStringWrapper(wrapper.getCode(),getSuccessResult(sourceJObject));
 		case 400:
 		case 415:
 		case 500: return new IntStringWrapper(wrapper.getCode(),getFailedResult(sourceJObject));

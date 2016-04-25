@@ -29,7 +29,7 @@ public class OCRController implements OCRModuleService{
 		System.out.println("Oxford Responsed @ "+UtilityTools.getCurrentTime());
 		return json.getOCRResult(OCRResponse);
 	}
-	private IntStringWrapper OxfordOCR(byte[] img){
+	public IntStringWrapper OxfordOCR(byte[] img){
 		CloseableHttpClient httpclient = HttpClients.createDefault();  
 		try{
 			URIBuilder builder = new URIBuilder("https://api.projectoxford.ai/vision/v1/ocr");
