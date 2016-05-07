@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -73,6 +74,16 @@ namespace SnapMemo.src.ui
         private void OnLogin(object sender, RoutedEventArgs e)
         {
             MainPage.Instance.ContentFrame.Navigate(typeof(LogInPage));
+        }
+
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            StorageFolder appInstalledFolder = Windows.ApplicationModel.Package.Current.InstalledLocation;
+            StorageFolder assets = await appInstalledFolder.GetFolderAsync("Assets");
+            var file = await assets.GetFileAsync("SnapMemo_square.png");
+            imgView.Source = await PictureConvert.FromStream(await file.OpenAsync(FileAccessMode.Read));
         }
     }
 }

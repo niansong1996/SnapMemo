@@ -399,19 +399,8 @@ namespace SnapMemo.src.ui
             }
         }
 
-        private async void imgView_Holding(object sender, HoldingRoutedEventArgs e)
+        private async Task focus(object sender, Point position)
         {
-            if (recognizing)
-            {
-                return;
-            }
-            else
-            {
-                recognizing = true;
-            }
-
-            var position = e.GetPosition(imgView);
-
             var memStream = new InMemoryRandomAccessStream();
             var encoder = await BitmapEncoder.CreateForTranscodingAsync(memStream, decoder);
 
@@ -443,6 +432,38 @@ namespace SnapMemo.src.ui
                 popUp.Dispose();
                 await handleNetException(root);
             }
+        }
+
+        private async void imgView_Holding(object sender, HoldingRoutedEventArgs e)
+        {
+            if (recognizing)
+            {
+                return;
+            }
+            else
+            {
+                recognizing = true;
+            }
+
+            var position = e.GetPosition(imgView);
+
+            await focus(sender, position);
+        }
+
+        private async void imgView_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            if (recognizing)
+            {
+                return;
+            }
+            else
+            {
+                recognizing = true;
+            }
+
+            var position = e.GetPosition(imgView);
+
+            await focus(sender, position);
         }
     }
 }

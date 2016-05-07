@@ -136,6 +136,11 @@ namespace SnapMemo
                 myFrame.Navigate(typeof(AboutUsPage));
                 mySplitView.IsPaneOpen = false;
             }
+            else if (cleanBoxItem.IsSelected)
+            {
+                DBHelper.DeleteAllMemo();
+                mySplitView.IsPaneOpen = false;
+            }
         }
 
         private void plusTB_Tapped(object sender, TappedRoutedEventArgs e)

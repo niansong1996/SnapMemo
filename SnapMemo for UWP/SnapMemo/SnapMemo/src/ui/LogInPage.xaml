@@ -26,12 +26,15 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
+            <Grid Grid.Row="0" Grid.ColumnSpan="2">
+                <Image Name="imgView" Width="100" Height="100"></Image>
+            </Grid>
             <TextBlock Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" FontSize="20" Margin="8,0,0,0">用户名</TextBlock>
             <TextBlock Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" FontSize="20" Margin="8,16,0,0">密码</TextBlock>
             <TextBox Name="nameTB" Grid.Column="1" Grid.Row="1" FontSize="20" Margin="8,0"/>
             <PasswordBox Name="passwordTB" Grid.Column="1" Grid.Row="2" FontSize="20
                          " Margin="8,16,8,0"/>
-            <Button Grid.Row="4" Grid.Column="1" VerticalAlignment="Top" Foreground="White" FontSize="22" Click="OnSignIn" Background="#44c690" Width="270" Margin="10,10,0,0">登录</Button>
+            <Button Grid.Row="4" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Stretch" Foreground="White" FontSize="22" Click="OnSignIn" Background="#44c690" Margin="10,10,10,0">登录</Button>
 
             <TextBlock Name="warnTB" Text="" Grid.Column="1" Grid.Row="4" Foreground="Red" FontSize="22" Height="46" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"></TextBlock>
         </Grid>

@@ -62,6 +62,19 @@ namespace SnapMemo.src.logic
             }
         }
 
+        public static void DeleteAllMemo()
+        {
+            using (var db = DBConnection)
+            {
+                var memos = (from p in db.Table<Memo>() select p).ToList();
+
+                foreach (var memo in memos)
+                {
+                    db.Delete(memo);
+                }
+            }
+        }
+
         public static void UpdateMemo(Memo modifyingMemo)
         {
             using(var db = DBConnection)

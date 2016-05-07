@@ -15,7 +15,7 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="0">
             <Grid Name="containerGrid">
                 <Image Name="imgView" 
-                       Holding="imgView_Holding"
+                       Holding="imgView_Holding" RightTapped="imgView_RightTapped"
                        ManipulationMode="TranslateX,TranslateY" ManipulationStarted="imgView_ManipulationStarted" ManipulationDelta="manipulationDelta" ManipulationCompleted="manipulationCompleted"/>
                 <Rectangle Name="border" Width="0" Height="0" Fill="Black" HorizontalAlignment="Left" VerticalAlignment="Top"
                            StrokeThickness="3" Opacity="0.46" Visibility="Visible" Stroke="Blue"

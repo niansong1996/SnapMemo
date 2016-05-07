@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="7a429bcf-0449-4bbd-b5ad-002aa677cb0b" Publisher="CN=Sissel" Version="1.3.4.0" />
+  <Identity Name="7a429bcf-0449-4bbd-b5ad-002aa677cb0b" Publisher="CN=Sissel" Version="1.5.7.0" />
   <mp:PhoneIdentity PhoneProductId="7a429bcf-0449-4bbd-b5ad-002aa677cb0b" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>SnapMemo</DisplayName>

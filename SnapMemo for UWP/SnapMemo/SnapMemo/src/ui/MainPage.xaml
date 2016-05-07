@@ -49,6 +49,12 @@
                             <TextBlock VerticalAlignment="Center" FontSize="20" Foreground="White" Margin="24,0,0,0">开发团队</TextBlock>
                         </StackPanel>
                     </ListBoxItem>
+                    <ListBoxItem Name="cleanBoxItem">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock VerticalAlignment="Center" FontFamily="Segoe MDL2 Assets" Foreground="White" FontSize="20">&#xE107;</TextBlock>
+                            <TextBlock VerticalAlignment="Center" FontSize="20" Foreground="White" Margin="24,0,0,0">清除缓存</TextBlock>
+                        </StackPanel>
+                    </ListBoxItem>
                 </ListBox>
             </SplitView.Pane>
 

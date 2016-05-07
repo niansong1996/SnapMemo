@@ -27,6 +27,9 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
+            <Grid Grid.Row="0" Grid.ColumnSpan="2">
+                <Image Name="imgView" Width="100" Height="100"></Image>
+            </Grid>
             <TextBlock Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" FontSize="22" Margin="8,0,0,0">用户名</TextBlock>
             <TextBlock Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" FontSize="22" Margin="8,16,0,0">密码</TextBlock>
             <TextBlock Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" FontSize="22" Margin="8,16,0,0">确认密码</TextBlock>
