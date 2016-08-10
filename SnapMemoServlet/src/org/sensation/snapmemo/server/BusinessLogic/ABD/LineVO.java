@@ -17,9 +17,12 @@ public class LineVO {
 		this.ylength = ylength;
 
 		this.words = "";
-		for(int i=0;i<ja.size();i++){
-			words += ja.getJSONObject(i).getString("text");
-		}
+		if(ja!=null)
+			for(int i=0;i<ja.size();i++){
+				words += ja.getJSONObject(i).getString("text");
+			}
+		else
+			words = "";
 	}
 
 	public boolean isIn(int x,int y){
@@ -60,7 +63,7 @@ public class LineVO {
 	public static void findNearest(int index,int maxDis,ArrayList<LineVO> source,ArrayList<LineVO> result){
 		int nearestIndex = -1;
 		int minDis = Integer.MAX_VALUE;
-	//	int maxDis = source.get(index).ylength;
+		//	int maxDis = source.get(index).ylength;
 		for(int i=0;i<source.size();i++){
 			if(result.contains(source.get(i))) continue;
 
@@ -70,10 +73,10 @@ public class LineVO {
 				minDis = currentDis;
 			}
 		}
-//		String nearLine = nearestIndex==-1?"nothing":source.get(nearestIndex).words;
-//		System.out.println("The nearest line of \n"
-//				+source.get(index).words+" \n"
-//				+ "is : "+nearLine);
+		//		String nearLine = nearestIndex==-1?"nothing":source.get(nearestIndex).words;
+		//		System.out.println("The nearest line of \n"
+		//				+source.get(index).words+" \n"
+		//				+ "is : "+nearLine);
 		if(nearestIndex!=-1){
 			result.add(source.get(nearestIndex));
 			findNearest(index,minDis,source,result);
@@ -90,7 +93,7 @@ public class LineVO {
 		}
 		return result;
 	}
-	
+
 	private static void sort(ArrayList<LineVO> source){
 		for(int i=source.size();i>=0;i--){
 			for(int j=1;j<i;j++){
@@ -116,6 +119,6 @@ public class LineVO {
 				return true;
 		return false;
 	}
-	
+
 
 }

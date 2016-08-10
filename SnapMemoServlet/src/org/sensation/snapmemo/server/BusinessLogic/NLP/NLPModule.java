@@ -40,7 +40,7 @@ public class NLPModule implements NLPModuleService{
 
 			if (entity != null){
 				String result = EntityUtils.toString(entity);
-				System.out.println(result);
+			//	System.out.println(result);
 				return json.string2po(result);
 			}
 

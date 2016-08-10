@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 import org.sensation.snapmemo.server.BusinessLogic.OCR.OCRController;
+import org.sensation.snapmemo.server.Utility.UtilityTools;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -40,7 +41,7 @@ public class ABDModule {
 	}
 	public String getSelectedText(String source,int x,int y){
 		ArrayList<LineVO> lineLocations = getLocations(source);
-		
+		System.out.println("Get Text locations complete @ "+UtilityTools.getCurrentTime());
 		int touchedLine = getTouchedLine(lineLocations,x,y);
 		System.out.println("Touched Line is : "+touchedLine);
 		

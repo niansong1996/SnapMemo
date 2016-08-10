@@ -54,7 +54,7 @@ public class OCRController implements OCRModuleService{
 
 			if (entity != null){
 				String result = EntityUtils.toString(entity);
-				System.out.println(result);
+				//System.out.println(result);
 				return new IntStringWrapper(response.getStatusLine().getStatusCode(),result);
 			}
 		} catch (URISyntaxException e) {
